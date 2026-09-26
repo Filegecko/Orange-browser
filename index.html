@@ -78,23 +78,7 @@ body.dark{
     --border:#2b2b2b;
     --orange-light:#30180b;
 }
-#browserView {
-    display: none;
-    width: 100%;
-    height: calc(100vh - 120px);
-    background: #fff;
-}
 
-#browserView.active {
-    display: block;
-}
-
-#browserFrame {
-    width: 100%;
-    height: 100%;
-    border: 0;
-    display: block;
-}
 
 /* =========================================
    APP
@@ -2124,13 +2108,7 @@ onclick="createTab()">
 
 </div>
 
-<div id="browserView">
-    <iframe
-        id="browserFrame"
-        src="about:blank"
-        title="OrangeBrowse Web View">
-    </iframe>
-</div>
+
 <!-- =====================================================
      MAIN
 ===================================================== -->
@@ -3628,15 +3606,10 @@ renderTabs();
    When converted to Android/iOS this function will
    feed the URL into the native WebView/browser frame.
 */
-const browserView = document.getElementById("browserView");
-const browserFrame = document.getElementById("browserFrame");
-
-if (browserView && browserFrame) {
-    browserView.classList.add("active");
-    browserFrame.src = destination;
+if (window.median && window.median.window) {
+    window.median.window.open(destination, "internal");
 }
 }
-
 
 /* =====================================================
    SEARCH
@@ -5600,86 +5573,7 @@ initialize();
     });
 
 })();
-/* =====================================================
-   APP STARTUP LOADER
-===================================================== */
 
-(function(){
-
-    const loader = document.getElementById("appLoader");
-
-    if(!loader) return;
-
-    const loaderTitle = loader.querySelector(".loader-title");
-
-    function updateLoaderTheme(){
-
-        if(document.body.classList.contains("dark")){
-
-            loader.classList.add("dark-loader");
-            loader.classList.remove("light-loader");
-
-            if(loaderTitle){
-                loaderTitle.style.color = "#ffffff";
-            }
-
-        }else{
-
-            loader.classList.add("light-loader");
-            loader.classList.remove("dark-loader");
-
-            if(loaderTitle){
-                loaderTitle.style.color = "#111111";
-            }
-
-        }
-
-    }
-
-    /* Apply the correct theme immediately */
-    updateLoaderTheme();
-
-    /* Watch for dark/light mode changes */
-    const themeObserver = new MutationObserver(function(){
-
-        updateLoaderTheme();
-
-    });
-
-    themeObserver.observe(document.body,{
-        attributes:true,
-        attributeFilter:["class"]
-    });
-
-    /*
-       Wait until the browser has actually rendered
-       the initial page before starting the timer.
-    */
-    requestAnimationFrame(function(){
-
-        requestAnimationFrame(function(){
-
-            setTimeout(function(){
-
-                loader.classList.add("hide");
-
-                setTimeout(function(){
-
-                    themeObserver.disconnect();
-
-                    if(loader && loader.parentNode){
-                        loader.remove();
-                    }
-
-                },500);
-
-            },900);
-
-        });
-
-    });
-
-})();
 </script>
 
 </body>
