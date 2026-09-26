@@ -3607,8 +3607,11 @@ renderTabs();
    feed the URL into the native WebView/browser frame.
 */
 
-window.location.href = destination;
-
+if (window.median && median.window) {
+    median.window.open(destination, "internal");
+} else {
+    window.open(destination, "_blank");
+}
 }
 
 
