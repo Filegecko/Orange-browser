@@ -1,0 +1,5663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#ff6a00">
+<meta name="description" content="OrangeBrowse - modern private AI browser">
+<title>OrangeBrowse</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+:root{
+    --orange:#ff6a00;
+    --orange2:#ff8500;
+    --orange-light:#fff1e8;
+    --black:#111111;
+    --black2:#181818;
+    --black3:#252525;
+    --white:#ffffff;
+    --bg:#f5f5f5;
+    --card:#ffffff;
+    --text:#111111;
+    --muted:#777777;
+    --border:#e6e6e6;
+    --danger:#e53935;
+    --green:#12a66a;
+    --blue:#2878ff;
+    --shadow:0 10px 35px rgba(0,0,0,.08);
+}
+
+html,
+body{
+    width:100%;
+    min-height:100%;
+}
+
+body{
+    font-family:Inter,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    transition:.25s;
+}
+
+button,
+input,
+select,
+textarea{
+    font-family:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+
+/* =========================================
+   DARK MODE
+========================================= */
+
+body.dark{
+    --bg:#0d0d0d;
+    --card:#181818;
+    --text:#ffffff;
+    --muted:#999999;
+    --border:#2b2b2b;
+    --orange-light:#30180b;
+}
+
+
+/* =========================================
+   APP
+========================================= */
+
+.app{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.browser-header{
+    background:var(--black);
+    color:white;
+    padding:10px 15px;
+    position:sticky;
+    top:0;
+    z-index:1000;
+    box-shadow:0 3px 18px rgba(0,0,0,.2);
+}
+
+.header-row{
+    width:100%;
+    max-width:1550px;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+
+/* =========================================
+   LOGO
+========================================= */
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    min-width:max-content;
+    cursor:pointer;
+}
+
+/*
+   EMPTY LOGO PLACEHOLDER
+
+   Replace the empty img src with your own file later.
+
+   Example:
+   src="images/orangebrowse-logo.png"
+*/
+
+.logo-icon{
+    width:39px;
+    height:39px;
+    border-radius:12px;
+
+    /* Remove dotted border */
+    border:none;
+
+    /* Soft background and shadow */
+    background:rgba(255,255,255,.08);
+    box-shadow:
+        0 3px 12px rgba(0,0,0,.16),
+        0 0 10px rgba(255,255,255,.10);
+
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.logo-icon img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:block;
+    border:none;
+    padding:0;
+}
+
+.logo-name{
+    font-size:17px;
+    font-weight:800;
+}
+
+.logo-name span{
+    color:var(--orange);
+}
+
+
+/* =========================================
+   NAVIGATION
+========================================= */
+
+.navigation{
+    display:flex;
+    gap:2px;
+}
+
+.icon-button{
+    width:38px;
+    height:38px;
+    border:0;
+    background:transparent;
+    color:#ccc;
+    border-radius:9px;
+    font-size:14px;
+}
+
+.icon-button:hover{
+    background:#292929;
+    color:white;
+}
+
+.icon-button:active{
+    transform:scale(.94);
+}
+
+
+/* =========================================
+   ADDRESS BAR
+========================================= */
+
+.address-container{
+    flex:1;
+    min-width:80px;
+}
+
+.address-bar{
+    height:40px;
+    width:100%;
+    background:#292929;
+    border:1px solid #383838;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:0 12px;
+}
+
+.address-bar:focus-within{
+    border-color:var(--orange);
+    box-shadow:0 0 0 3px rgba(255,106,0,.12);
+}
+
+.address-security{
+    color:#999;
+    font-size:13px;
+}
+
+.address-input{
+    flex:1;
+    min-width:0;
+    height:100%;
+    border:0;
+    outline:0;
+    background:transparent;
+    color:white;
+    font-size:13px;
+}
+
+.address-input::placeholder{
+    color:#999;
+}
+
+.address-clear{
+    border:0;
+    background:none;
+    color:#999;
+    font-size:13px;
+}
+
+.address-clear:hover{
+    color:var(--orange);
+}
+
+
+/* =========================================
+   HEADER RIGHT
+========================================= */
+
+.header-right{
+    display:flex;
+    gap:2px;
+}
+
+
+/* =========================================
+   TAB BAR
+========================================= */
+
+.tabbar{
+    background:#1b1b1b;
+    padding:0 15px 7px;
+}
+
+.tabs-container{
+    width:100%;
+    max-width:1550px;
+    margin:auto;
+    display:flex;
+    align-items:end;
+    gap:6px;
+    overflow-x:auto;
+    scrollbar-width:none;
+}
+
+.tabs-container::-webkit-scrollbar{
+    display:none;
+}
+
+.tab{
+    flex:0 0 205px;
+    max-width:240px;
+    height:38px;
+    padding:0 10px;
+    border-radius:9px 9px 0 0;
+    background:#292929;
+    color:#aaa;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-size:12px;
+    position:relative;
+    user-select:none;
+}
+
+.tab.active{
+    background:var(--bg);
+    color:var(--text);
+}
+
+.tab:hover{
+    background:#343434;
+}
+
+.tab.active:hover{
+    background:var(--card);
+}
+
+.tab-favicon{
+    width:20px;
+    height:20px;
+    border-radius:6px;
+    background:var(--orange);
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:9px;
+    flex-shrink:0;
+}
+
+.tab-title{
+    flex:1;
+    min-width:0;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.tab-close{
+    width:24px;
+    height:24px;
+    border:0;
+    background:transparent;
+    color:inherit;
+    border-radius:6px;
+    flex-shrink:0;
+}
+
+.tab-close:hover{
+    background:rgba(128,128,128,.2);
+}
+
+.new-tab-button{
+    width:36px;
+    height:36px;
+    border:0;
+    background:transparent;
+    color:#ddd;
+    border-radius:8px;
+    flex-shrink:0;
+}
+
+.new-tab-button:hover{
+    background:#303030;
+}
+
+
+/* =========================================
+   MAIN
+========================================= */
+
+.main{
+    flex:1;
+}
+
+.page{
+    width:100%;
+    max-width:1180px;
+    margin:auto;
+    padding:55px 24px 100px;
+}
+
+
+/* =========================================
+   HERO
+========================================= */
+
+.hero{
+    text-align:center;
+    margin-bottom:45px;
+}
+
+.hero-logo{
+    width:78px;
+    height:78px;
+    margin:auto auto 18px;
+    border-radius:25px;
+
+    /* Remove dotted border */
+    border:none;
+
+    /* Soft background and shadow */
+    background:rgba(255,255,255,.08);
+    box-shadow:
+        0 5px 18px rgba(0,0,0,.16),
+        0 0 14px rgba(255,255,255,.12);
+
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.hero-logo img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:block;
+    border:none;
+    padding:0;
+}
+
+.hero h1{
+    font-size:clamp(32px,5vw,52px);
+    letter-spacing:-2px;
+    margin-bottom:10px;
+}
+
+.hero h1 span{
+    color:var(--orange);
+}
+
+.hero p{
+    color:var(--muted);
+    font-size:14px;
+}
+
+
+/* =========================================
+   MAIN SEARCH
+========================================= */
+
+.main-search{
+    max-width:740px;
+    height:61px;
+    margin:28px auto 0;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:0 17px;
+}
+
+.main-search:focus-within{
+    border-color:var(--orange);
+    box-shadow:0 12px 40px rgba(255,106,0,.12);
+}
+
+.main-search i{
+    color:var(--orange);
+}
+
+.main-search input{
+    flex:1;
+    min-width:0;
+    height:100%;
+    border:0;
+    outline:0;
+    background:transparent;
+    color:var(--text);
+    font-size:14px;
+}
+
+.main-search button{
+    height:42px;
+    border:0;
+    padding:0 17px;
+    border-radius:11px;
+    background:var(--orange);
+    color:white;
+    font-size:12px;
+    font-weight:700;
+}
+
+.main-search button:hover{
+    background:#e85d00;
+}
+
+
+/* =========================================
+   SEARCH ENGINE
+========================================= */
+
+.engine-row{
+    max-width:740px;
+    margin:11px auto 0;
+    text-align:right;
+}
+
+.engine-row select{
+    border:0;
+    background:transparent;
+    color:var(--muted);
+    outline:0;
+    font-size:11px;
+}
+
+
+/* =========================================
+   TRENDING NEWS
+========================================= */
+
+.trending-section{
+    margin:0 0 35px;
+}
+
+.trending-box{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:17px;
+    overflow:hidden;
+    box-shadow:var(--shadow);
+    display:flex;
+    align-items:stretch;
+}
+
+.trending-label{
+    flex:0 0 auto;
+    background:var(--black);
+    color:white;
+    padding:15px 17px;
+    font-size:11px;
+    font-weight:800;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.trending-label i{
+    color:var(--orange);
+}
+
+.news-window{
+    flex:1;
+    min-width:0;
+    overflow:hidden;
+    padding:0 15px;
+    display:flex;
+    align-items:center;
+}
+
+.news-track{
+    display:flex;
+    width:max-content;
+    animation:newsMove 30s linear infinite;
+}
+
+.news-item{
+    white-space:nowrap;
+    padding-right:60px;
+    font-size:11px;
+    color:var(--muted);
+}
+
+.news-item strong{
+    color:var(--text);
+}
+
+@keyframes newsMove{
+    from{
+        transform:translateX(0);
+    }
+    to{
+        transform:translateX(-50%);
+    }
+}
+
+
+/* =========================================
+   SECTION HEADING
+========================================= */
+
+.section-heading{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:17px;
+}
+
+.section-heading h2{
+    font-size:17px;
+}
+
+.section-heading span{
+    font-size:11px;
+    color:var(--muted);
+}
+
+
+/* =========================================
+   QUICK LINKS
+========================================= */
+
+.quick-grid{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:13px;
+    margin-bottom:45px;
+}
+
+.quick-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:19px 10px;
+    text-align:center;
+    transition:.2s;
+}
+
+.quick-card:hover{
+    transform:translateY(-3px);
+    border-color:#ffc29b;
+    box-shadow:var(--shadow);
+}
+
+.quick-icon{
+    width:45px;
+    height:45px;
+    margin:auto auto 10px;
+    border-radius:14px;
+    background:var(--orange-light);
+    color:var(--orange);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:17px;
+}
+
+.quick-card strong{
+    display:block;
+    font-size:11px;
+}
+
+.quick-card small{
+    display:block;
+    margin-top:4px;
+    color:var(--muted);
+    font-size:9px;
+}
+
+
+/* =========================================
+   JAMA COIN PROMOTION
+========================================= */
+
+.jama-promo{
+    position:relative;
+    overflow:hidden;
+    margin:0 0 42px;
+    border-radius:24px;
+    background:
+        radial-gradient(circle at 85% 20%,rgba(255,106,0,.35),transparent 30%),
+        linear-gradient(135deg,#111111,#202020 55%,#111111);
+    border:1px solid #343434;
+    box-shadow:0 20px 50px rgba(0,0,0,.15);
+    color:white;
+}
+
+.jama-promo::before{
+    content:"";
+    position:absolute;
+    width:180px;
+    height:180px;
+    border:1px solid rgba(255,106,0,.25);
+    border-radius:50%;
+    right:-60px;
+    top:-70px;
+}
+
+.jama-promo::after{
+    content:"";
+    position:absolute;
+    width:120px;
+    height:120px;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:50%;
+    right:30px;
+    bottom:-60px;
+}
+
+.jama-content{
+    position:relative;
+    z-index:2;
+    padding:27px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:25px;
+}
+
+.jama-copy{
+    min-width:0;
+}
+
+.jama-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:7px 10px;
+    border-radius:30px;
+    background:rgba(255,106,0,.14);
+    border:1px solid rgba(255,106,0,.35);
+    color:#ff9a52;
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+    margin-bottom:13px;
+}
+
+.jama-copy h2{
+    font-size:clamp(24px,4vw,37px);
+    margin-bottom:8px;
+    letter-spacing:-1px;
+}
+
+.jama-copy h2 span{
+    color:var(--orange);
+}
+
+.jama-copy p{
+    color:#aaa;
+    font-size:11px;
+    line-height:1.7;
+    max-width:610px;
+}
+
+.jama-button{
+    flex-shrink:0;
+    border:0;
+    padding:13px 18px;
+    border-radius:11px;
+    background:var(--orange);
+    color:white;
+    font-weight:800;
+    font-size:11px;
+    box-shadow:0 10px 25px rgba(255,106,0,.2);
+}
+
+.jama-button:hover{
+    background:#ff7d22;
+}
+
+
+/* =========================================
+   AI ASSISTANT
+========================================= */
+
+.ai-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:21px;
+    padding:20px;
+    margin-bottom:40px;
+    box-shadow:var(--shadow);
+}
+
+.ai-head{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:16px;
+}
+
+.ai-icon{
+    width:45px;
+    height:45px;
+    border-radius:14px;
+    background:linear-gradient(135deg,#111,#333);
+    color:var(--orange);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+}
+
+.ai-head-text{
+    flex:1;
+}
+
+.ai-head-text h2{
+    font-size:15px;
+}
+
+.ai-head-text p{
+    color:var(--muted);
+    font-size:10px;
+    margin-top:3px;
+}
+
+.ai-status{
+    font-size:9px;
+    color:var(--green);
+    display:flex;
+    align-items:center;
+    gap:5px;
+}
+
+.ai-status::before{
+    content:"";
+    width:6px;
+    height:6px;
+    background:var(--green);
+    border-radius:50%;
+}
+
+.ai-chat{
+    height:240px;
+    overflow-y:auto;
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:14px;
+    margin-bottom:12px;
+}
+
+.ai-message{
+    max-width:88%;
+    padding:11px 13px;
+    border-radius:13px;
+    margin-bottom:9px;
+    font-size:11px;
+    line-height:1.65;
+}
+
+.ai-message.bot{
+    background:var(--card);
+    border:1px solid var(--border);
+}
+
+.ai-message.user{
+    background:var(--orange);
+    color:white;
+    margin-left:auto;
+}
+
+.ai-input-row{
+    display:flex;
+    gap:8px;
+}
+
+.ai-input{
+    flex:1;
+    min-width:0;
+    height:45px;
+    border:1px solid var(--border);
+    background:var(--bg);
+    color:var(--text);
+    border-radius:12px;
+    padding:0 13px;
+    outline:none;
+    font-size:11px;
+}
+
+.ai-input:focus{
+    border-color:var(--orange);
+}
+
+.ai-send{
+    width:48px;
+    border:0;
+    border-radius:12px;
+    background:var(--orange);
+    color:white;
+}
+
+.ai-note{
+    margin-top:10px;
+    color:var(--muted);
+    font-size:9px;
+    line-height:1.5;
+}
+
+
+/* =========================================
+   FEATURES
+========================================= */
+
+.features{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:17px;
+}
+
+.feature{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:24px;
+}
+
+.feature-icon{
+    width:44px;
+    height:44px;
+    border-radius:12px;
+    background:var(--black);
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:15px;
+}
+
+.feature h3{
+    font-size:14px;
+    margin-bottom:8px;
+}
+
+.feature p{
+    color:var(--muted);
+    font-size:11px;
+    line-height:1.7;
+}
+
+
+/* =========================================
+   OFFLINE BADGE
+========================================= */
+
+.offline-status{
+    position:fixed;
+    left:15px;
+    bottom:20px;
+    z-index:800;
+    display:none;
+    align-items:center;
+    gap:7px;
+    padding:8px 11px;
+    border-radius:20px;
+    background:#222;
+    color:white;
+    font-size:9px;
+    box-shadow:var(--shadow);
+}
+
+.offline-status.show{
+    display:flex;
+}
+
+.offline-status i{
+    color:var(--orange);
+}
+
+
+/* =========================================
+   MOBILE NAV
+========================================= */
+
+.mobile-nav{
+    display:none;
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    height:68px;
+    background:rgba(255,255,255,.96);
+    border-top:1px solid var(--border);
+    backdrop-filter:blur(15px);
+    z-index:900;
+}
+
+body.dark .mobile-nav{
+    background:rgba(20,20,20,.96);
+}
+
+.mobile-nav button{
+    flex:1;
+    border:0;
+    background:none;
+    color:var(--muted);
+    font-size:10px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+}
+
+.mobile-nav button i{
+    font-size:16px;
+}
+
+.mobile-nav button.active{
+    color:var(--orange);
+}
+
+
+/* =========================================
+   SIDE PANEL
+========================================= */
+
+.overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.48);
+    z-index:1500;
+    opacity:0;
+    pointer-events:none;
+    transition:.25s;
+}
+
+.overlay.open{
+    opacity:1;
+    pointer-events:auto;
+}
+
+.side-panel{
+    position:absolute;
+    top:0;
+    right:0;
+    height:100%;
+    width:min(410px,92%);
+    background:var(--card);
+    color:var(--text);
+    padding:25px;
+    overflow-y:auto;
+    transform:translateX(100%);
+    transition:.3s;
+}
+
+.overlay.open .side-panel{
+    transform:translateX(0);
+}
+
+.panel-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:23px;
+}
+
+.panel-head h2{
+    font-size:19px;
+}
+
+.close-panel{
+    width:38px;
+    height:38px;
+    border:0;
+    border-radius:10px;
+    background:var(--bg);
+    color:var(--text);
+}
+
+.menu-item{
+    width:100%;
+    border:0;
+    background:transparent;
+    color:var(--text);
+    padding:14px 10px;
+    border-radius:11px;
+    display:flex;
+    align-items:center;
+    gap:13px;
+    margin-bottom:3px;
+    text-align:left;
+}
+
+.menu-item:hover{
+    background:var(--bg);
+}
+
+.menu-item .menu-icon{
+    width:22px;
+    color:var(--orange);
+}
+
+.menu-item span{
+    flex:1;
+    font-size:12px;
+}
+
+.menu-item .arrow{
+    color:var(--muted);
+    font-size:10px;
+}
+
+
+/* =========================================
+   MODAL
+========================================= */
+
+.modal{
+    position:fixed;
+    inset:0;
+    z-index:2000;
+    background:rgba(0,0,0,.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:min(650px,100%);
+    max-height:85vh;
+    overflow:auto;
+    background:var(--card);
+    color:var(--text);
+    border-radius:20px;
+    padding:23px;
+    box-shadow:0 30px 80px rgba(0,0,0,.25);
+}
+
+.modal-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.modal-head h2{
+    font-size:18px;
+}
+
+.modal-close{
+    width:36px;
+    height:36px;
+    border:0;
+    border-radius:10px;
+    background:var(--bg);
+    color:var(--text);
+}
+
+
+/* =========================================
+   DATA LIST
+========================================= */
+
+.data-list{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.data-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:13px;
+    background:var(--bg);
+    border-radius:12px;
+}
+
+.data-icon{
+    width:38px;
+    height:38px;
+    flex-shrink:0;
+    border-radius:10px;
+    background:var(--orange-light);
+    color:var(--orange);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.data-content{
+    flex:1;
+    min-width:0;
+}
+
+.data-title{
+    font-size:12px;
+    font-weight:600;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.data-url{
+    color:var(--muted);
+    font-size:9px;
+    margin-top:3px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.data-delete{
+    border:0;
+    background:transparent;
+    color:var(--muted);
+    width:32px;
+    height:32px;
+}
+
+.data-delete:hover{
+    color:var(--danger);
+}
+
+
+/* =========================================
+   EMPTY
+========================================= */
+
+.empty{
+    text-align:center;
+    padding:40px 15px;
+    color:var(--muted);
+}
+
+.empty i{
+    font-size:30px;
+    margin-bottom:12px;
+    color:var(--orange);
+}
+
+.empty p{
+    font-size:12px;
+}
+
+
+/* =========================================
+   SETTINGS
+========================================= */
+
+.setting{
+    padding:15px 0;
+    border-bottom:1px solid var(--border);
+}
+
+.setting:last-child{
+    border-bottom:0;
+}
+
+.setting-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+}
+
+.setting-title{
+    font-size:13px;
+    font-weight:600;
+}
+
+.setting-description{
+    color:var(--muted);
+    font-size:10px;
+    line-height:1.6;
+    margin-top:5px;
+}
+
+.setting select{
+    background:var(--bg);
+    color:var(--text);
+    border:1px solid var(--border);
+    padding:9px;
+    border-radius:9px;
+    outline:0;
+}
+
+.danger-button{
+    width:100%;
+    height:42px;
+    border:0;
+    border-radius:10px;
+    background:#fff0f0;
+    color:var(--danger);
+    font-weight:600;
+    margin-top:10px;
+}
+
+body.dark .danger-button{
+    background:#351717;
+}
+
+
+/* =========================================
+   TOAST
+========================================= */
+
+.toast{
+    position:fixed;
+    left:50%;
+    bottom:28px;
+    transform:translate(-50%,120px);
+    background:#111;
+    color:white;
+    padding:12px 18px;
+    border-radius:12px;
+    font-size:11px;
+    z-index:3000;
+    opacity:0;
+    transition:.3s;
+    pointer-events:none;
+    white-space:nowrap;
+}
+
+.toast.show{
+    opacity:1;
+    transform:translate(-50%,0);
+}
+
+.toast i{
+    color:var(--orange);
+    margin-right:7px;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media(max-width:1050px){
+
+    .quick-grid{
+        grid-template-columns:repeat(3,1fr);
+    }
+
+    .features{
+        grid-template-columns:1fr;
+    }
+}
+
+
+@media(max-width:700px){
+
+    .browser-header{
+        padding:8px 9px;
+    }
+
+    .header-row{
+        gap:5px;
+    }
+
+    .logo-name{
+        display:none;
+    }
+
+    .logo-icon{
+        width:36px;
+        height:36px;
+    }
+
+    .navigation{
+        display:none;
+    }
+
+    .header-right .bookmark-button{
+        display:none;
+    }
+
+    .icon-button{
+        width:35px;
+        height:35px;
+    }
+
+    .address-bar{
+        height:37px;
+        border-radius:10px;
+    }
+
+    .tabbar{
+        padding:0 9px 6px;
+    }
+
+    .tab{
+        flex-basis:175px;
+        height:34px;
+    }
+
+    .page{
+        padding:45px 15px 95px;
+    }
+
+    .hero{
+        margin-bottom:35px;
+    }
+
+    .hero-logo{
+        width:66px;
+        height:66px;
+        border-radius:21px;
+    }
+
+    .hero h1{
+        font-size:32px;
+    }
+
+    .main-search{
+        height:55px;
+        border-radius:15px;
+        padding:0 13px;
+    }
+
+    .main-search button{
+        padding:0 12px;
+    }
+
+    .quick-grid{
+        grid-template-columns:repeat(3,1fr);
+        gap:9px;
+    }
+
+    .quick-card{
+        padding:14px 6px;
+        border-radius:13px;
+    }
+
+    .quick-icon{
+        width:39px;
+        height:39px;
+    }
+
+    .quick-card strong{
+        font-size:10px;
+    }
+
+    .quick-card small{
+        display:none;
+    }
+
+    .mobile-nav{
+        display:flex;
+    }
+
+    .toast{
+        bottom:82px;
+    }
+
+    .trending-box{
+        display:block;
+    }
+
+    .trending-label{
+        padding:11px 14px;
+    }
+
+    .news-window{
+        height:38px;
+    }
+
+    .jama-content{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .jama-button{
+        width:100%;
+    }
+}
+
+
+@media(max-width:420px){
+
+    .hero h1{
+        font-size:29px;
+    }
+
+    .hero p{
+        font-size:12px;
+    }
+
+    .main-search{
+        height:51px;
+    }
+
+    .main-search button{
+        font-size:10px;
+        padding:0 10px;
+    }
+
+    .quick-grid{
+        gap:7px;
+    }
+
+    .quick-card{
+        padding:12px 4px;
+    }
+
+    .quick-icon{
+        width:36px;
+        height:36px;
+    }
+
+    .jama-content{
+        padding:21px;
+    }
+}
+/* =========================================
+   APP LOADER
+========================================= */
+
+#appLoader{
+    position:fixed;
+    inset:0;
+    z-index:99999;
+    background:#111111;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    transition:opacity .45s ease,visibility .45s ease;
+}
+
+#appLoader.hide{
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+}
+
+.loader-logo{
+    width:82px;
+    height:82px;
+    border-radius:24px;
+
+    /* Remove dotted border */
+    border:none;
+
+    /* Soft background/shadow behind the logo */
+    background:rgba(255,255,255,.08);
+    box-shadow:
+        0 4px 18px rgba(0,0,0,.16),
+        0 0 12px rgba(255,255,255,.12);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    position:relative;
+
+    animation:loaderPulse 1.5s ease-in-out infinite;
+}
+
+.loader-logo img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+    display:block;
+
+    /* Lets the actual logo occupy the available space */
+    padding:0;
+    border:none;
+}
+
+.loader-spinner{
+    position:absolute;
+    inset:-7px;
+    border:3px solid transparent;
+    border-top-color:var(--orange);
+    border-right-color:var(--orange);
+    border-radius:50%;
+    animation:loaderSpin .9s linear infinite;
+}
+
+.loader-title{
+    margin-top:19px;
+    color:white;
+    font-size:19px;
+    font-weight:800;
+}
+
+.loader-title span{
+    color:var(--orange);
+}
+
+.loader-text{
+    margin-top:7px;
+    color:#888;
+    font-size:10px;
+    letter-spacing:.4px;
+}
+
+.loader-dots{
+    display:flex;
+    gap:5px;
+    margin-top:14px;
+}
+
+.loader-dots span{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:var(--orange);
+    animation:loaderDot 1s infinite ease-in-out;
+}
+
+.loader-dots span:nth-child(2){
+    animation-delay:.15s;
+}
+
+.loader-dots span:nth-child(3){
+    animation-delay:.3s;
+}
+
+@keyframes loaderSpin{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+@keyframes loaderPulse{
+    0%,100%{
+        transform:scale(1);
+    }
+    50%{
+        transform:scale(1.04);
+    }
+}
+
+@keyframes loaderDot{
+    0%,100%{
+        opacity:.25;
+        transform:translateY(0);
+    }
+    50%{
+        opacity:1;
+        transform:translateY(-4px);
+    }
+}
+
+
+/* =========================================
+   RECENT SEARCHES
+========================================= */
+
+.recent-searches{
+    max-width:740px;
+    margin:15px auto 0;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    display:none;
+}
+
+.recent-searches.show{
+    display:block;
+}
+
+.recent-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:13px 15px;
+    border-bottom:1px solid var(--border);
+}
+
+.recent-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:11px;
+    font-weight:800;
+}
+
+.recent-title i{
+    color:var(--orange);
+}
+
+.clear-recent{
+    border:0;
+    background:transparent;
+    color:var(--orange);
+    font-size:10px;
+    font-weight:700;
+}
+
+.clear-recent:hover{
+    text-decoration:underline;
+}
+
+.recent-list{
+    display:flex;
+    flex-direction:column;
+}
+
+.recent-item{
+    min-height:47px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:8px 13px;
+    border-bottom:1px solid var(--border);
+    transition:.15s;
+}
+
+.recent-item:last-child{
+    border-bottom:0;
+}
+
+.recent-item:hover{
+    background:var(--bg);
+}
+
+.recent-search-icon{
+    width:30px;
+    height:30px;
+    border-radius:9px;
+    background:var(--orange-light);
+    color:var(--orange);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    font-size:11px;
+}
+
+.recent-content{
+    flex:1;
+    min-width:0;
+    cursor:pointer;
+}
+
+.recent-query{
+    color:var(--text);
+    font-size:11px;
+    font-weight:600;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.recent-time{
+    color:var(--muted);
+    font-size:8px;
+    margin-top:3px;
+}
+
+.recent-remove{
+    width:29px;
+    height:29px;
+    border:0;
+    border-radius:8px;
+    background:transparent;
+    color:var(--muted);
+    flex-shrink:0;
+}
+
+.recent-remove:hover{
+    color:var(--danger);
+    background:var(--bg);
+}
+
+.recent-empty{
+    padding:18px;
+    text-align:center;
+    color:var(--muted);
+    font-size:10px;
+}
+
+
+/* =========================================
+   PROFESSIONAL BROWSER FEATURES
+========================================= */
+
+.features{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+}
+
+.feature{
+    position:relative;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:21px;
+    min-height:185px;
+    overflow:hidden;
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.feature::after{
+    content:"";
+    position:absolute;
+    width:90px;
+    height:90px;
+    right:-35px;
+    top:-35px;
+    border-radius:50%;
+    background:rgba(255,106,0,.06);
+    pointer-events:none;
+}
+
+.feature:hover{
+    transform:translateY(-4px);
+    border-color:rgba(255,106,0,.45);
+    box-shadow:0 15px 35px rgba(0,0,0,.08);
+}
+
+.feature-icon{
+    width:48px;
+    height:48px;
+    border-radius:14px;
+    background:var(--orange-light);
+    color:var(--orange);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin-bottom:17px;
+    font-size:17px;
+    position:relative;
+    z-index:1;
+}
+
+.feature h3{
+    font-size:14px;
+    margin-bottom:8px;
+    position:relative;
+    z-index:1;
+}
+
+.feature p{
+    color:var(--muted);
+    font-size:10px;
+    line-height:1.7;
+    position:relative;
+    z-index:1;
+}
+
+.feature-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    margin-top:13px;
+    padding:5px 8px;
+    border-radius:20px;
+    background:var(--bg);
+    color:var(--muted);
+    font-size:8px;
+    font-weight:700;
+}
+
+.feature-badge i{
+    color:var(--orange);
+}
+
+
+/* =========================================
+   MOBILE FEATURES
+========================================= */
+
+@media(max-width:1050px){
+
+    .features{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:600px){
+
+    .features{
+        grid-template-columns:1fr;
+        gap:11px;
+    }
+
+    .feature{
+        min-height:auto;
+        padding:18px;
+        border-radius:17px;
+    }
+
+    .feature-icon{
+        width:44px;
+        height:44px;
+        margin-bottom:13px;
+    }
+
+    .recent-searches{
+        margin-top:12px;
+        border-radius:14px;
+    }
+
+}
+/* =====================================================
+   LOADER THEME
+===================================================== */
+
+#appLoader{
+    position:fixed;
+    inset:0;
+    z-index:99999;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+
+    background:#ffffff;
+    color:#111111;
+
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+
+    transition:
+        opacity .5s ease,
+        visibility .5s ease,
+        background .25s ease,
+        color .25s ease;
+}
+
+#appLoader.dark-loader{
+    background:#0d0d0d;
+    color:#ffffff;
+}
+
+#appLoader.light-loader{
+    background:#ffffff;
+    color:#111111;
+}
+
+#appLoader.hide{
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+}
+</style>
+</head>
+
+<body>
+<!-- =====================================================
+     APP LOADER
+===================================================== -->
+
+<div id="appLoader">
+
+    <div class="loader-logo">
+
+        <!-- EMPTY LOGO PLACEHOLDER -->
+        <img src="images/logo.jpg" alt="">
+
+        <div class="loader-spinner"></div>
+
+    </div>
+
+    <div class="loader-title">
+        Orange<span>Browse</span>
+    </div>
+
+    <div class="loader-text">
+        Starting browser...
+    </div>
+
+    <div class="loader-dots">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+</div>
+<div class="app">
+
+
+<!-- =====================================================
+     HEADER
+===================================================== -->
+
+<header class="browser-header">
+
+<div class="header-row">
+
+
+<div class="logo" onclick="showNewTab()">
+
+    <!-- EMPTY LOGO PLACEHOLDER -->
+    <div class="logo-icon">
+        <img src="images/logo.jpg" alt="">
+    </div>
+
+    <div class="logo-name">
+        Orange<span>Browse</span>
+    </div>
+
+</div>
+
+
+<div class="navigation">
+
+<button class="icon-button"
+onclick="goBack()"
+title="Back">
+
+<i class="fa-solid fa-arrow-left"></i>
+
+</button>
+
+
+<button class="icon-button"
+onclick="goForward()"
+title="Forward">
+
+<i class="fa-solid fa-arrow-right"></i>
+
+</button>
+
+
+<button class="icon-button"
+onclick="reloadPage()"
+title="Reload">
+
+<i class="fa-solid fa-rotate-right"></i>
+
+</button>
+
+</div>
+
+
+<div class="address-container">
+
+<div class="address-bar">
+
+<i class="fa-solid fa-lock address-security"></i>
+
+<input
+id="addressInput"
+class="address-input"
+type="text"
+placeholder="Search or enter website address"
+autocomplete="off"
+onkeydown="addressKey(event)"
+>
+
+<button
+class="address-clear"
+onclick="clearAddress()">
+
+<i class="fa-solid fa-xmark"></i>
+
+</button>
+
+</div>
+
+</div>
+
+
+<div class="header-right">
+
+<button
+class="icon-button bookmark-button"
+onclick="bookmarkCurrent()"
+title="Bookmark">
+
+<i class="fa-regular fa-star"></i>
+
+</button>
+
+
+<button
+class="icon-button"
+onclick="openMenu()"
+title="Menu">
+
+<i class="fa-solid fa-ellipsis-vertical"></i>
+
+</button>
+
+</div>
+
+</div>
+
+</header>
+
+
+<!-- =====================================================
+     TABS
+===================================================== -->
+
+<div class="tabbar">
+
+<div class="tabs-container"
+id="tabsContainer">
+
+<button
+class="new-tab-button"
+onclick="createTab()">
+
+<i class="fa-solid fa-plus"></i>
+
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     MAIN
+===================================================== -->
+
+<main class="main">
+
+<div class="page">
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<section class="hero">
+
+<!-- EMPTY MAIN LOGO PLACEHOLDER -->
+
+<div class="hero-logo">
+
+<img src="images/logo.jpg" alt="">
+
+</div>
+
+
+<h1>
+Browse the <span>web.</span>
+</h1>
+
+
+<p>
+Fast, simple, private and beautifully designed.
+</p>
+
+
+<div class="main-search">
+
+<i class="fa-solid fa-magnifying-glass"></i>
+
+<input
+id="mainSearch"
+type="text"
+placeholder="Search the web or enter a URL"
+autocomplete="off"
+onkeydown="searchKey(event)"
+>
+
+<button onclick="performSearch()">
+Search
+</button>
+
+</div>
+
+
+<div class="engine-row">
+
+<select id="searchEngine">
+
+<option value="google">Google</option>
+<option value="bing">Bing</option>
+<option value="duckduckgo">DuckDuckGo</option>
+
+</select>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     TRENDING NEWS
+===================================================== -->
+
+<section class="trending-section">
+
+<div class="trending-box">
+
+<div class="trending-label">
+
+<i class="fa-solid fa-bolt"></i>
+
+GLOBAL TRENDING
+
+</div>
+
+
+<div class="news-window">
+
+<div class="news-track">
+
+<div class="news-item">
+<strong>Global:</strong>
+Technology and AI developments remain major topics worldwide.
+</div>
+
+<div class="news-item">
+<strong>Business:</strong>
+Markets, startups and digital economy developments.
+</div>
+
+<div class="news-item">
+<strong>Technology:</strong>
+New browser, mobile and artificial intelligence innovations.
+</div>
+
+<div class="news-item">
+<strong>World:</strong>
+Follow major international developments and breaking updates.
+</div>
+
+
+<!-- repeated for continuous ticker -->
+
+<div class="news-item">
+<strong>Global:</strong>
+Technology and AI developments remain major topics worldwide.
+</div>
+
+<div class="news-item">
+<strong>Business:</strong>
+Markets, startups and digital economy developments.
+</div>
+
+<div class="news-item">
+<strong>Technology:</strong>
+New browser, mobile and artificial intelligence innovations.
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     QUICK ACCESS
+===================================================== -->
+
+<div class="section-heading">
+
+<h2>Quick access</h2>
+
+<span>Your favorite websites</span>
+
+</div>
+
+
+<div class="quick-grid">
+
+
+<div
+class="quick-card"
+onclick="navigateTo('https://www.google.com')">
+
+<div class="quick-icon">
+<i class="fa-brands fa-google"></i>
+</div>
+
+<strong>Google</strong>
+<small>Search</small>
+
+</div>
+
+
+<div
+class="quick-card"
+onclick="navigateTo('https://www.youtube.com')">
+
+<div class="quick-icon">
+<i class="fa-brands fa-youtube"></i>
+</div>
+
+<strong>YouTube</strong>
+<small>Videos</small>
+
+</div>
+
+
+<div
+class="quick-card"
+onclick="navigateTo('https://www.wikipedia.org')">
+
+<div class="quick-icon">
+<i class="fa-brands fa-wikipedia-w"></i>
+</div>
+
+<strong>Wikipedia</strong>
+<small>Knowledge</small>
+
+</div>
+
+
+<div
+class="quick-card"
+onclick="navigateTo('https://www.facebook.com')">
+
+<div class="quick-icon">
+<i class="fa-brands fa-facebook-f"></i>
+</div>
+
+<strong>Facebook</strong>
+<small>Social</small>
+
+</div>
+
+
+<div
+class="quick-card"
+onclick="navigateTo('https://www.instagram.com')">
+
+<div class="quick-icon">
+<i class="fa-brands fa-instagram"></i>
+</div>
+
+<strong>Instagram</strong>
+<small>Social</small>
+
+</div>
+
+
+<div
+class="quick-card"
+onclick="navigateTo('https://www.reddit.com')">
+
+<div class="quick-icon">
+<i class="fa-brands fa-reddit-alien"></i>
+</div>
+
+<strong>Reddit</strong>
+<small>Community</small>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     AI ASSISTANT
+===================================================== -->
+
+<div class="section-heading">
+
+<h2>OrangeBrowse AI</h2>
+
+<span>AI assistant</span>
+
+</div>
+
+
+<div class="ai-card">
+
+<div class="ai-head">
+
+<div class="ai-icon">
+
+<i class="fa-solid fa-wand-magic-sparkles"></i>
+
+</div>
+
+
+<div class="ai-head-text">
+
+<h2>Ask OrangeBrowse AI</h2>
+
+<p>
+Ask questions, explain topics or get help while browsing.
+</p>
+
+</div>
+
+
+<div class="ai-status">
+AI READY
+</div>
+
+</div>
+
+
+<div
+class="ai-chat"
+id="aiChat">
+
+<div class="ai-message bot">
+
+Hello! I'm OrangeBrowse AI.
+Ask me a question and I'll help you.
+
+</div>
+
+</div>
+
+
+<div class="ai-input-row">
+
+<input
+id="aiInput"
+class="ai-input"
+placeholder="Ask AI anything..."
+autocomplete="off"
+onkeydown="aiKey(event)"
+>
+
+
+<button
+class="ai-send"
+onclick="askAI()">
+
+<i class="fa-solid fa-paper-plane"></i>
+
+</button>
+
+</div>
+
+
+<div class="ai-note">
+
+AI connection point is prepared for a secure GPT/native-app
+connection. Do not place a private API key directly inside
+this HTML file.
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     JAMA COIN PROMOTION
+===================================================== -->
+
+<section class="jama-promo">
+
+<div class="jama-content">
+
+<div class="jama-copy">
+
+<div class="jama-badge">
+
+<i class="fa-solid fa-rocket"></i>
+
+COMING SOON
+
+</div>
+
+
+<h2>
+JAMA <span>Coin</span>
+</h2>
+
+
+<p>
+A new digital token project is preparing for launch.
+Follow the official JAMA Coin project for future launch
+information, updates and ecosystem announcements.
+</p>
+
+</div>
+
+
+<button
+class="jama-button"
+onclick="jamaLaunchInfo()">
+
+<i class="fa-solid fa-arrow-right"></i>
+&nbsp; Learn More
+
+</button>
+
+</div>
+
+</section>
+
+
+<!-- =====================================================
+     BROWSER FEATURES
+===================================================== -->
+
+<div class="section-heading">
+
+<h2>Browser features</h2>
+
+<span>OrangeBrowse</span>
+
+</div>
+
+
+<div class="features">
+
+
+<!-- TABS -->
+
+<div class="feature">
+
+<div class="feature-icon">
+
+<i class="fa-solid fa-layer-group"></i>
+
+</div>
+
+<h3>Persistent tabs</h3>
+
+<p>
+Your open tabs are saved locally and can be restored
+when you return to OrangeBrowse.
+</p>
+
+</div>
+
+
+<!-- BOOKMARK -->
+
+<div class="feature">
+
+<div class="feature-icon">
+
+<i class="fa-solid fa-bookmark"></i>
+
+</div>
+
+<h3>Bookmarks</h3>
+
+<p>
+Save favorite websites locally for quick access.
+</p>
+
+</div>
+
+
+<!-- HISTORY -->
+
+<div class="feature">
+
+<div class="feature-icon">
+
+<i class="fa-solid fa-clock-rotate-left"></i>
+
+</div>
+
+<h3>History</h3>
+
+<p>
+Recently visited addresses are stored locally on this device.
+</p>
+
+</div>
+
+
+<!-- DATA SAVE -->
+
+<div class="feature">
+
+<div class="feature-icon">
+
+<i class="fa-solid fa-database"></i>
+
+</div>
+
+<h3>Data save</h3>
+
+<p>
+Tabs, bookmarks, history, settings and offline pages
+can be stored locally on the device.
+</p>
+
+</div>
+
+
+<!-- AD BLOCKER -->
+
+<div class="feature">
+
+<div class="feature-icon">
+
+<i class="fa-solid fa-shield-halved"></i>
+
+</div>
+
+<h3>Ad blocker</h3>
+
+<p>
+Ad-blocking controls are prepared for the native browser
+version. The current HTML version can manage the setting.
+</p>
+
+</div>
+
+
+<!-- OFFLINE -->
+
+<div class="feature">
+
+<div class="feature-icon">
+
+<i class="fa-solid fa-cloud-arrow-down"></i>
+
+</div>
+
+<h3>Offline pages</h3>
+
+<p>
+Save supported pages locally so they can be opened
+again without an internet connection.
+</p>
+
+</div>
+
+
+<!-- INCOGNITO -->
+
+<div class="feature">
+
+<div class="feature-icon">
+
+<i class="fa-solid fa-user-secret"></i>
+
+</div>
+
+<h3>Incognito mode</h3>
+
+<p>
+Open a private browsing session without adding visited
+pages to normal browser history.
+</p>
+
+</div>
+
+
+<!-- AI -->
+
+<div class="feature">
+
+<div class="feature-icon">
+
+<i class="fa-solid fa-robot"></i>
+
+</div>
+
+<h3>AI browsing assistant</h3>
+
+<p>
+OrangeBrowse is designed to support an integrated AI
+assistant for questions and browsing help.
+</p>
+
+</div>
+
+
+<!-- DARK MODE -->
+
+<div class="feature">
+
+<div class="feature-icon">
+
+<i class="fa-solid fa-moon"></i>
+
+</div>
+
+<h3>Dark mode</h3>
+
+<p>
+Use a comfortable dark interface across the browser.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</main>
+
+
+<!-- =====================================================
+     MOBILE NAV
+===================================================== -->
+
+<nav class="mobile-nav">
+
+<button
+class="active"
+onclick="showNewTab()">
+
+<i class="fa-solid fa-house"></i>
+
+<span>Home</span>
+
+</button>
+
+
+<button onclick="openBookmarks()">
+
+<i class="fa-regular fa-star"></i>
+
+<span>Bookmarks</span>
+
+</button>
+
+
+<button onclick="createTab()">
+
+<i class="fa-solid fa-plus"></i>
+
+<span>New Tab</span>
+
+</button>
+
+
+<button onclick="openHistory()">
+
+<i class="fa-solid fa-clock-rotate-left"></i>
+
+<span>History</span>
+
+</button>
+
+
+<button onclick="openMenu()">
+
+<i class="fa-solid fa-bars"></i>
+
+<span>Menu</span>
+
+</button>
+
+</nav>
+
+
+<!-- =====================================================
+     OFFLINE STATUS
+===================================================== -->
+
+<div
+class="offline-status"
+id="offlineStatus">
+
+<i class="fa-solid fa-wifi"></i>
+
+<span>Offline mode</span>
+
+</div>
+
+
+<!-- =====================================================
+     SIDE MENU
+===================================================== -->
+
+<div
+class="overlay"
+id="menuOverlay"
+onclick="closeMenuOutside(event)">
+
+<aside class="side-panel">
+
+
+<div class="panel-head">
+
+<h2>OrangeBrowse</h2>
+
+<button
+class="close-panel"
+onclick="closeMenu()">
+
+<i class="fa-solid fa-xmark"></i>
+
+</button>
+
+</div>
+
+
+<button
+class="menu-item"
+onclick="createTab();closeMenu()">
+
+<i class="fa-solid fa-plus menu-icon"></i>
+
+<span>New tab</span>
+
+<i class="fa-solid fa-chevron-right arrow"></i>
+
+</button>
+
+
+<button
+class="menu-item"
+onclick="openBookmarks()">
+
+<i class="fa-regular fa-star menu-icon"></i>
+
+<span>Bookmarks</span>
+
+<i class="fa-solid fa-chevron-right arrow"></i>
+
+</button>
+
+
+<button
+class="menu-item"
+onclick="openHistory()">
+
+<i class="fa-solid fa-clock-rotate-left menu-icon"></i>
+
+<span>History</span>
+
+<i class="fa-solid fa-chevron-right arrow"></i>
+
+</button>
+
+
+<button
+class="menu-item"
+onclick="openRecentlyClosed()">
+
+<i class="fa-solid fa-window-restore menu-icon"></i>
+
+<span>Recently closed tabs</span>
+
+<i class="fa-solid fa-chevron-right arrow"></i>
+
+</button>
+
+
+<button
+class="menu-item"
+onclick="openDownloads()">
+
+<i class="fa-solid fa-download menu-icon"></i>
+
+<span>Downloads</span>
+
+<i class="fa-solid fa-chevron-right arrow"></i>
+
+</button>
+
+
+<button
+class="menu-item"
+onclick="openOfflinePages()">
+
+<i class="fa-solid fa-cloud-arrow-down menu-icon"></i>
+
+<span>Offline pages</span>
+
+<i class="fa-solid fa-chevron-right arrow"></i>
+
+</button>
+
+
+<button
+class="menu-item"
+onclick="toggleIncognito()">
+
+<i class="fa-solid fa-user-secret menu-icon"></i>
+
+<span id="incognitoMenuText">
+Incognito mode
+</span>
+
+<i class="fa-solid fa-chevron-right arrow"></i>
+
+</button>
+
+
+<button
+class="menu-item"
+onclick="toggleAdBlock()">
+
+<i class="fa-solid fa-shield-halved menu-icon"></i>
+
+<span id="adBlockMenuText">
+Ad blocker
+</span>
+
+<i class="fa-solid fa-chevron-right arrow"></i>
+
+</button>
+
+
+<button
+class="menu-item"
+onclick="toggleDarkMode()">
+
+<i class="fa-solid fa-moon menu-icon"></i>
+
+<span>Dark mode</span>
+
+<i class="fa-solid fa-chevron-right arrow"></i>
+
+</button>
+
+
+<button
+class="menu-item"
+onclick="openSettings()">
+
+<i class="fa-solid fa-gear menu-icon"></i>
+
+<span>Settings</span>
+
+<i class="fa-solid fa-chevron-right arrow"></i>
+
+</button>
+
+</aside>
+
+</div>
+
+
+<!-- =====================================================
+     MODAL
+===================================================== -->
+
+<div
+class="modal"
+id="modal">
+
+<div class="modal-box">
+
+<div class="modal-head">
+
+<h2 id="modalTitle">
+Information
+</h2>
+
+<button
+class="modal-close"
+onclick="closeModal()">
+
+<i class="fa-solid fa-xmark"></i>
+
+</button>
+
+</div>
+
+
+<div id="modalContent"></div>
+
+</div>
+
+</div>
+
+
+<!-- =====================================================
+     TOAST
+===================================================== -->
+
+<div
+class="toast"
+id="toast">
+
+<i class="fa-solid fa-circle-check"></i>
+
+<span id="toastText"></span>
+
+</div>
+
+
+<script>
+
+
+/* =====================================================
+   STORAGE
+===================================================== */
+
+const STORAGE={
+
+tabs:"orangebrowse_tabs",
+
+activeTab:"orangebrowse_active_tab",
+
+bookmarks:"orangebrowse_bookmarks",
+
+history:"orangebrowse_history",
+
+closedTabs:"orangebrowse_closed_tabs",
+
+settings:"orangebrowse_settings",
+
+offlinePages:"orangebrowse_offline_pages"
+
+};
+
+
+/* =====================================================
+   DATA
+===================================================== */
+
+let tabs=load(STORAGE.tabs,[]);
+
+let activeTabId=
+localStorage.getItem(STORAGE.activeTab)||null;
+
+let bookmarks=
+load(STORAGE.bookmarks,[]);
+
+let historyItems=
+load(STORAGE.history,[]);
+
+let closedTabs=
+load(STORAGE.closedTabs,[]);
+
+let offlinePages=
+load(STORAGE.offlinePages,[]);
+
+
+let settings=load(
+
+STORAGE.settings,
+
+{
+
+dark:false,
+
+engine:"google",
+
+adBlock:true,
+
+incognito:false
+
+}
+
+);
+
+
+/* =====================================================
+   LOAD / SAVE
+===================================================== */
+
+function load(key,fallback){
+
+try{
+
+const value=localStorage.getItem(key);
+
+return value
+?JSON.parse(value)
+:fallback;
+
+}catch(error){
+
+return fallback;
+
+}
+
+}
+
+
+function save(key,value){
+
+localStorage.setItem(
+key,
+JSON.stringify(value)
+);
+
+}
+
+
+/* =====================================================
+   INITIALIZE
+===================================================== */
+
+function initialize(){
+
+if(!Array.isArray(tabs)){
+
+tabs=[];
+
+}
+
+
+if(tabs.length===0){
+
+createTab(false);
+
+}
+else{
+
+if(
+!activeTabId ||
+!tabs.some(t=>t.id===activeTabId)
+){
+
+activeTabId=tabs[0].id;
+
+}
+
+renderTabs();
+
+loadActiveTab();
+
+}
+
+
+if(settings.dark){
+
+document.body.classList.add("dark");
+
+}
+
+
+document.getElementById(
+"searchEngine"
+).value=settings.engine||"google";
+
+
+updatePrivacyUI();
+
+updateNetworkStatus();
+
+}
+
+
+
+/* =====================================================
+   CREATE TAB
+===================================================== */
+
+function createTab(saveData=true){
+
+const id=
+
+"tab_"+
+Date.now()+"_"+
+Math.random()
+.toString(36)
+.substring(2,8);
+
+
+const tab={
+
+id:id,
+
+title:"New Tab",
+
+url:"",
+
+isNewTab:true,
+
+created:Date.now()
+
+};
+
+
+tabs.push(tab);
+
+activeTabId=id;
+
+
+localStorage.setItem(
+STORAGE.activeTab,
+activeTabId
+);
+
+
+save(
+STORAGE.tabs,
+tabs
+);
+
+
+renderTabs();
+
+showNewTab();
+
+showToast("New tab created");
+
+}
+
+
+/* =====================================================
+   RENDER TABS
+===================================================== */
+
+function renderTabs(){
+
+const container=
+document.getElementById(
+"tabsContainer"
+);
+
+container.innerHTML="";
+
+
+tabs.forEach(tab=>{
+
+const element=
+document.createElement("div");
+
+
+element.className=
+"tab"+
+(
+tab.id===activeTabId
+?" active"
+:""
+);
+
+
+element.dataset.id=tab.id;
+
+
+element.innerHTML=`
+
+<div class="tab-favicon">
+
+<i class="fa-solid fa-globe"></i>
+
+</div>
+
+<span class="tab-title">
+
+${escapeHTML(
+tab.title||"New Tab"
+)}
+
+</span>
+
+<button
+class="tab-close"
+title="Close tab">
+
+<i class="fa-solid fa-xmark"></i>
+
+</button>
+
+`;
+
+
+element.addEventListener(
+"click",
+function(event){
+
+if(
+event.target.closest(".tab-close")
+){
+
+return;
+
+}
+
+activateTab(tab.id);
+
+}
+);
+
+
+element
+.querySelector(".tab-close")
+.addEventListener(
+"click",
+function(event){
+
+event.stopPropagation();
+
+closeTab(tab.id);
+
+}
+);
+
+
+container.appendChild(element);
+
+});
+
+
+const newButton=
+document.createElement("button");
+
+newButton.className=
+"new-tab-button";
+
+newButton.title="New tab";
+
+newButton.innerHTML=
+'<i class="fa-solid fa-plus"></i>';
+
+newButton.onclick=createTab;
+
+container.appendChild(newButton);
+
+}
+
+
+/* =====================================================
+   ACTIVATE TAB
+===================================================== */
+
+function activateTab(id){
+
+const tab=
+tabs.find(t=>t.id===id);
+
+if(!tab)return;
+
+
+activeTabId=id;
+
+localStorage.setItem(
+STORAGE.activeTab,
+activeTabId
+);
+
+
+renderTabs();
+
+
+if(
+tab.isNewTab||
+!tab.url
+){
+
+showNewTab();
+
+}
+else{
+
+setAddress(tab.url);
+
+}
+
+}
+
+
+/* =====================================================
+   CLOSE TAB
+===================================================== */
+
+function closeTab(id){
+
+const index=
+tabs.findIndex(t=>t.id===id);
+
+if(index===-1)return;
+
+
+const tab=tabs[index];
+
+
+if(!settings.incognito){
+
+closedTabs.unshift({
+
+...tab,
+
+closedAt:Date.now()
+
+});
+
+closedTabs=
+closedTabs.slice(0,20);
+
+save(
+STORAGE.closedTabs,
+closedTabs
+);
+
+}
+
+
+tabs.splice(index,1);
+
+
+if(tabs.length===0){
+
+createTab();
+
+showToast("Tab closed");
+
+return;
+
+}
+
+
+if(activeTabId===id){
+
+const nextTab=
+tabs[index]||
+tabs[index-1]||
+tabs[0];
+
+activeTabId=nextTab.id;
+
+}
+
+
+save(
+STORAGE.tabs,
+tabs
+);
+
+
+localStorage.setItem(
+STORAGE.activeTab,
+activeTabId
+);
+
+
+renderTabs();
+
+loadActiveTab();
+
+showToast("Tab closed");
+
+}
+
+
+/* =====================================================
+   LOAD ACTIVE
+===================================================== */
+
+function loadActiveTab(){
+
+const tab=
+tabs.find(t=>t.id===activeTabId);
+
+
+if(!tab){
+
+showNewTab();
+
+return;
+
+}
+
+
+if(
+tab.isNewTab||
+!tab.url
+){
+
+showNewTab();
+
+return;
+
+}
+
+
+setAddress(tab.url);
+
+}
+
+
+/* =====================================================
+   NEW TAB
+===================================================== */
+
+function showNewTab(){
+
+document.getElementById(
+"addressInput"
+).value="";
+
+
+document.getElementById(
+"mainSearch"
+).value="";
+
+
+const tab=
+tabs.find(t=>t.id===activeTabId);
+
+
+if(tab){
+
+tab.title="New Tab";
+
+tab.url="";
+
+tab.isNewTab=true;
+
+
+save(
+STORAGE.tabs,
+tabs
+);
+
+}
+
+
+renderTabs();
+
+
+window.scrollTo({
+
+top:0,
+
+behavior:"smooth"
+
+});
+
+
+}
+
+
+/* =====================================================
+   NAVIGATE
+===================================================== */
+
+function navigateTo(value){
+
+if(!value)return;
+
+
+let destination=value;
+
+let title=value;
+
+
+if(
+!value.startsWith("http://")&&
+!value.startsWith("https://")
+){
+
+if(
+value.includes(".")&&
+!value.includes(" ")
+){
+
+destination=
+"https://"+value;
+
+}
+else{
+
+const engine=
+settings.engine||"google";
+
+
+if(engine==="bing"){
+
+destination=
+"https://www.bing.com/search?q="+
+encodeURIComponent(value);
+
+}
+else if(engine==="duckduckgo"){
+
+destination=
+"https://duckduckgo.com/?q="+
+encodeURIComponent(value);
+
+}
+else{
+
+destination=
+"https://www.google.com/search?q="+
+encodeURIComponent(value);
+
+}
+
+}
+
+}
+
+
+const tab=
+tabs.find(t=>t.id===activeTabId);
+
+
+if(tab){
+
+tab.url=destination;
+
+tab.title=title;
+
+tab.isNewTab=false;
+
+save(
+STORAGE.tabs,
+tabs
+);
+
+}
+
+
+if(!settings.incognito){
+
+addHistory(
+title,
+destination
+);
+
+}
+
+
+setAddress(value);
+
+renderTabs();
+
+
+/*
+   Current HTML edition still opens external pages
+   separately.
+
+   When converted to Android/iOS this function will
+   feed the URL into the native WebView/browser frame.
+*/
+
+window.open(
+destination,
+"_blank"
+);
+
+}
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+function performSearch(){
+
+const input=
+document.getElementById(
+"mainSearch"
+);
+
+const value=
+input.value.trim();
+
+
+if(!value){
+
+input.focus();
+
+return;
+
+}
+
+
+navigateTo(value);
+
+}
+
+
+function searchKey(event){
+
+if(event.key==="Enter"){
+
+performSearch();
+
+}
+
+}
+
+
+function addressKey(event){
+
+if(event.key==="Enter"){
+
+const value=
+document.getElementById(
+"addressInput"
+).value.trim();
+
+
+if(value){
+
+navigateTo(value);
+
+}
+
+}
+
+}
+
+
+/* =====================================================
+   ADDRESS
+===================================================== */
+
+function setAddress(value){
+
+document.getElementById(
+"addressInput"
+).value=value;
+
+}
+
+
+function clearAddress(){
+
+const input=
+document.getElementById(
+"addressInput"
+);
+
+input.value="";
+
+input.focus();
+
+}
+
+
+/* =====================================================
+   HISTORY
+===================================================== */
+
+function addHistory(title,url){
+
+if(settings.incognito)return;
+
+
+historyItems.unshift({
+
+id:Date.now(),
+
+title:title||url,
+
+url:url,
+
+time:new Date().toISOString()
+
+});
+
+
+historyItems=
+historyItems.slice(0,100);
+
+
+save(
+STORAGE.history,
+historyItems
+);
+
+}
+
+
+function openHistory(){
+
+closeMenu();
+
+
+let html="";
+
+
+if(historyItems.length===0){
+
+html=`
+
+<div class="empty">
+
+<i class="fa-solid fa-clock-rotate-left"></i>
+
+<p>
+No browsing history yet.
+</p>
+
+</div>
+
+`;
+
+}
+else{
+
+html=`
+
+<div class="data-list">
+
+${historyItems.map(item=>`
+
+<div class="data-item">
+
+<div class="data-icon">
+
+<i class="fa-solid fa-globe"></i>
+
+</div>
+
+
+<div
+class="data-content"
+onclick="navigateTo('${escapeJS(item.url)}')"
+style="cursor:pointer">
+
+<div class="data-title">
+
+${escapeHTML(item.title)}
+
+</div>
+
+
+<div class="data-url">
+
+${escapeHTML(item.url)}
+
+</div>
+
+</div>
+
+
+<button
+class="data-delete"
+onclick="deleteHistory(${item.id})">
+
+<i class="fa-solid fa-trash"></i>
+
+</button>
+
+</div>
+
+`).join("")}
+
+</div>
+
+
+<button
+class="danger-button"
+onclick="clearHistory()">
+
+Clear history
+
+</button>
+
+`;
+
+}
+
+
+openModal(
+"Browsing History",
+html
+);
+
+}
+
+
+function deleteHistory(id){
+
+historyItems=
+historyItems.filter(
+item=>item.id!==id
+);
+
+save(
+STORAGE.history,
+historyItems
+);
+
+openHistory();
+
+}
+
+
+function clearHistory(){
+
+historyItems=[];
+
+save(
+STORAGE.history,
+historyItems
+);
+
+openHistory();
+
+showToast("History cleared");
+
+}
+
+
+/* =====================================================
+   BOOKMARKS
+===================================================== */
+
+function bookmarkCurrent(){
+
+const tab=
+tabs.find(t=>t.id===activeTabId);
+
+
+if(!tab||!tab.url){
+
+showToast(
+"There is no page to bookmark"
+);
+
+return;
+
+}
+
+
+const exists=
+bookmarks.some(
+item=>item.url===tab.url
+);
+
+
+if(exists){
+
+showToast(
+"Already bookmarked"
+);
+
+return;
+
+}
+
+
+bookmarks.unshift({
+
+id:Date.now(),
+
+title:tab.title||tab.url,
+
+url:tab.url
+
+});
+
+
+save(
+STORAGE.bookmarks,
+bookmarks
+);
+
+
+showToast(
+"Page bookmarked"
+);
+
+}
+
+
+function openBookmarks(){
+
+closeMenu();
+
+
+let html="";
+
+
+if(bookmarks.length===0){
+
+html=`
+
+<div class="empty">
+
+<i class="fa-regular fa-star"></i>
+
+<p>
+No bookmarks yet.
+</p>
+
+</div>
+
+`;
+
+}
+else{
+
+html=`
+
+<div class="data-list">
+
+${bookmarks.map(item=>`
+
+<div class="data-item">
+
+<div class="data-icon">
+
+<i class="fa-regular fa-star"></i>
+
+</div>
+
+
+<div
+class="data-content"
+onclick="navigateTo('${escapeJS(item.url)}')"
+style="cursor:pointer">
+
+<div class="data-title">
+
+${escapeHTML(item.title)}
+
+</div>
+
+
+<div class="data-url">
+
+${escapeHTML(item.url)}
+
+</div>
+
+</div>
+
+
+<button
+class="data-delete"
+onclick="deleteBookmark(${item.id})">
+
+<i class="fa-solid fa-trash"></i>
+
+</button>
+
+</div>
+
+`).join("")}
+
+</div>
+
+`;
+
+}
+
+
+openModal(
+"Bookmarks",
+html
+);
+
+}
+
+
+function deleteBookmark(id){
+
+bookmarks=
+bookmarks.filter(
+item=>item.id!==id
+);
+
+save(
+STORAGE.bookmarks,
+bookmarks
+);
+
+openBookmarks();
+
+showToast(
+"Bookmark removed"
+);
+
+}
+
+
+/* =====================================================
+   RECENTLY CLOSED
+===================================================== */
+
+function openRecentlyClosed(){
+
+closeMenu();
+
+
+let html="";
+
+
+if(closedTabs.length===0){
+
+html=`
+
+<div class="empty">
+
+<i class="fa-solid fa-window-restore"></i>
+
+<p>
+No recently closed tabs.
+</p>
+
+</div>
+
+`;
+
+}
+else{
+
+html=`
+
+<div class="data-list">
+
+${closedTabs.map((item,index)=>`
+
+<div class="data-item">
+
+<div class="data-icon">
+
+<i class="fa-solid fa-window-restore"></i>
+
+</div>
+
+
+<div
+class="data-content"
+onclick="restoreClosedTab(${index})"
+style="cursor:pointer">
+
+<div class="data-title">
+
+${escapeHTML(
+item.title||"New Tab"
+)}
+
+</div>
+
+
+<div class="data-url">
+
+${escapeHTML(
+item.url||"New Tab"
+)}
+
+</div>
+
+</div>
+
+
+<button
+class="data-delete"
+onclick="removeClosedTab(${index})">
+
+<i class="fa-solid fa-xmark"></i>
+
+</button>
+
+</div>
+
+`).join("")}
+
+</div>
+
+`;
+
+}
+
+
+openModal(
+"Recently Closed Tabs",
+html
+);
+
+}
+
+
+function restoreClosedTab(index){
+
+const oldTab=
+closedTabs[index];
+
+if(!oldTab)return;
+
+
+const restored={
+
+id:
+"tab_"+
+Date.now()+"_"+
+Math.random()
+.toString(36)
+.substring(2,7),
+
+title:oldTab.title||"New Tab",
+
+url:oldTab.url||"",
+
+isNewTab:!oldTab.url,
+
+created:Date.now()
+
+};
+
+
+tabs.push(restored);
+
+activeTabId=restored.id;
+
+
+closedTabs.splice(index,1);
+
+
+save(
+STORAGE.tabs,
+tabs
+);
+
+save(
+STORAGE.closedTabs,
+closedTabs
+);
+
+
+localStorage.setItem(
+STORAGE.activeTab,
+activeTabId
+);
+
+
+closeModal();
+
+renderTabs();
+
+loadActiveTab();
+
+showToast("Tab restored");
+
+}
+
+
+function removeClosedTab(index){
+
+closedTabs.splice(index,1);
+
+save(
+STORAGE.closedTabs,
+closedTabs
+);
+
+openRecentlyClosed();
+
+}
+
+
+/* =====================================================
+   OFFLINE PAGES
+===================================================== */
+
+function saveCurrentOffline(){
+
+const tab=
+tabs.find(t=>t.id===activeTabId);
+
+
+if(!tab||!tab.url){
+
+showToast(
+"No webpage available to save"
+);
+
+return;
+
+}
+
+
+const exists=
+offlinePages.some(
+page=>page.url===tab.url
+);
+
+
+if(exists){
+
+showToast(
+"Page already saved offline"
+);
+
+return;
+
+}
+
+
+offlinePages.unshift({
+
+id:Date.now(),
+
+title:tab.title||tab.url,
+
+url:tab.url,
+
+savedAt:new Date().toISOString(),
+
+content:
+"Offline page reference saved by OrangeBrowse."
+
+});
+
+
+offlinePages=
+offlinePages.slice(0,50);
+
+
+save(
+STORAGE.offlinePages,
+offlinePages
+);
+
+
+showToast(
+"Offline page saved"
+);
+
+}
+
+
+function openOfflinePages(){
+
+closeMenu();
+
+
+let html="";
+
+
+if(offlinePages.length===0){
+
+html=`
+
+<div class="empty">
+
+<i class="fa-solid fa-cloud-arrow-down"></i>
+
+<p>
+No offline pages saved yet.
+</p>
+
+<br>
+
+<button
+class="jama-button"
+onclick="saveCurrentOffline();closeModal()">
+
+Save current page
+
+</button>
+
+</div>
+
+`;
+
+}
+else{
+
+html=`
+
+<div class="data-list">
+
+${offlinePages.map((page,index)=>`
+
+<div class="data-item">
+
+<div class="data-icon">
+
+<i class="fa-solid fa-cloud-arrow-down"></i>
+
+</div>
+
+
+<div
+class="data-content"
+onclick="navigateTo('${escapeJS(page.url)}')"
+style="cursor:pointer">
+
+<div class="data-title">
+
+${escapeHTML(page.title)}
+
+</div>
+
+
+<div class="data-url">
+
+${escapeHTML(page.url)}
+
+</div>
+
+</div>
+
+
+<button
+class="data-delete"
+onclick="deleteOfflinePage(${index})">
+
+<i class="fa-solid fa-trash"></i>
+
+</button>
+
+</div>
+
+`).join("")}
+
+</div>
+
+
+<button
+class="danger-button"
+onclick="clearOfflinePages()">
+
+Clear offline pages
+
+</button>
+
+`;
+
+}
+
+
+openModal(
+"Offline Pages",
+html
+);
+
+
+}
+
+
+function deleteOfflinePage(index){
+
+offlinePages.splice(index,1);
+
+save(
+STORAGE.offlinePages,
+offlinePages
+);
+
+openOfflinePages();
+
+showToast(
+"Offline page removed"
+);
+
+}
+
+
+function clearOfflinePages(){
+
+offlinePages=[];
+
+save(
+STORAGE.offlinePages,
+offlinePages
+);
+
+openOfflinePages();
+
+showToast(
+"Offline pages cleared"
+);
+
+}
+
+
+/* =====================================================
+   INCOGNITO
+===================================================== */
+
+function toggleIncognito(){
+
+settings.incognito=
+!settings.incognito;
+
+
+save(
+STORAGE.settings,
+settings
+);
+
+
+updatePrivacyUI();
+
+
+showToast(
+
+settings.incognito
+?
+"Incognito mode enabled"
+:
+"Incognito mode disabled"
+
+);
+
+}
+
+
+function updatePrivacyUI(){
+
+const menu=
+document.getElementById(
+"incognitoMenuText"
+);
+
+
+if(menu){
+
+menu.textContent=
+settings.incognito
+?
+"Exit incognito"
+:
+"Incognito mode";
+
+}
+
+}
+
+
+/* =====================================================
+   AD BLOCKER
+===================================================== */
+
+function toggleAdBlock(){
+
+settings.adBlock=
+!settings.adBlock;
+
+
+save(
+STORAGE.settings,
+settings
+);
+
+
+updatePrivacyUI();
+
+
+showToast(
+
+settings.adBlock
+?
+"Ad blocker enabled"
+:
+"Ad blocker disabled"
+
+);
+
+}
+
+
+function updatePrivacyUI(){
+
+const incognito=
+document.getElementById(
+"incognitoMenuText"
+);
+
+
+const adblock=
+document.getElementById(
+"adBlockMenuText"
+);
+
+
+if(incognito){
+
+incognito.textContent=
+settings.incognito
+?
+"Exit incognito"
+:
+"Incognito mode";
+
+}
+
+
+if(adblock){
+
+adblock.textContent=
+settings.adBlock
+?
+"Ad blocker: ON"
+:
+"Ad blocker: OFF";
+
+}
+
+}
+
+
+/* =====================================================
+   AI
+===================================================== */
+
+function aiKey(event){
+
+if(event.key==="Enter"){
+
+askAI();
+
+}
+
+}
+
+
+function addAIMessage(text,type){
+
+const chat=
+document.getElementById(
+"aiChat"
+);
+
+
+const message=
+document.createElement("div");
+
+
+message.className=
+"ai-message "+type;
+
+
+message.textContent=text;
+
+
+chat.appendChild(message);
+
+
+chat.scrollTop=
+chat.scrollHeight;
+
+}
+
+
+/*
+   AI CONNECTION ARCHITECTURE
+
+   1. Android native app can provide:
+
+      window.AndroidAI.ask(question)
+
+   2. A secure backend can provide:
+
+      /api/ai
+
+   3. This browser frontend does NOT contain
+      a secret OpenAI API key.
+*/
+
+async function askAI(){
+
+const input=
+document.getElementById(
+"aiInput"
+);
+
+
+const question=
+input.value.trim();
+
+
+if(!question){
+
+input.focus();
+
+return;
+
+}
+
+
+addAIMessage(
+question,
+"user"
+);
+
+
+input.value="";
+
+
+/* Android/native bridge */
+
+if(
+window.AndroidAI &&
+typeof window.AndroidAI.ask==="function"
+){
+
+try{
+
+const answer=
+await window.AndroidAI.ask(
+question
+);
+
+
+addAIMessage(
+answer||"I couldn't get an answer.",
+"bot"
+);
+
+
+return;
+
+}
+catch(error){
+
+addAIMessage(
+"AI connection failed.",
+"bot"
+);
+
+return;
+
+}
+
+}
+
+
+/* Secure backend hook */
+
+try{
+
+const response=
+await fetch("/api/ai",{
+
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/json"
+},
+
+body:JSON.stringify({
+message:question
+})
+
+});
+
+
+if(response.ok){
+
+const data=
+await response.json();
+
+
+if(data.answer){
+
+addAIMessage(
+data.answer,
+"bot"
+);
+
+return;
+
+}
+
+}
+
+}catch(error){
+
+/* Backend isn't installed yet. */
+
+}
+
+
+/* Temporary frontend response */
+
+addAIMessage(
+
+"OrangeBrowse AI is ready, but the GPT connection has not been connected yet. When we build the Android/iOS browser, we can connect this assistant to GPT through the native app or a secure backend without exposing a private API key.",
+
+"bot"
+
+);
+
+}
+
+
+/* =====================================================
+   JAMA
+===================================================== */
+
+function jamaLaunchInfo(){
+
+openModal(
+
+"JAMA Coin",
+
+`
+
+<div class="empty">
+
+<i class="fa-solid fa-rocket"></i>
+
+<h3 style="margin-bottom:10px;color:var(--text);">
+JAMA Coin — Launching Soon
+</h3>
+
+<p>
+The JAMA Coin promotional area is ready.
+Official launch information can be added here
+when the project is ready.
+</p>
+
+</div>
+
+`
+
+);
+
+}
+
+
+/* =====================================================
+   DOWNLOADS
+===================================================== */
+
+function openDownloads(){
+
+closeMenu();
+
+
+openModal(
+
+"Downloads",
+
+`
+
+<div class="empty">
+
+<i class="fa-solid fa-download"></i>
+
+<p>
+Downloads will be connected to the native browser
+download manager when OrangeBrowse becomes an
+Android/iOS application.
+</p>
+
+</div>
+
+`
+
+);
+
+}
+
+
+/* =====================================================
+   SETTINGS
+===================================================== */
+
+function openSettings(){
+
+closeMenu();
+
+
+openModal(
+
+"Settings",
+
+`
+
+<div class="setting">
+
+<div class="setting-row">
+
+<div>
+
+<div class="setting-title">
+Search engine
+</div>
+
+<div class="setting-description">
+Choose your default search engine.
+</div>
+
+</div>
+
+
+<select
+id="settingsEngine"
+onchange="changeSearchEngine(this.value)">
+
+<option value="google">
+Google
+</option>
+
+<option value="bing">
+Bing
+</option>
+
+<option value="duckduckgo">
+DuckDuckGo
+</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<div class="setting">
+
+<div class="setting-row">
+
+<div>
+
+<div class="setting-title">
+Ad blocker
+</div>
+
+<div class="setting-description">
+Control the browser ad-blocking preference.
+</div>
+
+</div>
+
+
+<button
+class="icon-button"
+style="background:var(--bg);color:var(--text)"
+onclick="toggleAdBlock();openSettings()">
+
+<i class="fa-solid fa-shield-halved"></i>
+
+</button>
+
+</div>
+
+</div>
+
+
+<div class="setting">
+
+<div class="setting-row">
+
+<div>
+
+<div class="setting-title">
+Incognito mode
+</div>
+
+<div class="setting-description">
+Do not add browsing activity to normal history.
+</div>
+
+</div>
+
+
+<button
+class="icon-button"
+style="background:var(--bg);color:var(--text)"
+onclick="toggleIncognito();openSettings()">
+
+<i class="fa-solid fa-user-secret"></i>
+
+</button>
+
+</div>
+
+</div>
+
+
+<div class="setting">
+
+<div class="setting-title">
+Offline pages
+</div>
+
+<div class="setting-description">
+Save the current page reference locally.
+</div>
+
+<button
+class="jama-button"
+style="margin-top:10px"
+onclick="saveCurrentOffline()">
+
+Save current page
+
+</button>
+
+</div>
+
+
+<div class="setting">
+
+<div class="setting-row">
+
+<div>
+
+<div class="setting-title">
+Dark mode
+</div>
+
+<div class="setting-description">
+Use a darker appearance.
+</div>
+
+</div>
+
+
+<button
+class="icon-button"
+style="background:var(--bg);color:var(--text)"
+onclick="toggleDarkMode();openSettings()">
+
+<i class="fa-solid fa-moon"></i>
+
+</button>
+
+</div>
+
+</div>
+
+
+<div class="setting">
+
+<div class="setting-title">
+Clear browsing data
+</div>
+
+<div class="setting-description">
+Remove locally stored history, bookmarks,
+closed tabs, offline pages and saved tabs.
+</div>
+
+<button
+class="danger-button"
+onclick="clearAllData()">
+
+Clear all local browser data
+
+</button>
+
+</div>
+
+`
+
+);
+
+
+document.getElementById(
+"settingsEngine"
+).value=
+settings.engine||"google";
+
+}
+
+
+function changeSearchEngine(value){
+
+settings.engine=value;
+
+save(
+STORAGE.settings,
+settings
+);
+
+
+document.getElementById(
+"searchEngine"
+).value=value;
+
+
+showToast(
+"Search engine updated"
+);
+
+}
+
+
+/* =====================================================
+   DARK MODE
+===================================================== */
+
+function toggleDarkMode(){
+
+settings.dark=
+!settings.dark;
+
+
+document.body.classList.toggle(
+"dark",
+settings.dark
+);
+
+
+save(
+STORAGE.settings,
+settings
+);
+
+
+showToast(
+
+settings.dark
+?
+"Dark mode enabled"
+:
+"Dark mode disabled"
+
+);
+
+}
+
+
+/* =====================================================
+   CLEAR ALL DATA
+===================================================== */
+
+function clearAllData(){
+
+const confirmed=
+confirm(
+"Clear all locally saved OrangeBrowse data?"
+);
+
+
+if(!confirmed)return;
+
+
+localStorage.removeItem(
+STORAGE.tabs
+);
+
+localStorage.removeItem(
+STORAGE.activeTab
+);
+
+localStorage.removeItem(
+STORAGE.bookmarks
+);
+
+localStorage.removeItem(
+STORAGE.history
+);
+
+localStorage.removeItem(
+STORAGE.closedTabs
+);
+
+localStorage.removeItem(
+STORAGE.offlinePages
+);
+
+
+tabs=[];
+
+bookmarks=[];
+
+historyItems=[];
+
+closedTabs=[];
+
+offlinePages=[];
+
+
+createTab();
+
+
+closeModal();
+
+
+showToast(
+"Browser data cleared"
+);
+
+}
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+function openMenu(){
+
+document
+.getElementById(
+"menuOverlay"
+)
+.classList.add("open");
+
+}
+
+
+function closeMenu(){
+
+document
+.getElementById(
+"menuOverlay"
+)
+.classList.remove("open");
+
+}
+
+
+function closeMenuOutside(event){
+
+if(
+event.target.id==="menuOverlay"
+){
+
+closeMenu();
+
+}
+
+}
+
+
+/* =====================================================
+   MODAL
+===================================================== */
+
+function openModal(title,content){
+
+document.getElementById(
+"modalTitle"
+).textContent=title;
+
+
+document.getElementById(
+"modalContent"
+).innerHTML=content;
+
+
+document.getElementById(
+"modal"
+).classList.add("show");
+
+}
+
+
+function closeModal(){
+
+document.getElementById(
+"modal"
+).classList.remove("show");
+
+}
+
+
+/* =====================================================
+   BROWSER CONTROLS
+===================================================== */
+
+function goBack(){
+
+window.history.back();
+
+}
+
+
+function goForward(){
+
+window.history.forward();
+
+}
+
+
+function reloadPage(){
+
+location.reload();
+
+}
+
+
+/* =====================================================
+   NETWORK STATUS
+===================================================== */
+
+function updateNetworkStatus(){
+
+const status=
+document.getElementById(
+"offlineStatus"
+);
+
+
+if(!navigator.onLine){
+
+status.classList.add("show");
+
+}
+else{
+
+status.classList.remove("show");
+
+}
+
+}
+
+
+window.addEventListener(
+"online",
+updateNetworkStatus
+);
+
+
+window.addEventListener(
+"offline",
+updateNetworkStatus
+);
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+let toastTimer;
+
+
+function showToast(message){
+
+const toast=
+document.getElementById(
+"toast"
+);
+
+
+document.getElementById(
+"toastText"
+).textContent=message;
+
+
+toast.classList.add("show");
+
+
+clearTimeout(toastTimer);
+
+
+toastTimer=
+setTimeout(
+
+()=>{
+
+toast.classList.remove("show");
+
+},
+
+2200
+
+);
+
+}
+
+
+/* =====================================================
+   ESCAPE
+===================================================== */
+
+function escapeHTML(value){
+
+return String(value)
+
+.replace(/&/g,"&amp;")
+
+.replace(/</g,"&lt;")
+
+.replace(/>/g,"&gt;")
+
+.replace(/"/g,"&quot;")
+
+.replace(/'/g,"&#039;");
+
+}
+
+
+function escapeJS(value){
+
+return String(value)
+
+.replace(/\\/g,"\\\\")
+
+.replace(/'/g,"\\'")
+
+.replace(/"/g,'\\"');
+
+}
+
+
+/* =====================================================
+   KEYBOARD SHORTCUTS
+===================================================== */
+
+document.addEventListener(
+"keydown",
+function(event){
+
+
+if(
+(event.ctrlKey||event.metaKey)&&
+event.key.toLowerCase()==="l"
+){
+
+event.preventDefault();
+
+
+const input=
+document.getElementById(
+"addressInput"
+);
+
+
+input.focus();
+
+input.select();
+
+}
+
+
+if(
+(event.ctrlKey||event.metaKey)&&
+event.key.toLowerCase()==="t"
+){
+
+event.preventDefault();
+
+createTab();
+
+}
+
+
+if(
+(event.ctrlKey||event.metaKey)&&
+event.key.toLowerCase()==="w"
+){
+
+event.preventDefault();
+
+closeTab(activeTabId);
+
+}
+
+
+if(event.key==="Escape"){
+
+closeModal();
+
+closeMenu();
+
+}
+
+});
+
+
+/* =====================================================
+   MODAL OUTSIDE CLICK
+===================================================== */
+
+document
+.getElementById("modal")
+.addEventListener(
+"click",
+function(event){
+
+if(event.target===this){
+
+closeModal();
+
+}
+
+});
+
+
+/* =====================================================
+   SEARCH ENGINE
+===================================================== */
+
+document
+.getElementById("searchEngine")
+.addEventListener(
+"change",
+function(){
+
+changeSearchEngine(
+this.value
+);
+
+});
+
+
+/* =====================================================
+   SAVE SESSION
+===================================================== */
+
+window.addEventListener(
+"beforeunload",
+function(){
+
+save(
+STORAGE.tabs,
+tabs
+);
+
+save(
+STORAGE.bookmarks,
+bookmarks
+);
+
+save(
+STORAGE.history,
+historyItems
+);
+
+save(
+STORAGE.closedTabs,
+closedTabs
+);
+
+save(
+STORAGE.offlinePages,
+offlinePages
+);
+
+save(
+STORAGE.settings,
+settings
+);
+
+
+localStorage.setItem(
+STORAGE.activeTab,
+activeTabId
+);
+
+});
+
+/* =====================================================
+   INITIALIZE APPLICATION
+===================================================== */
+
+initialize();
+
+
+/* =====================================================
+   APP STARTUP LOADER
+===================================================== */
+
+(function(){
+
+    const loader = document.getElementById("appLoader");
+
+    if(!loader) return;
+
+    const loaderTitle = loader.querySelector(".loader-title");
+
+    function updateLoaderTheme(){
+
+        if(document.body.classList.contains("dark")){
+
+            loader.classList.add("dark-loader");
+            loader.classList.remove("light-loader");
+
+            if(loaderTitle){
+                loaderTitle.style.color = "#ffffff";
+            }
+
+        }else{
+
+            loader.classList.add("light-loader");
+            loader.classList.remove("dark-loader");
+
+            if(loaderTitle){
+                loaderTitle.style.color = "#111111";
+            }
+
+        }
+
+    }
+
+    updateLoaderTheme();
+
+    const themeObserver = new MutationObserver(function(){
+        updateLoaderTheme();
+    });
+
+    themeObserver.observe(document.body,{
+        attributes:true,
+        attributeFilter:["class"]
+    });
+
+    requestAnimationFrame(function(){
+
+        requestAnimationFrame(function(){
+
+            setTimeout(function(){
+
+                loader.classList.add("hide");
+
+                setTimeout(function(){
+
+                    themeObserver.disconnect();
+
+                    if(loader.parentNode){
+                        loader.remove();
+                    }
+
+                },500);
+
+            },900);
+
+        });
+
+    });
+
+})();
+/* =====================================================
+   APP STARTUP LOADER
+===================================================== */
+
+(function(){
+
+    const loader = document.getElementById("appLoader");
+
+    if(!loader) return;
+
+    const loaderTitle = loader.querySelector(".loader-title");
+
+    function updateLoaderTheme(){
+
+        if(document.body.classList.contains("dark")){
+
+            loader.classList.add("dark-loader");
+            loader.classList.remove("light-loader");
+
+            if(loaderTitle){
+                loaderTitle.style.color = "#ffffff";
+            }
+
+        }else{
+
+            loader.classList.add("light-loader");
+            loader.classList.remove("dark-loader");
+
+            if(loaderTitle){
+                loaderTitle.style.color = "#111111";
+            }
+
+        }
+
+    }
+
+    /* Apply the correct theme immediately */
+    updateLoaderTheme();
+
+    /* Watch for dark/light mode changes */
+    const themeObserver = new MutationObserver(function(){
+
+        updateLoaderTheme();
+
+    });
+
+    themeObserver.observe(document.body,{
+        attributes:true,
+        attributeFilter:["class"]
+    });
+
+    /*
+       Wait until the browser has actually rendered
+       the initial page before starting the timer.
+    */
+    requestAnimationFrame(function(){
+
+        requestAnimationFrame(function(){
+
+            setTimeout(function(){
+
+                loader.classList.add("hide");
+
+                setTimeout(function(){
+
+                    themeObserver.disconnect();
+
+                    if(loader && loader.parentNode){
+                        loader.remove();
+                    }
+
+                },500);
+
+            },900);
+
+        });
+
+    });
+
+})();
+</script>
+
+</body>
+</html>
