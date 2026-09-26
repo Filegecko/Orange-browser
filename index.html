@@ -78,7 +78,23 @@ body.dark{
     --border:#2b2b2b;
     --orange-light:#30180b;
 }
+#browserView {
+    display: none;
+    width: 100%;
+    height: calc(100vh - 120px);
+    background: #fff;
+}
 
+#browserView.active {
+    display: block;
+}
+
+#browserFrame {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+}
 
 /* =========================================
    APP
@@ -1953,7 +1969,7 @@ body.dark .danger-button{
     <div class="loader-logo">
 
         <!-- EMPTY LOGO PLACEHOLDER -->
-        <img src="logo.jpg" alt="">
+        <img src="images/logo.jpg" alt="">
 
         <div class="loader-spinner"></div>
 
@@ -1990,7 +2006,7 @@ body.dark .danger-button{
 
     <!-- EMPTY LOGO PLACEHOLDER -->
     <div class="logo-icon">
-        <img src="logo.jpg" alt="">
+        <img src="images/logo.jpg" alt="">
     </div>
 
     <div class="logo-name">
@@ -2108,7 +2124,13 @@ onclick="createTab()">
 
 </div>
 
-
+<div id="browserView">
+    <iframe
+        id="browserFrame"
+        src="about:blank"
+        title="OrangeBrowse Web View">
+    </iframe>
+</div>
 <!-- =====================================================
      MAIN
 ===================================================== -->
@@ -2128,7 +2150,7 @@ onclick="createTab()">
 
 <div class="hero-logo">
 
-<img src="logo.jpg" alt="">
+<img src="images/logo.jpg" alt="">
 
 </div>
 
@@ -3606,11 +3628,12 @@ renderTabs();
    When converted to Android/iOS this function will
    feed the URL into the native WebView/browser frame.
 */
+const browserView = document.getElementById("browserView");
+const browserFrame = document.getElementById("browserFrame");
 
-if (window.median && median.window) {
-    median.window.open(destination, "internal");
-} else {
-    window.open(destination, "_blank");
+if (browserView && browserFrame) {
+    browserView.classList.add("active");
+    browserFrame.src = destination;
 }
 }
 
