@@ -13,7 +13,6 @@
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
 <style>
 
 *{
@@ -34,6 +33,7 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
     --card:#ffffff;
     --text:#111111;
     --muted:#777777;
+    --gray:#777777;
     --border:#e6e6e6;
     --danger:#e53935;
     --green:#12a66a;
@@ -65,24 +65,15 @@ button{
     cursor:pointer;
 }
 
-
-/* =========================================
-   DARK MODE
-========================================= */
-
 body.dark{
     --bg:#0d0d0d;
     --card:#181818;
     --text:#ffffff;
     --muted:#999999;
+    --gray:#999999;
     --border:#2b2b2b;
     --orange-light:#30180b;
 }
-
-
-/* =========================================
-   APP
-========================================= */
 
 .app{
     min-height:100vh;
@@ -90,10 +81,7 @@ body.dark{
     flex-direction:column;
 }
 
-
-/* =========================================
-   HEADER
-========================================= */
+/* HEADER */
 
 .browser-header{
     background:var(--black);
@@ -114,11 +102,6 @@ body.dark{
     gap:9px;
 }
 
-
-/* =========================================
-   LOGO
-========================================= */
-
 .logo{
     display:flex;
     align-items:center;
@@ -127,42 +110,28 @@ body.dark{
     cursor:pointer;
 }
 
-/*
-   EMPTY LOGO PLACEHOLDER
-
-   Replace the empty img src with your own file later.
-
-   Example:
-   src="images/orangebrowse-logo.png"
-*/
-
 .logo-icon{
     width:39px;
     height:39px;
     border-radius:12px;
-
-    /* Remove dotted border */
     border:none;
-
-    /* Soft background and shadow */
     background:rgba(255,255,255,.08);
     box-shadow:
         0 3px 12px rgba(0,0,0,.16),
         0 0 10px rgba(255,255,255,.10);
-
     overflow:hidden;
     display:flex;
     align-items:center;
     justify-content:center;
 }
 
-.logo-icon img{
+.logo-icon img,
+.hero-logo img,
+.loader-logo img{
     width:100%;
     height:100%;
     object-fit:contain;
     display:block;
-    border:none;
-    padding:0;
 }
 
 .logo-name{
@@ -174,10 +143,7 @@ body.dark{
     color:var(--orange);
 }
 
-
-/* =========================================
-   NAVIGATION
-========================================= */
+/* NAVIGATION */
 
 .navigation{
     display:flex;
@@ -203,10 +169,7 @@ body.dark{
     transform:scale(.94);
 }
 
-
-/* =========================================
-   ADDRESS BAR
-========================================= */
+/* ADDRESS */
 
 .address-container{
     flex:1;
@@ -261,20 +224,12 @@ body.dark{
     color:var(--orange);
 }
 
-
-/* =========================================
-   HEADER RIGHT
-========================================= */
-
 .header-right{
     display:flex;
     gap:2px;
 }
 
-
-/* =========================================
-   TAB BAR
-========================================= */
+/* TABS */
 
 .tabbar{
     background:#1b1b1b;
@@ -374,10 +329,7 @@ body.dark{
     background:#303030;
 }
 
-
-/* =========================================
-   MAIN
-========================================= */
+/* MAIN */
 
 .main{
     flex:1;
@@ -390,10 +342,7 @@ body.dark{
     padding:55px 24px 100px;
 }
 
-
-/* =========================================
-   HERO
-========================================= */
+/* HERO */
 
 .hero{
     text-align:center;
@@ -405,29 +354,15 @@ body.dark{
     height:78px;
     margin:auto auto 18px;
     border-radius:25px;
-
-    /* Remove dotted border */
     border:none;
-
-    /* Soft background and shadow */
     background:rgba(255,255,255,.08);
     box-shadow:
         0 5px 18px rgba(0,0,0,.16),
         0 0 14px rgba(255,255,255,.12);
-
     overflow:hidden;
     display:flex;
     align-items:center;
     justify-content:center;
-}
-
-.hero-logo img{
-    width:100%;
-    height:100%;
-    object-fit:contain;
-    display:block;
-    border:none;
-    padding:0;
 }
 
 .hero h1{
@@ -445,10 +380,7 @@ body.dark{
     font-size:14px;
 }
 
-
-/* =========================================
-   MAIN SEARCH
-========================================= */
+/* SEARCH */
 
 .main-search{
     max-width:740px;
@@ -499,11 +431,6 @@ body.dark{
     background:#e85d00;
 }
 
-
-/* =========================================
-   SEARCH ENGINE
-========================================= */
-
 .engine-row{
     max-width:740px;
     margin:11px auto 0;
@@ -518,10 +445,7 @@ body.dark{
     font-size:11px;
 }
 
-
-/* =========================================
-   TRENDING NEWS
-========================================= */
+/* TRENDING */
 
 .trending-section{
     margin:0 0 35px;
@@ -580,39 +504,35 @@ body.dark{
 }
 
 @keyframes newsMove{
-    from{
-        transform:translateX(0);
-    }
-    to{
-        transform:translateX(-50%);
-    }
+    from{transform:translateX(0)}
+    to{transform:translateX(-50%)}
 }
 
+/* SECTIONS */
 
-/* =========================================
-   SECTION HEADING
-========================================= */
+.section{
+    margin-top:35px;
+}
 
 .section-heading{
     display:flex;
-    justify-content:space-between;
     align-items:center;
-    margin-bottom:17px;
+    justify-content:space-between;
+    margin-bottom:15px;
 }
 
 .section-heading h2{
-    font-size:17px;
+    font-size:19px;
+    font-weight:800;
 }
 
-.section-heading span{
-    font-size:11px;
+.section-heading span,
+.section-heading p{
     color:var(--muted);
+    font-size:12px;
 }
 
-
-/* =========================================
-   QUICK LINKS
-========================================= */
+/* QUICK */
 
 .quick-grid{
     display:grid;
@@ -661,113 +581,7 @@ body.dark{
     font-size:9px;
 }
 
-
-/* =========================================
-   JAMA COIN PROMOTION
-========================================= */
-
-.jama-promo{
-    position:relative;
-    overflow:hidden;
-    margin:0 0 42px;
-    border-radius:24px;
-    background:
-        radial-gradient(circle at 85% 20%,rgba(255,106,0,.35),transparent 30%),
-        linear-gradient(135deg,#111111,#202020 55%,#111111);
-    border:1px solid #343434;
-    box-shadow:0 20px 50px rgba(0,0,0,.15);
-    color:white;
-}
-
-.jama-promo::before{
-    content:"";
-    position:absolute;
-    width:180px;
-    height:180px;
-    border:1px solid rgba(255,106,0,.25);
-    border-radius:50%;
-    right:-60px;
-    top:-70px;
-}
-
-.jama-promo::after{
-    content:"";
-    position:absolute;
-    width:120px;
-    height:120px;
-    border:1px solid rgba(255,255,255,.08);
-    border-radius:50%;
-    right:30px;
-    bottom:-60px;
-}
-
-.jama-content{
-    position:relative;
-    z-index:2;
-    padding:27px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:25px;
-}
-
-.jama-copy{
-    min-width:0;
-}
-
-.jama-badge{
-    display:inline-flex;
-    align-items:center;
-    gap:7px;
-    padding:7px 10px;
-    border-radius:30px;
-    background:rgba(255,106,0,.14);
-    border:1px solid rgba(255,106,0,.35);
-    color:#ff9a52;
-    font-size:9px;
-    font-weight:800;
-    letter-spacing:.5px;
-    text-transform:uppercase;
-    margin-bottom:13px;
-}
-
-.jama-copy h2{
-    font-size:clamp(24px,4vw,37px);
-    margin-bottom:8px;
-    letter-spacing:-1px;
-}
-
-.jama-copy h2 span{
-    color:var(--orange);
-}
-
-.jama-copy p{
-    color:#aaa;
-    font-size:11px;
-    line-height:1.7;
-    max-width:610px;
-}
-
-.jama-button{
-    flex-shrink:0;
-    border:0;
-    padding:13px 18px;
-    border-radius:11px;
-    background:var(--orange);
-    color:white;
-    font-weight:800;
-    font-size:11px;
-    box-shadow:0 10px 25px rgba(255,106,0,.2);
-}
-
-.jama-button:hover{
-    background:#ff7d22;
-}
-
-
-/* =========================================
-   AI ASSISTANT
-========================================= */
+/* AI */
 
 .ai-card{
     background:var(--card);
@@ -819,7 +633,7 @@ body.dark{
     gap:5px;
 }
 
-.ai-status::before{
+.ai-status:before{
     content:"";
     width:6px;
     height:6px;
@@ -894,51 +708,302 @@ body.dark{
     line-height:1.5;
 }
 
+/* JAMA */
 
-/* =========================================
-   FEATURES
-========================================= */
-
-.features{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:17px;
-}
-
-.feature{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:18px;
-    padding:24px;
-}
-
-.feature-icon{
-    width:44px;
-    height:44px;
-    border-radius:12px;
-    background:var(--black);
+.jama-promo{
+    position:relative;
+    overflow:hidden;
+    margin:0 0 42px;
+    border-radius:24px;
+    background:
+        radial-gradient(circle at 85% 20%,rgba(255,106,0,.35),transparent 30%),
+        linear-gradient(135deg,#111111,#202020 55%,#111111);
+    border:1px solid #343434;
+    box-shadow:0 20px 50px rgba(0,0,0,.15);
     color:white;
+}
+
+.jama-promo:before,
+.jama-promo:after{
+    content:"";
+    position:absolute;
+    border-radius:50%;
+}
+
+.jama-promo:before{
+    width:180px;
+    height:180px;
+    border:1px solid rgba(255,106,0,.25);
+    right:-60px;
+    top:-70px;
+}
+
+.jama-promo:after{
+    width:120px;
+    height:120px;
+    border:1px solid rgba(255,255,255,.08);
+    right:30px;
+    bottom:-60px;
+}
+
+.jama-content{
+    position:relative;
+    z-index:2;
+    padding:27px;
     display:flex;
     align-items:center;
-    justify-content:center;
-    margin-bottom:15px;
+    justify-content:space-between;
+    gap:25px;
 }
 
-.feature h3{
-    font-size:14px;
+.jama-copy{
+    min-width:0;
+}
+
+.jama-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:7px 10px;
+    border-radius:30px;
+    background:rgba(255,106,0,.14);
+    border:1px solid rgba(255,106,0,.35);
+    color:#ff9a52;
+    font-size:9px;
+    font-weight:800;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+    margin-bottom:13px;
+}
+
+.jama-copy h2{
+    font-size:clamp(24px,4vw,37px);
     margin-bottom:8px;
 }
 
-.feature p{
-    color:var(--muted);
-    font-size:11px;
-    line-height:1.7;
+.jama-copy h2 span{
+    color:var(--orange);
 }
 
+.jama-copy p{
+    color:#aaa;
+    font-size:11px;
+    line-height:1.7;
+    max-width:610px;
+}
 
-/* =========================================
-   OFFLINE BADGE
-========================================= */
+.jama-button{
+    flex-shrink:0;
+    border:0;
+    padding:13px 18px;
+    border-radius:11px;
+    background:var(--orange);
+    color:white;
+    font-weight:800;
+    font-size:11px;
+    box-shadow:0 10px 25px rgba(255,106,0,.2);
+}
+
+.jama-button:hover{
+    background:#ff7d22;
+}
+
+/* FEATURES */
+
+.features-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+}
+
+.feature-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:20px;
+    min-height:180px;
+    transition:.2s;
+}
+
+.feature-card:hover{
+    transform:translateY(-3px);
+    box-shadow:var(--shadow);
+}
+
+.feature-icon{
+    width:46px;
+    height:46px;
+    border-radius:13px;
+    background:var(--orange-light);
+    color:var(--orange);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:19px;
+    margin-bottom:14px;
+}
+
+.feature-card h3{
+    font-size:15px;
+    margin-bottom:7px;
+}
+
+.feature-card p{
+    color:var(--gray);
+    font-size:12px;
+    line-height:1.55;
+}
+
+.feature-toggle{
+    margin-top:14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.feature-status{
+    color:var(--gray);
+    font-size:10px;
+}
+
+.toggle{
+    width:42px;
+    height:23px;
+    border-radius:20px;
+    background:#c9c9c9;
+    border:none;
+    padding:3px;
+    transition:.2s;
+}
+
+.toggle span{
+    width:17px;
+    height:17px;
+    display:block;
+    border-radius:50%;
+    background:#fff;
+    transition:.2s;
+}
+
+.toggle.active{
+    background:var(--orange);
+}
+
+.toggle.active span{
+    transform:translateX(19px);
+}
+
+/* RECENT */
+
+.recent-searches{
+    max-width:740px;
+    margin:15px auto 0;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    box-shadow:var(--shadow);
+    overflow:hidden;
+    display:none;
+}
+
+.recent-searches.show{
+    display:block;
+}
+
+.recent-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:13px 15px;
+    border-bottom:1px solid var(--border);
+}
+
+.recent-title{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:11px;
+    font-weight:800;
+}
+
+.recent-title i{
+    color:var(--orange);
+}
+
+.clear-recent{
+    border:0;
+    background:transparent;
+    color:var(--orange);
+    font-size:10px;
+    font-weight:700;
+}
+
+.recent-list{
+    display:flex;
+    flex-direction:column;
+}
+
+.recent-item{
+    min-height:47px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:8px 13px;
+    border-bottom:1px solid var(--border);
+}
+
+.recent-item:last-child{
+    border-bottom:0;
+}
+
+.recent-item:hover{
+    background:var(--bg);
+}
+
+.recent-search-icon{
+    width:30px;
+    height:30px;
+    border-radius:9px;
+    background:var(--orange-light);
+    color:var(--orange);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    font-size:11px;
+}
+
+.recent-content{
+    flex:1;
+    min-width:0;
+    cursor:pointer;
+}
+
+.recent-query{
+    color:var(--text);
+    font-size:11px;
+    font-weight:600;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.recent-time{
+    color:var(--muted);
+    font-size:8px;
+    margin-top:3px;
+}
+
+.recent-remove{
+    width:29px;
+    height:29px;
+    border:0;
+    border-radius:8px;
+    background:transparent;
+    color:var(--muted);
+}
+
+/* OFFLINE */
 
 .offline-status{
     position:fixed;
@@ -964,10 +1029,7 @@ body.dark{
     color:var(--orange);
 }
 
-
-/* =========================================
-   MOBILE NAV
-========================================= */
+/* MOBILE NAV */
 
 .mobile-nav{
     display:none;
@@ -1007,10 +1069,7 @@ body.dark .mobile-nav{
     color:var(--orange);
 }
 
-
-/* =========================================
-   SIDE PANEL
-========================================= */
+/* SIDE MENU */
 
 .overlay{
     position:fixed;
@@ -1098,10 +1157,7 @@ body.dark .mobile-nav{
     font-size:10px;
 }
 
-
-/* =========================================
-   MODAL
-========================================= */
+/* MODAL */
 
 .modal{
     position:fixed;
@@ -1149,10 +1205,7 @@ body.dark .mobile-nav{
     color:var(--text);
 }
 
-
-/* =========================================
-   DATA LIST
-========================================= */
+/* DATA */
 
 .data-list{
     display:flex;
@@ -1215,10 +1268,7 @@ body.dark .mobile-nav{
     color:var(--danger);
 }
 
-
-/* =========================================
-   EMPTY
-========================================= */
+/* EMPTY */
 
 .empty{
     text-align:center;
@@ -1236,10 +1286,7 @@ body.dark .mobile-nav{
     font-size:12px;
 }
 
-
-/* =========================================
-   SETTINGS
-========================================= */
+/* SETTINGS */
 
 .setting{
     padding:15px 0;
@@ -1293,10 +1340,7 @@ body.dark .danger-button{
     background:#351717;
 }
 
-
-/* =========================================
-   TOAST
-========================================= */
+/* TOAST */
 
 .toast{
     position:fixed;
@@ -1325,10 +1369,122 @@ body.dark .danger-button{
     margin-right:7px;
 }
 
+/* LOADER */
 
-/* =========================================
-   RESPONSIVE
-========================================= */
+#appLoader{
+    position:fixed;
+    inset:0;
+    z-index:99999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    background:#fff;
+    color:#111;
+    opacity:1;
+    visibility:visible;
+    pointer-events:auto;
+    transition:opacity .5s ease,visibility .5s ease,background .25s ease,color .25s ease;
+}
+
+#appLoader.dark-loader{
+    background:#0d0d0d;
+    color:#fff;
+}
+
+#appLoader.light-loader{
+    background:#fff;
+    color:#111;
+}
+
+#appLoader.hide{
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
+}
+
+.loader-logo{
+    width:82px;
+    height:82px;
+    border-radius:24px;
+    border:none;
+    background:rgba(128,128,128,.08);
+    box-shadow:
+        0 4px 18px rgba(0,0,0,.16),
+        0 0 12px rgba(255,255,255,.12);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    position:relative;
+    animation:loaderPulse 1.5s ease-in-out infinite;
+}
+
+.loader-spinner{
+    position:absolute;
+    inset:-7px;
+    border:3px solid transparent;
+    border-top-color:var(--orange);
+    border-right-color:var(--orange);
+    border-radius:50%;
+    animation:loaderSpin .9s linear infinite;
+}
+
+.loader-title{
+    margin-top:19px;
+    font-size:19px;
+    font-weight:800;
+}
+
+.loader-title span{
+    color:var(--orange);
+}
+
+.loader-text{
+    margin-top:7px;
+    color:#888;
+    font-size:10px;
+    letter-spacing:.4px;
+}
+
+.loader-dots{
+    display:flex;
+    gap:5px;
+    margin-top:14px;
+}
+
+.loader-dots span{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:var(--orange);
+    animation:loaderDot 1s infinite ease-in-out;
+}
+
+.loader-dots span:nth-child(2){animation-delay:.15s}
+.loader-dots span:nth-child(3){animation-delay:.3s}
+
+@keyframes loaderSpin{
+    to{transform:rotate(360deg)}
+}
+
+@keyframes loaderPulse{
+    0%,100%{transform:scale(1)}
+    50%{transform:scale(1.04)}
+}
+
+@keyframes loaderDot{
+    0%,100%{
+        opacity:.25;
+        transform:translateY(0);
+    }
+    50%{
+        opacity:1;
+        transform:translateY(-4px);
+    }
+}
+
+/* RESPONSIVE */
 
 @media(max-width:1050px){
 
@@ -1336,11 +1492,10 @@ body.dark .danger-button{
         grid-template-columns:repeat(3,1fr);
     }
 
-    .features{
+    .features-grid{
         grid-template-columns:1fr;
     }
 }
-
 
 @media(max-width:700px){
 
@@ -1469,7 +1624,6 @@ body.dark .danger-button{
     }
 }
 
-
 @media(max-width:420px){
 
     .hero h1{
@@ -1506,444 +1660,12 @@ body.dark .danger-button{
         padding:21px;
     }
 }
-/* =========================================
-   APP LOADER
-========================================= */
 
-#appLoader{
-    position:fixed;
-    inset:0;
-    z-index:99999;
-    background:#111111;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-    transition:opacity .45s ease,visibility .45s ease;
-}
-
-#appLoader.hide{
-    opacity:0;
-    visibility:hidden;
-    pointer-events:none;
-}
-
-.loader-logo{
-    width:82px;
-    height:82px;
-    border-radius:24px;
-
-    /* Remove dotted border */
-    border:none;
-
-    /* Soft background/shadow behind the logo */
-    background:rgba(255,255,255,.08);
-    box-shadow:
-        0 4px 18px rgba(0,0,0,.16),
-        0 0 12px rgba(255,255,255,.12);
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
-    position:relative;
-
-    animation:loaderPulse 1.5s ease-in-out infinite;
-}
-
-.loader-logo img{
-    width:100%;
-    height:100%;
-    object-fit:contain;
-    display:block;
-
-    /* Lets the actual logo occupy the available space */
-    padding:0;
-    border:none;
-}
-
-.loader-spinner{
-    position:absolute;
-    inset:-7px;
-    border:3px solid transparent;
-    border-top-color:var(--orange);
-    border-right-color:var(--orange);
-    border-radius:50%;
-    animation:loaderSpin .9s linear infinite;
-}
-
-.loader-title{
-    margin-top:19px;
-    color:white;
-    font-size:19px;
-    font-weight:800;
-}
-
-.loader-title span{
-    color:var(--orange);
-}
-
-.loader-text{
-    margin-top:7px;
-    color:#888;
-    font-size:10px;
-    letter-spacing:.4px;
-}
-
-.loader-dots{
-    display:flex;
-    gap:5px;
-    margin-top:14px;
-}
-
-.loader-dots span{
-    width:6px;
-    height:6px;
-    border-radius:50%;
-    background:var(--orange);
-    animation:loaderDot 1s infinite ease-in-out;
-}
-
-.loader-dots span:nth-child(2){
-    animation-delay:.15s;
-}
-
-.loader-dots span:nth-child(3){
-    animation-delay:.3s;
-}
-
-@keyframes loaderSpin{
-    to{
-        transform:rotate(360deg);
-    }
-}
-
-@keyframes loaderPulse{
-    0%,100%{
-        transform:scale(1);
-    }
-    50%{
-        transform:scale(1.04);
-    }
-}
-
-@keyframes loaderDot{
-    0%,100%{
-        opacity:.25;
-        transform:translateY(0);
-    }
-    50%{
-        opacity:1;
-        transform:translateY(-4px);
-    }
-}
-
-
-/* =========================================
-   RECENT SEARCHES
-========================================= */
-
-.recent-searches{
-    max-width:740px;
-    margin:15px auto 0;
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:16px;
-    box-shadow:var(--shadow);
-    overflow:hidden;
-    display:none;
-}
-
-.recent-searches.show{
-    display:block;
-}
-
-.recent-head{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:13px 15px;
-    border-bottom:1px solid var(--border);
-}
-
-.recent-title{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    font-size:11px;
-    font-weight:800;
-}
-
-.recent-title i{
-    color:var(--orange);
-}
-
-.clear-recent{
-    border:0;
-    background:transparent;
-    color:var(--orange);
-    font-size:10px;
-    font-weight:700;
-}
-
-.clear-recent:hover{
-    text-decoration:underline;
-}
-
-.recent-list{
-    display:flex;
-    flex-direction:column;
-}
-
-.recent-item{
-    min-height:47px;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:8px 13px;
-    border-bottom:1px solid var(--border);
-    transition:.15s;
-}
-
-.recent-item:last-child{
-    border-bottom:0;
-}
-
-.recent-item:hover{
-    background:var(--bg);
-}
-
-.recent-search-icon{
-    width:30px;
-    height:30px;
-    border-radius:9px;
-    background:var(--orange-light);
-    color:var(--orange);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-shrink:0;
-    font-size:11px;
-}
-
-.recent-content{
-    flex:1;
-    min-width:0;
-    cursor:pointer;
-}
-
-.recent-query{
-    color:var(--text);
-    font-size:11px;
-    font-weight:600;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-}
-
-.recent-time{
-    color:var(--muted);
-    font-size:8px;
-    margin-top:3px;
-}
-
-.recent-remove{
-    width:29px;
-    height:29px;
-    border:0;
-    border-radius:8px;
-    background:transparent;
-    color:var(--muted);
-    flex-shrink:0;
-}
-
-.recent-remove:hover{
-    color:var(--danger);
-    background:var(--bg);
-}
-
-.recent-empty{
-    padding:18px;
-    text-align:center;
-    color:var(--muted);
-    font-size:10px;
-}
-
-
-/* =========================================
-   PROFESSIONAL BROWSER FEATURES
-========================================= */
-
-.features{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:16px;
-}
-
-.feature{
-    position:relative;
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:20px;
-    padding:21px;
-    min-height:185px;
-    overflow:hidden;
-    transition:
-        transform .2s ease,
-        border-color .2s ease,
-        box-shadow .2s ease;
-}
-
-.feature::after{
-    content:"";
-    position:absolute;
-    width:90px;
-    height:90px;
-    right:-35px;
-    top:-35px;
-    border-radius:50%;
-    background:rgba(255,106,0,.06);
-    pointer-events:none;
-}
-
-.feature:hover{
-    transform:translateY(-4px);
-    border-color:rgba(255,106,0,.45);
-    box-shadow:0 15px 35px rgba(0,0,0,.08);
-}
-
-.feature-icon{
-    width:48px;
-    height:48px;
-    border-radius:14px;
-    background:var(--orange-light);
-    color:var(--orange);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin-bottom:17px;
-    font-size:17px;
-    position:relative;
-    z-index:1;
-}
-
-.feature h3{
-    font-size:14px;
-    margin-bottom:8px;
-    position:relative;
-    z-index:1;
-}
-
-.feature p{
-    color:var(--muted);
-    font-size:10px;
-    line-height:1.7;
-    position:relative;
-    z-index:1;
-}
-
-.feature-badge{
-    display:inline-flex;
-    align-items:center;
-    gap:4px;
-    margin-top:13px;
-    padding:5px 8px;
-    border-radius:20px;
-    background:var(--bg);
-    color:var(--muted);
-    font-size:8px;
-    font-weight:700;
-}
-
-.feature-badge i{
-    color:var(--orange);
-}
-
-
-/* =========================================
-   MOBILE FEATURES
-========================================= */
-
-@media(max-width:1050px){
-
-    .features{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-}
-
-@media(max-width:600px){
-
-    .features{
-        grid-template-columns:1fr;
-        gap:11px;
-    }
-
-    .feature{
-        min-height:auto;
-        padding:18px;
-        border-radius:17px;
-    }
-
-    .feature-icon{
-        width:44px;
-        height:44px;
-        margin-bottom:13px;
-    }
-
-    .recent-searches{
-        margin-top:12px;
-        border-radius:14px;
-    }
-
-}
-/* =====================================================
-   LOADER THEME
-===================================================== */
-
-#appLoader{
-    position:fixed;
-    inset:0;
-    z-index:99999;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex-direction:column;
-
-    background:#ffffff;
-    color:#111111;
-
-    opacity:1;
-    visibility:visible;
-    pointer-events:auto;
-
-    transition:
-        opacity .5s ease,
-        visibility .5s ease,
-        background .25s ease,
-        color .25s ease;
-}
-
-#appLoader.dark-loader{
-    background:#0d0d0d;
-    color:#ffffff;
-}
-
-#appLoader.light-loader{
-    background:#ffffff;
-    color:#111111;
-}
-
-#appLoader.hide{
-    opacity:0;
-    visibility:hidden;
-    pointer-events:none;
-}
 </style>
 </head>
 
 <body>
+
 <!-- =====================================================
      APP LOADER
 ===================================================== -->
@@ -1951,12 +1673,8 @@ body.dark .danger-button{
 <div id="appLoader">
 
     <div class="loader-logo">
-
-        <!-- EMPTY LOGO PLACEHOLDER -->
-        <img src="images/logo.jpg" alt="">
-
+        <img src="logo.jpg" alt="">
         <div class="loader-spinner"></div>
-
     </div>
 
     <div class="loader-title">
@@ -1974,8 +1692,9 @@ body.dark .danger-button{
     </div>
 
 </div>
-<div class="app">
 
+
+<div class="app">
 
 <!-- =====================================================
      HEADER
@@ -1985,12 +1704,10 @@ body.dark .danger-button{
 
 <div class="header-row">
 
-
 <div class="logo" onclick="showNewTab()">
 
-    <!-- EMPTY LOGO PLACEHOLDER -->
     <div class="logo-icon">
-        <img src="images/logo.jpg" alt="">
+        <img src="logo.jpg" alt="">
     </div>
 
     <div class="logo-name">
@@ -2003,28 +1720,26 @@ body.dark .danger-button{
 <div class="navigation">
 
 <button class="icon-button"
-onclick="goBack()"
-title="Back">
+        onclick="goBack()"
+        title="Back">
 
-<i class="fa-solid fa-arrow-left"></i>
-
-</button>
-
-
-<button class="icon-button"
-onclick="goForward()"
-title="Forward">
-
-<i class="fa-solid fa-arrow-right"></i>
+    <i class="fa-solid fa-arrow-left"></i>
 
 </button>
 
+<button class="icon-button"
+        onclick="goForward()"
+        title="Forward">
+
+    <i class="fa-solid fa-arrow-right"></i>
+
+</button>
 
 <button class="icon-button"
-onclick="reloadPage()"
-title="Reload">
+        onclick="reloadPage()"
+        title="Reload">
 
-<i class="fa-solid fa-rotate-right"></i>
+    <i class="fa-solid fa-rotate-right"></i>
 
 </button>
 
@@ -2070,7 +1785,6 @@ title="Bookmark">
 
 </button>
 
-
 <button
 class="icon-button"
 onclick="openMenu()"
@@ -2094,15 +1808,7 @@ title="Menu">
 <div class="tabbar">
 
 <div class="tabs-container"
-id="tabsContainer">
-
-<button
-class="new-tab-button"
-onclick="createTab()">
-
-<i class="fa-solid fa-plus"></i>
-
-</button>
+     id="tabsContainer">
 
 </div>
 
@@ -2117,31 +1823,21 @@ onclick="createTab()">
 
 <div class="page">
 
-
-<!-- =====================================================
-     HERO
-===================================================== -->
-
 <section class="hero">
-
-<!-- EMPTY MAIN LOGO PLACEHOLDER -->
 
 <div class="hero-logo">
 
-<img src="images/logo.jpg" alt="">
+<img src="logo.jpg" alt="">
 
 </div>
-
 
 <h1>
 Browse the <span>web.</span>
 </h1>
 
-
 <p>
 Fast, simple, private and beautifully designed.
 </p>
-
 
 <div class="main-search">
 
@@ -2161,7 +1857,6 @@ Search
 
 </div>
 
-
 <div class="engine-row">
 
 <select id="searchEngine">
@@ -2177,9 +1872,7 @@ Search
 </section>
 
 
-<!-- =====================================================
-     TRENDING NEWS
-===================================================== -->
+<!-- TRENDING -->
 
 <section class="trending-section">
 
@@ -2192,7 +1885,6 @@ Search
 GLOBAL TRENDING
 
 </div>
-
 
 <div class="news-window">
 
@@ -2218,9 +1910,6 @@ New browser, mobile and artificial intelligence innovations.
 Follow major international developments and breaking updates.
 </div>
 
-
-<!-- repeated for continuous ticker -->
-
 <div class="news-item">
 <strong>Global:</strong>
 Technology and AI developments remain major topics worldwide.
@@ -2245,9 +1934,7 @@ New browser, mobile and artificial intelligence innovations.
 </section>
 
 
-<!-- =====================================================
-     QUICK ACCESS
-===================================================== -->
+<!-- QUICK ACCESS -->
 
 <div class="section-heading">
 
@@ -2260,10 +1947,8 @@ New browser, mobile and artificial intelligence innovations.
 
 <div class="quick-grid">
 
-
-<div
-class="quick-card"
-onclick="navigateTo('https://www.google.com')">
+<div class="quick-card"
+     onclick="navigateTo('https://www.google.com')">
 
 <div class="quick-icon">
 <i class="fa-brands fa-google"></i>
@@ -2275,9 +1960,8 @@ onclick="navigateTo('https://www.google.com')">
 </div>
 
 
-<div
-class="quick-card"
-onclick="navigateTo('https://www.youtube.com')">
+<div class="quick-card"
+     onclick="navigateTo('https://www.youtube.com')">
 
 <div class="quick-icon">
 <i class="fa-brands fa-youtube"></i>
@@ -2289,9 +1973,8 @@ onclick="navigateTo('https://www.youtube.com')">
 </div>
 
 
-<div
-class="quick-card"
-onclick="navigateTo('https://www.wikipedia.org')">
+<div class="quick-card"
+     onclick="navigateTo('https://www.wikipedia.org')">
 
 <div class="quick-icon">
 <i class="fa-brands fa-wikipedia-w"></i>
@@ -2303,9 +1986,8 @@ onclick="navigateTo('https://www.wikipedia.org')">
 </div>
 
 
-<div
-class="quick-card"
-onclick="navigateTo('https://www.facebook.com')">
+<div class="quick-card"
+     onclick="navigateTo('https://www.facebook.com')">
 
 <div class="quick-icon">
 <i class="fa-brands fa-facebook-f"></i>
@@ -2317,9 +1999,8 @@ onclick="navigateTo('https://www.facebook.com')">
 </div>
 
 
-<div
-class="quick-card"
-onclick="navigateTo('https://www.instagram.com')">
+<div class="quick-card"
+     onclick="navigateTo('https://www.instagram.com')">
 
 <div class="quick-icon">
 <i class="fa-brands fa-instagram"></i>
@@ -2331,9 +2012,8 @@ onclick="navigateTo('https://www.instagram.com')">
 </div>
 
 
-<div
-class="quick-card"
-onclick="navigateTo('https://www.reddit.com')">
+<div class="quick-card"
+     onclick="navigateTo('https://www.reddit.com')">
 
 <div class="quick-icon">
 <i class="fa-brands fa-reddit-alien"></i>
@@ -2347,9 +2027,7 @@ onclick="navigateTo('https://www.reddit.com')">
 </div>
 
 
-<!-- =====================================================
-     AI ASSISTANT
-===================================================== -->
+<!-- AI -->
 
 <div class="section-heading">
 
@@ -2365,11 +2043,8 @@ onclick="navigateTo('https://www.reddit.com')">
 <div class="ai-head">
 
 <div class="ai-icon">
-
 <i class="fa-solid fa-wand-magic-sparkles"></i>
-
 </div>
-
 
 <div class="ai-head-text">
 
@@ -2381,7 +2056,6 @@ Ask questions, explain topics or get help while browsing.
 
 </div>
 
-
 <div class="ai-status">
 AI READY
 </div>
@@ -2389,9 +2063,8 @@ AI READY
 </div>
 
 
-<div
-class="ai-chat"
-id="aiChat">
+<div class="ai-chat"
+     id="aiChat">
 
 <div class="ai-message bot">
 
@@ -2412,7 +2085,6 @@ placeholder="Ask AI anything..."
 autocomplete="off"
 onkeydown="aiKey(event)"
 >
-
 
 <button
 class="ai-send"
@@ -2436,9 +2108,7 @@ this HTML file.
 </div>
 
 
-<!-- =====================================================
-     JAMA COIN PROMOTION
-===================================================== -->
+<!-- JAMA -->
 
 <section class="jama-promo">
 
@@ -2454,11 +2124,9 @@ COMING SOON
 
 </div>
 
-
 <h2>
 JAMA <span>Coin</span>
 </h2>
-
 
 <p>
 A new digital token project is preparing for launch.
@@ -2483,214 +2151,224 @@ onclick="jamaLaunchInfo()">
 </section>
 
 
-<!-- =====================================================
-     BROWSER FEATURES
-===================================================== -->
+<!-- FEATURES -->
+
+<section class="section">
 
 <div class="section-heading">
 
+<div>
 <h2>Browser features</h2>
-
-<span>OrangeBrowse</span>
+<p>Tools built into OrangeBrowse</p>
+</div>
 
 </div>
 
 
-<div class="features">
+<div class="features-grid">
 
 
-<!-- TABS -->
-
-<div class="feature">
+<div class="feature-card"
+     onclick="openAIAssistant()"
+     style="cursor:pointer;">
 
 <div class="feature-icon">
-
-<i class="fa-solid fa-layer-group"></i>
-
+<i class="fa-solid fa-robot"></i>
 </div>
 
-<h3>Persistent tabs</h3>
+<h3>AI Assistant</h3>
 
 <p>
-Your open tabs are saved locally and can be restored
-when you return to OrangeBrowse.
+Ask questions, get explanations and interact
+with the OrangeBrowse AI assistant.
 </p>
+
+<div class="feature-toggle">
+
+<span class="feature-status">
+Open assistant
+</span>
+
+<i class="fa-solid fa-chevron-right"
+   style="color:var(--orange);"></i>
+
+</div>
 
 </div>
 
 
-<!-- BOOKMARK -->
-
-<div class="feature">
+<div class="feature-card"
+     onclick="openBookmarks()"
+     style="cursor:pointer;">
 
 <div class="feature-icon">
-
 <i class="fa-solid fa-bookmark"></i>
-
 </div>
 
 <h3>Bookmarks</h3>
 
 <p>
-Save favorite websites locally for quick access.
+Save your favorite websites and quickly
+return to them later.
 </p>
 
+<div class="feature-toggle">
+
+<span class="feature-status">
+Saved locally
+</span>
+
+<i class="fa-solid fa-chevron-right"
+   style="color:var(--orange);"></i>
+
+</div>
+
 </div>
 
 
-<!-- HISTORY -->
-
-<div class="feature">
+<div class="feature-card"
+     onclick="showToast('Your tabs are saved automatically.')"
+     style="cursor:pointer;">
 
 <div class="feature-icon">
-
-<i class="fa-solid fa-clock-rotate-left"></i>
-
+<i class="fa-solid fa-layer-group"></i>
 </div>
 
-<h3>History</h3>
+<h3>Persistent Tabs</h3>
 
 <p>
-Recently visited addresses are stored locally on this device.
+Your open OrangeBrowse tabs are saved locally
+and restored when you return.
 </p>
 
+<div class="feature-toggle">
+
+<span class="feature-status">
+Enabled
+</span>
+
+<i class="fa-solid fa-check"
+   style="color:#20a66a;"></i>
+
+</div>
+
 </div>
 
 
-<!-- DATA SAVE -->
-
-<div class="feature">
+<div class="feature-card">
 
 <div class="feature-icon">
-
-<i class="fa-solid fa-database"></i>
-
+<i class="fa-solid fa-gauge-high"></i>
 </div>
 
-<h3>Data save</h3>
+<h3>Data Saver</h3>
 
 <p>
-Tabs, bookmarks, history, settings and offline pages
-can be stored locally on the device.
+Reduce unnecessary loading on OrangeBrowse's
+own interface and limit some optional resources.
 </p>
+
+<div class="feature-toggle">
+
+<span class="feature-status"
+      id="dataSaverStatus">
+Off
+</span>
+
+<button class="toggle"
+        id="dataSaverToggle"
+        onclick="toggleFeature(event,'dataSaver')">
+
+<span></span>
+
+</button>
+
+</div>
 
 </div>
 
 
-<!-- AD BLOCKER -->
-
-<div class="feature">
+<div class="feature-card">
 
 <div class="feature-icon">
-
 <i class="fa-solid fa-shield-halved"></i>
-
 </div>
 
-<h3>Ad blocker</h3>
+<h3>Ad Blocker</h3>
 
 <p>
-Ad-blocking controls are prepared for the native browser
-version. The current HTML version can manage the setting.
+Enable OrangeBrowse's local filtering mode.
+Full website-wide blocking requires the native
+browser app version.
 </p>
 
+<div class="feature-toggle">
+
+<span class="feature-status"
+      id="adBlockStatus">
+Off
+</span>
+
+<button class="toggle"
+        id="adBlockToggle"
+        onclick="toggleFeature(event,'adBlock')">
+
+<span></span>
+
+</button>
+
+</div>
+
 </div>
 
 
-<!-- OFFLINE -->
-
-<div class="feature">
+<div class="feature-card">
 
 <div class="feature-icon">
-
-<i class="fa-solid fa-cloud-arrow-down"></i>
-
-</div>
-
-<h3>Offline pages</h3>
-
-<p>
-Save supported pages locally so they can be opened
-again without an internet connection.
-</p>
-
-</div>
-
-
-<!-- INCOGNITO -->
-
-<div class="feature">
-
-<div class="feature-icon">
-
 <i class="fa-solid fa-user-secret"></i>
-
 </div>
 
-<h3>Incognito mode</h3>
+<h3>Incognito</h3>
 
 <p>
-Open a private browsing session without adding visited
-pages to normal browser history.
+Open a local private tab that does not add
+searches to your saved OrangeBrowse history.
 </p>
 
-</div>
+<div class="feature-toggle">
 
+<span class="feature-status"
+      id="incognitoStatus">
+Off
+</span>
 
-<!-- AI -->
+<button class="toggle"
+        id="incognitoToggle"
+        onclick="toggleFeature(event,'incognito')">
 
-<div class="feature">
+<span></span>
 
-<div class="feature-icon">
-
-<i class="fa-solid fa-robot"></i>
-
-</div>
-
-<h3>AI browsing assistant</h3>
-
-<p>
-OrangeBrowse is designed to support an integrated AI
-assistant for questions and browsing help.
-</p>
-
-</div>
-
-
-<!-- DARK MODE -->
-
-<div class="feature">
-
-<div class="feature-icon">
-
-<i class="fa-solid fa-moon"></i>
-
-</div>
-
-<h3>Dark mode</h3>
-
-<p>
-Use a comfortable dark interface across the browser.
-</p>
+</button>
 
 </div>
 
 </div>
+
+</div>
+
+</section>
 
 </div>
 
 </main>
 
 
-<!-- =====================================================
-     MOBILE NAV
-===================================================== -->
+<!-- MOBILE NAV -->
 
 <nav class="mobile-nav">
 
-<button
-class="active"
-onclick="showNewTab()">
+<button class="active"
+        onclick="showNewTab()">
 
 <i class="fa-solid fa-house"></i>
 
@@ -2737,13 +2415,10 @@ onclick="showNewTab()">
 </nav>
 
 
-<!-- =====================================================
-     OFFLINE STATUS
-===================================================== -->
+<!-- OFFLINE -->
 
-<div
-class="offline-status"
-id="offlineStatus">
+<div class="offline-status"
+     id="offlineStatus">
 
 <i class="fa-solid fa-wifi"></i>
 
@@ -2752,25 +2427,20 @@ id="offlineStatus">
 </div>
 
 
-<!-- =====================================================
-     SIDE MENU
-===================================================== -->
+<!-- MENU -->
 
-<div
-class="overlay"
-id="menuOverlay"
-onclick="closeMenuOutside(event)">
+<div class="overlay"
+     id="menuOverlay"
+     onclick="closeMenuOutside(event)">
 
 <aside class="side-panel">
-
 
 <div class="panel-head">
 
 <h2>OrangeBrowse</h2>
 
-<button
-class="close-panel"
-onclick="closeMenu()">
+<button class="close-panel"
+        onclick="closeMenu()">
 
 <i class="fa-solid fa-xmark"></i>
 
@@ -2779,9 +2449,8 @@ onclick="closeMenu()">
 </div>
 
 
-<button
-class="menu-item"
-onclick="createTab();closeMenu()">
+<button class="menu-item"
+        onclick="createTab();closeMenu()">
 
 <i class="fa-solid fa-plus menu-icon"></i>
 
@@ -2792,9 +2461,8 @@ onclick="createTab();closeMenu()">
 </button>
 
 
-<button
-class="menu-item"
-onclick="openBookmarks()">
+<button class="menu-item"
+        onclick="openBookmarks()">
 
 <i class="fa-regular fa-star menu-icon"></i>
 
@@ -2805,9 +2473,8 @@ onclick="openBookmarks()">
 </button>
 
 
-<button
-class="menu-item"
-onclick="openHistory()">
+<button class="menu-item"
+        onclick="openHistory()">
 
 <i class="fa-solid fa-clock-rotate-left menu-icon"></i>
 
@@ -2818,9 +2485,8 @@ onclick="openHistory()">
 </button>
 
 
-<button
-class="menu-item"
-onclick="openRecentlyClosed()">
+<button class="menu-item"
+        onclick="openRecentlyClosed()">
 
 <i class="fa-solid fa-window-restore menu-icon"></i>
 
@@ -2831,9 +2497,8 @@ onclick="openRecentlyClosed()">
 </button>
 
 
-<button
-class="menu-item"
-onclick="openDownloads()">
+<button class="menu-item"
+        onclick="openDownloads()">
 
 <i class="fa-solid fa-download menu-icon"></i>
 
@@ -2844,9 +2509,8 @@ onclick="openDownloads()">
 </button>
 
 
-<button
-class="menu-item"
-onclick="openOfflinePages()">
+<button class="menu-item"
+        onclick="openOfflinePages()">
 
 <i class="fa-solid fa-cloud-arrow-down menu-icon"></i>
 
@@ -2857,9 +2521,8 @@ onclick="openOfflinePages()">
 </button>
 
 
-<button
-class="menu-item"
-onclick="toggleIncognito()">
+<button class="menu-item"
+        onclick="toggleIncognito()">
 
 <i class="fa-solid fa-user-secret menu-icon"></i>
 
@@ -2872,9 +2535,8 @@ Incognito mode
 </button>
 
 
-<button
-class="menu-item"
-onclick="toggleAdBlock()">
+<button class="menu-item"
+        onclick="toggleAdBlock()">
 
 <i class="fa-solid fa-shield-halved menu-icon"></i>
 
@@ -2887,22 +2549,22 @@ Ad blocker
 </button>
 
 
-<button
-class="menu-item"
-onclick="toggleDarkMode()">
+<button class="menu-item"
+        onclick="toggleDarkMode()">
 
 <i class="fa-solid fa-moon menu-icon"></i>
 
-<span>Dark mode</span>
+<span id="darkModeMenuText">
+Dark mode
+</span>
 
 <i class="fa-solid fa-chevron-right arrow"></i>
 
 </button>
 
 
-<button
-class="menu-item"
-onclick="openSettings()">
+<button class="menu-item"
+        onclick="openSettings()">
 
 <i class="fa-solid fa-gear menu-icon"></i>
 
@@ -2917,13 +2579,10 @@ onclick="openSettings()">
 </div>
 
 
-<!-- =====================================================
-     MODAL
-===================================================== -->
+<!-- MODAL -->
 
-<div
-class="modal"
-id="modal">
+<div class="modal"
+     id="modal">
 
 <div class="modal-box">
 
@@ -2933,16 +2592,14 @@ id="modal">
 Information
 </h2>
 
-<button
-class="modal-close"
-onclick="closeModal()">
+<button class="modal-close"
+        onclick="closeModal()">
 
 <i class="fa-solid fa-xmark"></i>
 
 </button>
 
 </div>
-
 
 <div id="modalContent"></div>
 
@@ -2951,13 +2608,10 @@ onclick="closeModal()">
 </div>
 
 
-<!-- =====================================================
-     TOAST
-===================================================== -->
+<!-- TOAST -->
 
-<div
-class="toast"
-id="toast">
+<div class="toast"
+     id="toast">
 
 <i class="fa-solid fa-circle-check"></i>
 
@@ -2968,100 +2622,99 @@ id="toast">
 
 <script>
 
+/* =====================================================
+   ORANGEBROWSE CORE
+===================================================== */
+
+const STORAGE = {
+    tabs:"orangebrowse_tabs",
+    activeTab:"orangebrowse_active_tab",
+    bookmarks:"orangebrowse_bookmarks",
+    history:"orangebrowse_history",
+    closedTabs:"orangebrowse_closed_tabs",
+    settings:"orangebrowse_settings",
+    offlinePages:"orangebrowse_offline_pages"
+};
+
+const DEFAULT_SETTINGS = {
+    dark:false,
+    engine:"google",
+    adBlock:true,
+    incognito:false,
+    dataSaver:false
+};
+
+let tabs = load(STORAGE.tabs,[]);
+let activeTabId = localStorage.getItem(STORAGE.activeTab) || null;
+let bookmarks = load(STORAGE.bookmarks,[]);
+let historyItems = load(STORAGE.history,[]);
+let closedTabs = load(STORAGE.closedTabs,[]);
+let offlinePages = load(STORAGE.offlinePages,[]);
+
+let settings = {
+    ...DEFAULT_SETTINGS,
+    ...load(STORAGE.settings,{})
+};
+
+let toastTimer = null;
+
 
 /* =====================================================
    STORAGE
 ===================================================== */
 
-const STORAGE={
-
-tabs:"orangebrowse_tabs",
-
-activeTab:"orangebrowse_active_tab",
-
-bookmarks:"orangebrowse_bookmarks",
-
-history:"orangebrowse_history",
-
-closedTabs:"orangebrowse_closed_tabs",
-
-settings:"orangebrowse_settings",
-
-offlinePages:"orangebrowse_offline_pages"
-
-};
-
-
-/* =====================================================
-   DATA
-===================================================== */
-
-let tabs=load(STORAGE.tabs,[]);
-
-let activeTabId=
-localStorage.getItem(STORAGE.activeTab)||null;
-
-let bookmarks=
-load(STORAGE.bookmarks,[]);
-
-let historyItems=
-load(STORAGE.history,[]);
-
-let closedTabs=
-load(STORAGE.closedTabs,[]);
-
-let offlinePages=
-load(STORAGE.offlinePages,[]);
-
-
-let settings=load(
-
-STORAGE.settings,
-
-{
-
-dark:false,
-
-engine:"google",
-
-adBlock:true,
-
-incognito:false
-
-}
-
-);
-
-
-/* =====================================================
-   LOAD / SAVE
-===================================================== */
-
 function load(key,fallback){
 
-try{
+    try{
 
-const value=localStorage.getItem(key);
+        const value = localStorage.getItem(key);
 
-return value
-?JSON.parse(value)
-:fallback;
+        if(value === null){
+            return fallback;
+        }
 
-}catch(error){
+        return JSON.parse(value);
 
-return fallback;
+    }catch(error){
 
-}
+        console.warn("OrangeBrowse storage error:",error);
 
+        return fallback;
+
+    }
 }
 
 
 function save(key,value){
 
-localStorage.setItem(
-key,
-JSON.stringify(value)
-);
+    try{
+
+        localStorage.setItem(
+            key,
+            JSON.stringify(value)
+        );
+
+    }catch(error){
+
+        console.warn("OrangeBrowse save error:",error);
+
+    }
+
+}
+
+
+/* =====================================================
+   TAB ID
+===================================================== */
+
+function generateTabId(){
+
+    return "tab_" +
+        Date.now() +
+        "_" +
+        Math.random()
+        .toString(36)
+        .substring(2,9);
 
 }
 
@@ -3072,108 +2725,124 @@ JSON.stringify(value)
 
 function initialize(){
 
-if(!Array.isArray(tabs)){
+    if(!Array.isArray(tabs)){
+        tabs=[];
+    }
 
-tabs=[];
+    if(!Array.isArray(bookmarks)){
+        bookmarks=[];
+    }
+
+    if(!Array.isArray(historyItems)){
+        historyItems=[];
+    }
+
+    if(!Array.isArray(closedTabs)){
+        closedTabs=[];
+    }
+
+    if(!Array.isArray(offlinePages)){
+        offlinePages=[];
+    }
+
+
+    if(tabs.length === 0){
+
+        createTab(false);
+
+    }else{
+
+        if(
+            !activeTabId ||
+            !tabs.some(tab=>tab.id===activeTabId)
+        ){
+
+            activeTabId=tabs[0].id;
+
+        }
+
+        persistTabs();
+
+        renderTabs();
+
+        loadActiveTab();
+
+    }
+
+
+    applySettings();
+
+    updateAllFeatureUI();
+
+    updatePrivacyUI();
+
+    updateNetworkStatus();
 
 }
-
-
-if(tabs.length===0){
-
-createTab(false);
-
-}
-else{
-
-if(
-!activeTabId ||
-!tabs.some(t=>t.id===activeTabId)
-){
-
-activeTabId=tabs[0].id;
-
-}
-
-renderTabs();
-
-loadActiveTab();
-
-}
-
-
-if(settings.dark){
-
-document.body.classList.add("dark");
-
-}
-
-
-document.getElementById(
-"searchEngine"
-).value=settings.engine||"google";
-
-
-updatePrivacyUI();
-
-updateNetworkStatus();
-
-}
-
 
 
 /* =====================================================
-   CREATE TAB
+   TAB HISTORY
 ===================================================== */
 
 function createTab(saveData=true){
 
-const id=
+    const id=generateTabId();
 
-"tab_"+
-Date.now()+"_"+
-Math.random()
-.toString(36)
-.substring(2,8);
+    const tab={
+        id:id,
+        title:"New Tab",
+        url:"",
+        isNewTab:true,
+        created:Date.now(),
 
-
-const tab={
-
-id:id,
-
-title:"New Tab",
-
-url:"",
-
-isNewTab:true,
-
-created:Date.now()
-
-};
+        /*
+         Each OrangeBrowse tab has its own
+         navigation history.
+        */
+        history:[],
+        historyIndex:-1
+    };
 
 
-tabs.push(tab);
+    tabs.push(tab);
 
-activeTabId=id;
+    activeTabId=id;
 
-
-localStorage.setItem(
-STORAGE.activeTab,
-activeTabId
-);
+    persistTabs();
 
 
-save(
-STORAGE.tabs,
-tabs
-);
+    if(saveData){
+        save(STORAGE.closedTabs,closedTabs);
+    }
 
 
-renderTabs();
+    renderTabs();
 
-showNewTab();
+    showNewTab();
 
-showToast("New tab created");
+    showToast("New tab created");
+
+}
+
+
+function persistTabs(){
+
+    save(STORAGE.tabs,tabs);
+
+    localStorage.setItem(
+        STORAGE.activeTab,
+        activeTabId || ""
+    );
+
+}
+
+
+function getActiveTab(){
+
+    return tabs.find(
+        tab=>tab.id===activeTabId
+    ) || null;
 
 }
 
@@ -3184,110 +2853,92 @@ showToast("New tab created");
 
 function renderTabs(){
 
-const container=
-document.getElementById(
-"tabsContainer"
-);
+    const container=
+        document.getElementById("tabsContainer");
 
-container.innerHTML="";
+    if(!container)return;
 
-
-tabs.forEach(tab=>{
-
-const element=
-document.createElement("div");
+    container.innerHTML="";
 
 
-element.className=
-"tab"+
-(
-tab.id===activeTabId
-?" active"
-:""
-);
+    tabs.forEach(tab=>{
+
+        const element=
+            document.createElement("div");
+
+        element.className=
+            "tab" +
+            (tab.id===activeTabId ? " active":"");
+
+        element.dataset.id=tab.id;
 
 
-element.dataset.id=tab.id;
+        element.innerHTML=`
+
+            <div class="tab-favicon">
+                <i class="fa-solid fa-globe"></i>
+            </div>
+
+            <span class="tab-title">
+                ${escapeHTML(tab.title || "New Tab")}
+            </span>
+
+            <button
+                class="tab-close"
+                title="Close tab">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+        `;
 
 
-element.innerHTML=`
+        element.addEventListener(
+            "click",
+            function(event){
 
-<div class="tab-favicon">
+                if(event.target.closest(".tab-close")){
+                    return;
+                }
 
-<i class="fa-solid fa-globe"></i>
+                activateTab(tab.id);
 
-</div>
-
-<span class="tab-title">
-
-${escapeHTML(
-tab.title||"New Tab"
-)}
-
-</span>
-
-<button
-class="tab-close"
-title="Close tab">
-
-<i class="fa-solid fa-xmark"></i>
-
-</button>
-
-`;
+            }
+        );
 
 
-element.addEventListener(
-"click",
-function(event){
+        element
+            .querySelector(".tab-close")
+            .addEventListener(
+                "click",
+                function(event){
 
-if(
-event.target.closest(".tab-close")
-){
+                    event.stopPropagation();
 
-return;
+                    closeTab(tab.id);
 
-}
-
-activateTab(tab.id);
-
-}
-);
+                }
+            );
 
 
-element
-.querySelector(".tab-close")
-.addEventListener(
-"click",
-function(event){
+        container.appendChild(element);
 
-event.stopPropagation();
-
-closeTab(tab.id);
-
-}
-);
+    });
 
 
-container.appendChild(element);
+    const newButton=
+        document.createElement("button");
 
-});
+    newButton.className="new-tab-button";
 
+    newButton.title="New tab";
 
-const newButton=
-document.createElement("button");
+    newButton.innerHTML=
+        '<i class="fa-solid fa-plus"></i>';
 
-newButton.className=
-"new-tab-button";
+    newButton.onclick=()=>createTab(true);
 
-newButton.title="New tab";
-
-newButton.innerHTML=
-'<i class="fa-solid fa-plus"></i>';
-
-newButton.onclick=createTab;
-
-container.appendChild(newButton);
+    container.appendChild(newButton);
 
 }
 
@@ -3298,36 +2949,19 @@ container.appendChild(newButton);
 
 function activateTab(id){
 
-const tab=
-tabs.find(t=>t.id===id);
+    const tab=
+        tabs.find(item=>item.id===id);
 
-if(!tab)return;
-
-
-activeTabId=id;
-
-localStorage.setItem(
-STORAGE.activeTab,
-activeTabId
-);
+    if(!tab)return;
 
 
-renderTabs();
+    activeTabId=id;
 
+    persistTabs();
 
-if(
-tab.isNewTab||
-!tab.url
-){
+    renderTabs();
 
-showNewTab();
-
-}
-else{
-
-setAddress(tab.url);
-
-}
+    loadActiveTab();
 
 }
 
@@ -3338,115 +2972,102 @@ setAddress(tab.url);
 
 function closeTab(id){
 
-const index=
-tabs.findIndex(t=>t.id===id);
+    const index=
+        tabs.findIndex(tab=>tab.id===id);
 
-if(index===-1)return;
-
-
-const tab=tabs[index];
+    if(index===-1)return;
 
 
-if(!settings.incognito){
-
-closedTabs.unshift({
-
-...tab,
-
-closedAt:Date.now()
-
-});
-
-closedTabs=
-closedTabs.slice(0,20);
-
-save(
-STORAGE.closedTabs,
-closedTabs
-);
-
-}
+    const tab=tabs[index];
 
 
-tabs.splice(index,1);
+    if(
+        !settings.incognito &&
+        (tab.url || !tab.isNewTab)
+    ){
+
+        closedTabs.unshift({
+            ...tab,
+            closedAt:Date.now()
+        });
+
+        closedTabs=
+            closedTabs.slice(0,20);
+
+        save(
+            STORAGE.closedTabs,
+            closedTabs
+        );
+
+    }
 
 
-if(tabs.length===0){
-
-createTab();
-
-showToast("Tab closed");
-
-return;
-
-}
+    tabs.splice(index,1);
 
 
-if(activeTabId===id){
+    if(tabs.length===0){
 
-const nextTab=
-tabs[index]||
-tabs[index-1]||
-tabs[0];
+        activeTabId=null;
 
-activeTabId=nextTab.id;
+        createTab(false);
 
-}
+        showToast("Tab closed");
 
+        return;
 
-save(
-STORAGE.tabs,
-tabs
-);
+    }
 
 
-localStorage.setItem(
-STORAGE.activeTab,
-activeTabId
-);
+    if(activeTabId===id){
+
+        const nextTab=
+            tabs[index] ||
+            tabs[index-1] ||
+            tabs[0];
+
+        activeTabId=nextTab.id;
+
+    }
 
 
-renderTabs();
+    persistTabs();
 
-loadActiveTab();
+    renderTabs();
 
-showToast("Tab closed");
+    loadActiveTab();
+
+    showToast("Tab closed");
 
 }
 
 
 /* =====================================================
-   LOAD ACTIVE
+   LOAD ACTIVE TAB
 ===================================================== */
 
 function loadActiveTab(){
 
-const tab=
-tabs.find(t=>t.id===activeTabId);
+    const tab=getActiveTab();
+
+    if(!tab){
+
+        showNewTab();
+
+        return;
+
+    }
 
 
-if(!tab){
+    if(tab.isNewTab || !tab.url){
 
-showNewTab();
+        showNewTab(false);
 
-return;
+        return;
 
-}
-
-
-if(
-tab.isNewTab||
-!tab.url
-){
-
-showNewTab();
-
-return;
-
-}
+    }
 
 
-setAddress(tab.url);
+    setAddress(tab.url);
 
 }
 
@@ -3455,161 +3076,339 @@ setAddress(tab.url);
    NEW TAB
 ===================================================== */
 
-function showNewTab(){
+function showNewTab(saveTab=true){
 
-document.getElementById(
-"addressInput"
-).value="";
+    const address=
+        document.getElementById("addressInput");
 
-
-document.getElementById(
-"mainSearch"
-).value="";
+    const search=
+        document.getElementById("mainSearch");
 
 
-const tab=
-tabs.find(t=>t.id===activeTabId);
+    if(address){
+        address.value="";
+    }
+
+    if(search){
+        search.value="";
+    }
 
 
-if(tab){
-
-tab.title="New Tab";
-
-tab.url="";
-
-tab.isNewTab=true;
+    const tab=getActiveTab();
 
 
-save(
-STORAGE.tabs,
-tabs
-);
+    if(tab){
 
-}
+        tab.title="New Tab";
+
+        tab.url="";
+
+        tab.isNewTab=true;
+
+        if(
+            !Array.isArray(tab.history)
+        ){
+            tab.history=[];
+        }
+
+        tab.historyIndex=-1;
+
+        if(saveTab){
+            persistTabs();
+        }
+
+    }
 
 
-renderTabs();
+    renderTabs();
 
-
-window.scrollTo({
-
-top:0,
-
-behavior:"smooth"
-
-});
-
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
 
 }
 
 
 /* =====================================================
-   NAVIGATE
+   NORMALIZE URL / SEARCH
 ===================================================== */
 
-function navigateTo(value){
+function buildDestination(value){
 
-if(!value)return;
+    value=String(value || "").trim();
 
-
-let destination=value;
-
-let title=value;
-
-
-if(
-!value.startsWith("http://")&&
-!value.startsWith("https://")
-){
-
-if(
-value.includes(".")&&
-!value.includes(" ")
-){
-
-destination=
-"https://"+value;
-
-}
-else{
-
-const engine=
-settings.engine||"google";
+    if(!value){
+        return "";
+    }
 
 
-if(engine==="bing"){
+    /*
+       Already a valid web URL.
+    */
 
-destination=
-"https://www.bing.com/search?q="+
-encodeURIComponent(value);
+    if(
+        /^https?:\/\//i.test(value)
+    ){
 
-}
-else if(engine==="duckduckgo"){
+        return value;
 
-destination=
-"https://duckduckgo.com/?q="+
-encodeURIComponent(value);
-
-}
-else{
-
-destination=
-"https://www.google.com/search?q="+
-encodeURIComponent(value);
-
-}
-
-}
-
-}
+    }
 
 
-const tab=
-tabs.find(t=>t.id===activeTabId);
+    /*
+       localhost / IP.
+    */
+
+    if(
+        /^localhost(?::\d+)?(?:\/.*)?$/i.test(value) ||
+        /^(?:\d{1,3}\.){3}\d{1,3}(?::\d+)?(?:\/.*)?$/i.test(value)
+    ){
+
+        return "http://" + value;
+
+    }
 
 
-if(tab){
+    /*
+       Domain-like input.
+    */
 
-tab.url=destination;
+    if(
+        /^[^\s]+\.[^\s]+$/i.test(value)
+    ){
 
-tab.title=title;
+        return "https://" + value;
 
-tab.isNewTab=false;
+    }
 
-save(
-STORAGE.tabs,
-tabs
-);
+
+    /*
+       Otherwise search.
+    */
+
+    const engine=settings.engine || "google";
+
+    if(engine==="bing"){
+
+        return "https://www.bing.com/search?q=" +
+            encodeURIComponent(value);
+
+    }
+
+    if(engine==="duckduckgo"){
+
+        return "https://duckduckgo.com/?q=" +
+            encodeURIComponent(value);
+
+    }
+
+    return "https://www.google.com/search?q=" +
+        encodeURIComponent(value);
 
 }
 
 
-if(!settings.incognito){
+/* =====================================================
+   NAVIGATION
+===================================================== */
 
-addHistory(
-title,
-destination
-);
+function navigateTo(value,options={}){
+
+    value=String(value || "").trim();
+
+    if(!value){
+        return;
+    }
+
+
+    const destination=
+        buildDestination(value);
+
+    if(!destination){
+        return;
+    }
+
+
+    const tab=getActiveTab();
+
+    if(!tab){
+        return;
+    }
+
+
+    /*
+       Remove forward history when navigating
+       to a new destination.
+    */
+
+    if(!options.fromHistory){
+
+        if(!Array.isArray(tab.history)){
+            tab.history=[];
+        }
+
+        if(
+            tab.historyIndex >= 0 &&
+            tab.history[tab.historyIndex]===destination
+        ){
+
+            /* Same page. */
+
+        }else{
+
+            tab.history=
+                tab.history.slice(
+                    0,
+                    tab.historyIndex + 1
+                );
+
+            tab.history.push(destination);
+
+            tab.historyIndex=
+                tab.history.length-1;
+
+        }
+
+    }
+
+
+    tab.url=destination;
+
+    tab.title=
+        options.title ||
+        getDisplayTitle(value,destination);
+
+    tab.isNewTab=false;
+
+
+    persistTabs();
+
+    renderTabs();
+
+    setAddress(destination);
+
+
+    /*
+       Only normal navigation is written
+       to browser history.
+    */
+
+    if(
+        !settings.incognito &&
+        !options.fromHistory
+    ){
+
+        addHistory(
+            tab.title,
+            destination
+        );
+
+    }
+
+
+    /*
+       The Median native bridge remains supported.
+
+       "internal" is passed exactly as requested
+       by your existing architecture.
+    */
+
+    openNativeDestination(destination);
 
 }
 
 
-setAddress(value);
+/* =====================================================
+   DISPLAY TITLE
+===================================================== */
 
-renderTabs();
+function getDisplayTitle(input,url){
 
+    if(
+        !input ||
+        !input.trim()
+    ){
 
-/*
-   Current HTML edition still opens external pages
-   separately.
+        return url;
 
-   When converted to Android/iOS this function will
-   feed the URL into the native WebView/browser frame.
-*/
-if (window.median && window.median.window) {
-    window.median.window.open(destination, "internal");
+    }
+
+    return input.trim();
+
 }
+
+
+/* =====================================================
+   MEDIAN / NATIVE NAVIGATION
+===================================================== */
+
+function openNativeDestination(url){
+
+    /*
+       Median bridge.
+
+       This does NOT pretend that HTML itself is
+       a browser engine.
+
+       If the native app exposes the Median window
+       bridge, the destination is handed to it.
+    */
+
+    try{
+
+        if(
+            window.median &&
+            window.median.window &&
+            typeof window.median.window.open==="function"
+        ){
+
+            window.median.window.open(
+                url,
+                "internal"
+            );
+
+            return true;
+
+        }
+
+    }catch(error){
+
+        console.warn(
+            "Median navigation failed:",
+            error
+        );
+
+    }
+
+
+    /*
+       Website fallback.
+
+       This opens normally only when the native
+       bridge does not exist.
+    */
+
+    try{
+
+        window.open(
+            url,
+            "_blank"
+        );
+
+    }catch(error){
+
+        console.warn(
+            "Navigation fallback failed:",
+            error
+        );
+
+    }
+
+    return false;
+
 }
+
 
 /* =====================================================
    SEARCH
@@ -3617,57 +3416,60 @@ if (window.median && window.median.window) {
 
 function performSearch(){
 
-const input=
-document.getElementById(
-"mainSearch"
-);
+    const input=
+        document.getElementById("mainSearch");
 
-const value=
-input.value.trim();
+    if(!input)return;
 
 
-if(!value){
+    const value=input.value.trim();
 
-input.focus();
+    if(!value){
 
-return;
+        input.focus();
 
-}
+        return;
+
+    }
 
 
-navigateTo(value);
+    navigateTo(value);
 
 }
 
 
 function searchKey(event){
 
-if(event.key==="Enter"){
+    if(event.key==="Enter"){
 
-performSearch();
+        event.preventDefault();
 
-}
+        performSearch();
+
+    }
 
 }
 
 
 function addressKey(event){
 
-if(event.key==="Enter"){
+    if(event.key==="Enter"){
 
-const value=
-document.getElementById(
-"addressInput"
-).value.trim();
+        event.preventDefault();
 
+        const input=
+            document.getElementById("addressInput");
 
-if(value){
+        const value=
+            input.value.trim();
 
-navigateTo(value);
+        if(value){
 
-}
+            navigateTo(value);
 
-}
+        }
+
+    }
 
 }
 
@@ -3678,23 +3480,222 @@ navigateTo(value);
 
 function setAddress(value){
 
-document.getElementById(
-"addressInput"
-).value=value;
+    const input=
+        document.getElementById("addressInput");
+
+    if(input){
+
+        input.value=value || "";
+
+    }
 
 }
 
 
 function clearAddress(){
 
-const input=
-document.getElementById(
-"addressInput"
-);
+    const input=
+        document.getElementById("addressInput");
 
-input.value="";
+    if(!input)return;
 
-input.focus();
+    input.value="";
+
+    input.focus();
+
+}
+
+
+/* =====================================================
+   BACK
+===================================================== */
+
+function goBack(){
+
+    const tab=getActiveTab();
+
+    if(!tab){
+        return;
+    }
+
+
+    if(
+        !Array.isArray(tab.history)
+    ){
+
+        tab.history=[];
+
+    }
+
+
+    if(
+        tab.historyIndex > 0
+    ){
+
+        tab.historyIndex--;
+
+        const destination=
+            tab.history[tab.historyIndex];
+
+        tab.url=destination;
+
+        tab.isNewTab=false;
+
+        persistTabs();
+
+        renderTabs();
+
+        setAddress(destination);
+
+        openNativeDestination(destination);
+
+        return;
+
+    }
+
+
+    /*
+       No OrangeBrowse page history remains.
+       We can safely ask the native/browser history
+       to go back if it exists.
+    */
+
+    try{
+
+        if(
+            window.median &&
+            window.median.window &&
+            typeof window.median.window.goBack==="function"
+        ){
+
+            window.median.window.goBack();
+
+            return;
+
+        }
+
+    }catch(error){}
+
+
+    /*
+       We deliberately do not call window.history.back()
+       automatically here because that can eject the user
+       from the OrangeBrowse application/page.
+    */
+
+    showToast("No previous page");
+
+}
+
+
+/* =====================================================
+   FORWARD
+===================================================== */
+
+function goForward(){
+
+    const tab=getActiveTab();
+
+    if(!tab){
+        return;
+    }
+
+
+    if(
+        !Array.isArray(tab.history)
+    ){
+
+        tab.history=[];
+
+    }
+
+
+    if(
+        tab.historyIndex <
+        tab.history.length-1
+    ){
+
+        tab.historyIndex++;
+
+        const destination=
+            tab.history[tab.historyIndex];
+
+        tab.url=destination;
+
+        tab.isNewTab=false;
+
+        persistTabs();
+
+        renderTabs();
+
+        setAddress(destination);
+
+        openNativeDestination(destination);
+
+        return;
+
+    }
+
+
+    try{
+
+        if(
+            window.median &&
+            window.median.window &&
+            typeof window.median.window.goForward==="function"
+        ){
+
+            window.median.window.goForward();
+
+            return;
+
+        }
+
+    }catch(error){}
+
+
+    showToast("No next page");
+
+}
+
+
+/* =====================================================
+   RELOAD
+===================================================== */
+
+function reloadPage(){
+
+    const tab=getActiveTab();
+
+    if(
+        tab &&
+        tab.url
+    ){
+
+        /*
+           Re-open the current destination through
+           the same native navigation bridge.
+        */
+
+        openNativeDestination(tab.url);
+
+        showToast("Page reloaded");
+
+        return;
+
+    }
+
+
+    /*
+       New-tab page only needs a local refresh.
+    */
+
+    window.scrollTo({
+        top:0,
+        behavior:"smooth"
+    });
+
+    showToast("New tab refreshed");
 
 }
 
@@ -3705,162 +3706,167 @@ input.focus();
 
 function addHistory(title,url){
 
-if(settings.incognito)return;
+    if(settings.incognito){
+        return;
+    }
 
 
-historyItems.unshift({
+    historyItems.unshift({
 
-id:Date.now(),
+        id:Date.now(),
 
-title:title||url,
+        title:title || url,
 
-url:url,
+        url:url,
 
-time:new Date().toISOString()
+        time:new Date().toISOString()
 
-});
-
-
-historyItems=
-historyItems.slice(0,100);
+    });
 
 
-save(
-STORAGE.history,
-historyItems
-);
+    historyItems=
+        historyItems.slice(0,100);
+
+    save(
+        STORAGE.history,
+        historyItems
+    );
 
 }
 
 
 function openHistory(){
 
-closeMenu();
+    closeMenu();
+
+    let html="";
 
 
-let html="";
+    if(historyItems.length===0){
+
+        html=`
+
+        <div class="empty">
+
+            <i class="fa-solid fa-clock-rotate-left"></i>
+
+            <p>No browsing history yet.</p>
+
+        </div>
+
+        `;
+
+    }else{
+
+        html=`
+
+        <div class="data-list">
+
+        ${historyItems.map((item,index)=>`
+
+            <div class="data-item">
+
+                <div class="data-icon">
+                    <i class="fa-solid fa-globe"></i>
+                </div>
+
+                <div
+                    class="data-content"
+                    onclick="openHistoryItem(${index})"
+                    style="cursor:pointer">
+
+                    <div class="data-title">
+                        ${escapeHTML(item.title)}
+                    </div>
+
+                    <div class="data-url">
+                        ${escapeHTML(item.url)}
+                    </div>
+
+                </div>
+
+                <button
+                    class="data-delete"
+                    onclick="deleteHistory(${item.id})">
+
+                    <i class="fa-solid fa-trash"></i>
+
+                </button>
+
+            </div>
+
+        `).join("")}
+
+        </div>
+
+        <button
+            class="danger-button"
+            onclick="clearHistory()">
+
+            Clear history
+
+        </button>
+
+        `;
+
+    }
 
 
-if(historyItems.length===0){
-
-html=`
-
-<div class="empty">
-
-<i class="fa-solid fa-clock-rotate-left"></i>
-
-<p>
-No browsing history yet.
-</p>
-
-</div>
-
-`;
-
-}
-else{
-
-html=`
-
-<div class="data-list">
-
-${historyItems.map(item=>`
-
-<div class="data-item">
-
-<div class="data-icon">
-
-<i class="fa-solid fa-globe"></i>
-
-</div>
-
-
-<div
-class="data-content"
-onclick="navigateTo('${escapeJS(item.url)}')"
-style="cursor:pointer">
-
-<div class="data-title">
-
-${escapeHTML(item.title)}
-
-</div>
-
-
-<div class="data-url">
-
-${escapeHTML(item.url)}
-
-</div>
-
-</div>
-
-
-<button
-class="data-delete"
-onclick="deleteHistory(${item.id})">
-
-<i class="fa-solid fa-trash"></i>
-
-</button>
-
-</div>
-
-`).join("")}
-
-</div>
-
-
-<button
-class="danger-button"
-onclick="clearHistory()">
-
-Clear history
-
-</button>
-
-`;
+    openModal(
+        "Browsing History",
+        html
+    );
 
 }
 
 
-openModal(
-"Browsing History",
-html
-);
+function openHistoryItem(index){
+
+    const item=historyItems[index];
+
+    if(!item)return;
+
+    closeModal();
+
+    navigateTo(
+        item.url,
+        {
+            title:item.title
+        }
+    );
 
 }
 
 
 function deleteHistory(id){
 
-historyItems=
-historyItems.filter(
-item=>item.id!==id
-);
+    historyItems=
+        historyItems.filter(
+            item=>item.id!==id
+        );
 
-save(
-STORAGE.history,
-historyItems
-);
+    save(
+        STORAGE.history,
+        historyItems
+    );
 
-openHistory();
+    openHistory();
 
 }
 
 
 function clearHistory(){
 
-historyItems=[];
+    historyItems=[];
 
-save(
-STORAGE.history,
-historyItems
-);
+    save(
+        STORAGE.history,
+        historyItems
+    );
 
-openHistory();
+    openHistory();
 
-showToast("History cleared");
+    showToast("History cleared");
 
 }
 
@@ -3871,169 +3877,177 @@ showToast("History cleared");
 
 function bookmarkCurrent(){
 
-const tab=
-tabs.find(t=>t.id===activeTabId);
+    const tab=getActiveTab();
+
+    if(
+        !tab ||
+        !tab.url
+    ){
+
+        showToast(
+            "There is no page to bookmark"
+        );
+
+        return;
+
+    }
 
 
-if(!tab||!tab.url){
-
-showToast(
-"There is no page to bookmark"
-);
-
-return;
-
-}
+    const exists=
+        bookmarks.some(
+            item=>item.url===tab.url
+        );
 
 
-const exists=
-bookmarks.some(
-item=>item.url===tab.url
-);
+    if(exists){
+
+        showToast(
+            "Already bookmarked"
+        );
+
+        return;
+
+    }
 
 
-if(exists){
+    bookmarks.unshift({
 
-showToast(
-"Already bookmarked"
-);
+        id:Date.now(),
 
-return;
+        title:tab.title || tab.url,
 
-}
+        url:tab.url
 
-
-bookmarks.unshift({
-
-id:Date.now(),
-
-title:tab.title||tab.url,
-
-url:tab.url
-
-});
+    });
 
 
-save(
-STORAGE.bookmarks,
-bookmarks
-);
+    save(
+        STORAGE.bookmarks,
+        bookmarks
+    );
 
 
-showToast(
-"Page bookmarked"
-);
+    showToast(
+        "Page bookmarked"
+    );
 
 }
 
 
 function openBookmarks(){
 
-closeMenu();
+    closeMenu();
+
+    let html="";
 
 
-let html="";
+    if(bookmarks.length===0){
+
+        html=`
+
+        <div class="empty">
+
+            <i class="fa-regular fa-star"></i>
+
+            <p>No bookmarks yet.</p>
+
+        </div>
+
+        `;
+
+    }else{
+
+        html=`
+
+        <div class="data-list">
+
+        ${bookmarks.map((item,index)=>`
+
+            <div class="data-item">
+
+                <div class="data-icon">
+
+                    <i class="fa-regular fa-star"></i>
+
+                </div>
+
+                <div
+                    class="data-content"
+                    onclick="openBookmark(${index})"
+                    style="cursor:pointer">
+
+                    <div class="data-title">
+                        ${escapeHTML(item.title)}
+                    </div>
+
+                    <div class="data-url">
+                        ${escapeHTML(item.url)}
+                    </div>
+
+                </div>
+
+                <button
+                    class="data-delete"
+                    onclick="deleteBookmark(${item.id})">
+
+                    <i class="fa-solid fa-trash"></i>
+
+                </button>
+
+            </div>
+
+        `).join("")}
+
+        </div>
+
+        `;
+
+    }
 
 
-if(bookmarks.length===0){
-
-html=`
-
-<div class="empty">
-
-<i class="fa-regular fa-star"></i>
-
-<p>
-No bookmarks yet.
-</p>
-
-</div>
-
-`;
-
-}
-else{
-
-html=`
-
-<div class="data-list">
-
-${bookmarks.map(item=>`
-
-<div class="data-item">
-
-<div class="data-icon">
-
-<i class="fa-regular fa-star"></i>
-
-</div>
-
-
-<div
-class="data-content"
-onclick="navigateTo('${escapeJS(item.url)}')"
-style="cursor:pointer">
-
-<div class="data-title">
-
-${escapeHTML(item.title)}
-
-</div>
-
-
-<div class="data-url">
-
-${escapeHTML(item.url)}
-
-</div>
-
-</div>
-
-
-<button
-class="data-delete"
-onclick="deleteBookmark(${item.id})">
-
-<i class="fa-solid fa-trash"></i>
-
-</button>
-
-</div>
-
-`).join("")}
-
-</div>
-
-`;
+    openModal(
+        "Bookmarks",
+        html
+    );
 
 }
 
 
-openModal(
-"Bookmarks",
-html
-);
+function openBookmark(index){
+
+    const item=bookmarks[index];
+
+    if(!item)return;
+
+    closeModal();
+
+    navigateTo(
+        item.url,
+        {
+            title:item.title
+        }
+    );
 
 }
 
 
 function deleteBookmark(id){
 
-bookmarks=
-bookmarks.filter(
-item=>item.id!==id
-);
+    bookmarks=
+        bookmarks.filter(
+            item=>item.id!==id
+        );
 
-save(
-STORAGE.bookmarks,
-bookmarks
-);
+    save(
+        STORAGE.bookmarks,
+        bookmarks
+    );
 
-openBookmarks();
+    openBookmarks();
 
-showToast(
-"Bookmark removed"
-);
+    showToast(
+        "Bookmark removed"
+    );
 
 }
 
@@ -4044,172 +4058,176 @@ showToast(
 
 function openRecentlyClosed(){
 
-closeMenu();
+    closeMenu();
+
+    let html="";
 
 
-let html="";
+    if(closedTabs.length===0){
+
+        html=`
+
+        <div class="empty">
+
+            <i class="fa-solid fa-window-restore"></i>
+
+            <p>No recently closed tabs.</p>
+
+        </div>
+
+        `;
+
+    }else{
+
+        html=`
+
+        <div class="data-list">
+
+        ${closedTabs.map((item,index)=>`
+
+            <div class="data-item">
+
+                <div class="data-icon">
+
+                    <i class="fa-solid fa-window-restore"></i>
+
+                </div>
+
+                <div
+                    class="data-content"
+                    onclick="restoreClosedTab(${index})"
+                    style="cursor:pointer">
+
+                    <div class="data-title">
+
+                        ${escapeHTML(
+                            item.title || "New Tab"
+                        )}
+
+                    </div>
+
+                    <div class="data-url">
+
+                        ${escapeHTML(
+                            item.url || "New Tab"
+                        )}
+
+                    </div>
+
+                </div>
+
+                <button
+                    class="data-delete"
+                    onclick="removeClosedTab(${index})">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                </button>
+
+            </div>
+
+        `).join("")}
+
+        </div>
+
+        `;
+
+    }
 
 
-if(closedTabs.length===0){
-
-html=`
-
-<div class="empty">
-
-<i class="fa-solid fa-window-restore"></i>
-
-<p>
-No recently closed tabs.
-</p>
-
-</div>
-
-`;
-
-}
-else{
-
-html=`
-
-<div class="data-list">
-
-${closedTabs.map((item,index)=>`
-
-<div class="data-item">
-
-<div class="data-icon">
-
-<i class="fa-solid fa-window-restore"></i>
-
-</div>
-
-
-<div
-class="data-content"
-onclick="restoreClosedTab(${index})"
-style="cursor:pointer">
-
-<div class="data-title">
-
-${escapeHTML(
-item.title||"New Tab"
-)}
-
-</div>
-
-
-<div class="data-url">
-
-${escapeHTML(
-item.url||"New Tab"
-)}
-
-</div>
-
-</div>
-
-
-<button
-class="data-delete"
-onclick="removeClosedTab(${index})">
-
-<i class="fa-solid fa-xmark"></i>
-
-</button>
-
-</div>
-
-`).join("")}
-
-</div>
-
-`;
-
-}
-
-
-openModal(
-"Recently Closed Tabs",
-html
-);
+    openModal(
+        "Recently Closed Tabs",
+        html
+    );
 
 }
 
 
 function restoreClosedTab(index){
 
-const oldTab=
-closedTabs[index];
+    const oldTab=
+        closedTabs[index];
 
-if(!oldTab)return;
-
-
-const restored={
-
-id:
-"tab_"+
-Date.now()+"_"+
-Math.random()
-.toString(36)
-.substring(2,7),
-
-title:oldTab.title||"New Tab",
-
-url:oldTab.url||"",
-
-isNewTab:!oldTab.url,
-
-created:Date.now()
-
-};
+    if(!oldTab)return;
 
 
-tabs.push(restored);
+    const restored={
+        ...oldTab,
 
-activeTabId=restored.id;
+        id:generateTabId(),
 
+        created:Date.now(),
 
-closedTabs.splice(index,1);
-
-
-save(
-STORAGE.tabs,
-tabs
-);
-
-save(
-STORAGE.closedTabs,
-closedTabs
-);
+        closedAt:undefined
+    };
 
 
-localStorage.setItem(
-STORAGE.activeTab,
-activeTabId
-);
+    delete restored.closedAt;
 
 
-closeModal();
+    if(
+        !Array.isArray(restored.history)
+    ){
 
-renderTabs();
+        restored.history=
+            restored.url
+            ?[restored.url]
+            :[];
 
-loadActiveTab();
+    }
 
-showToast("Tab restored");
+
+    if(
+        typeof restored.historyIndex!=="number"
+    ){
+
+        restored.historyIndex=
+            restored.history.length-1;
+
+    }
+
+
+    restored.isNewTab=
+        !restored.url;
+
+
+    tabs.push(restored);
+
+    activeTabId=restored.id;
+
+
+    closedTabs.splice(index,1);
+
+
+    persistTabs();
+
+    save(
+        STORAGE.closedTabs,
+        closedTabs
+    );
+
+
+    closeModal();
+
+    renderTabs();
+
+    loadActiveTab();
+
+    showToast("Tab restored");
 
 }
 
 
 function removeClosedTab(index){
 
-closedTabs.splice(index,1);
+    closedTabs.splice(index,1);
 
-save(
-STORAGE.closedTabs,
-closedTabs
-);
+    save(
+        STORAGE.closedTabs,
+        closedTabs
+    );
 
-openRecentlyClosed();
+    openRecentlyClosed();
 
 }
 
@@ -4220,213 +4238,220 @@ openRecentlyClosed();
 
 function saveCurrentOffline(){
 
-const tab=
-tabs.find(t=>t.id===activeTabId);
+    const tab=getActiveTab();
+
+    if(
+        !tab ||
+        !tab.url
+    ){
+
+        showToast(
+            "No webpage available to save"
+        );
+
+        return;
+
+    }
 
 
-if(!tab||!tab.url){
-
-showToast(
-"No webpage available to save"
-);
-
-return;
-
-}
+    const exists=
+        offlinePages.some(
+            page=>page.url===tab.url
+        );
 
 
-const exists=
-offlinePages.some(
-page=>page.url===tab.url
-);
+    if(exists){
+
+        showToast(
+            "Page already saved offline"
+        );
+
+        return;
+
+    }
 
 
-if(exists){
+    offlinePages.unshift({
 
-showToast(
-"Page already saved offline"
-);
+        id:Date.now(),
 
-return;
+        title:tab.title || tab.url,
 
-}
+        url:tab.url,
 
+        savedAt:new Date().toISOString(),
 
-offlinePages.unshift({
+        content:
+            "Offline page reference saved by OrangeBrowse."
 
-id:Date.now(),
-
-title:tab.title||tab.url,
-
-url:tab.url,
-
-savedAt:new Date().toISOString(),
-
-content:
-"Offline page reference saved by OrangeBrowse."
-
-});
+    });
 
 
-offlinePages=
-offlinePages.slice(0,50);
+    offlinePages=
+        offlinePages.slice(0,50);
 
 
-save(
-STORAGE.offlinePages,
-offlinePages
-);
+    save(
+        STORAGE.offlinePages,
+        offlinePages
+    );
 
 
-showToast(
-"Offline page saved"
-);
+    showToast(
+        "Offline page saved"
+    );
 
 }
 
 
 function openOfflinePages(){
 
-closeMenu();
+    closeMenu();
+
+    let html="";
 
 
-let html="";
+    if(offlinePages.length===0){
+
+        html=`
+
+        <div class="empty">
+
+            <i class="fa-solid fa-cloud-arrow-down"></i>
+
+            <p>No offline pages saved yet.</p>
+
+            <br>
+
+            <button
+                class="jama-button"
+                onclick="saveCurrentOffline();closeModal()">
+
+                Save current page
+
+            </button>
+
+        </div>
+
+        `;
+
+    }else{
+
+        html=`
+
+        <div class="data-list">
+
+        ${offlinePages.map((page,index)=>`
+
+            <div class="data-item">
+
+                <div class="data-icon">
+
+                    <i class="fa-solid fa-cloud-arrow-down"></i>
+
+                </div>
+
+                <div
+                    class="data-content"
+                    onclick="openOfflinePage(${index})"
+                    style="cursor:pointer">
+
+                    <div class="data-title">
+                        ${escapeHTML(page.title)}
+                    </div>
+
+                    <div class="data-url">
+                        ${escapeHTML(page.url)}
+                    </div>
+
+                </div>
+
+                <button
+                    class="data-delete"
+                    onclick="deleteOfflinePage(${index})">
+
+                    <i class="fa-solid fa-trash"></i>
+
+                </button>
+
+            </div>
+
+        `).join("")}
+
+        </div>
+
+        <button
+            class="danger-button"
+            onclick="clearOfflinePages()">
+
+            Clear offline pages
+
+        </button>
+
+        `;
+
+    }
 
 
-if(offlinePages.length===0){
-
-html=`
-
-<div class="empty">
-
-<i class="fa-solid fa-cloud-arrow-down"></i>
-
-<p>
-No offline pages saved yet.
-</p>
-
-<br>
-
-<button
-class="jama-button"
-onclick="saveCurrentOffline();closeModal()">
-
-Save current page
-
-</button>
-
-</div>
-
-`;
-
-}
-else{
-
-html=`
-
-<div class="data-list">
-
-${offlinePages.map((page,index)=>`
-
-<div class="data-item">
-
-<div class="data-icon">
-
-<i class="fa-solid fa-cloud-arrow-down"></i>
-
-</div>
-
-
-<div
-class="data-content"
-onclick="navigateTo('${escapeJS(page.url)}')"
-style="cursor:pointer">
-
-<div class="data-title">
-
-${escapeHTML(page.title)}
-
-</div>
-
-
-<div class="data-url">
-
-${escapeHTML(page.url)}
-
-</div>
-
-</div>
-
-
-<button
-class="data-delete"
-onclick="deleteOfflinePage(${index})">
-
-<i class="fa-solid fa-trash"></i>
-
-</button>
-
-</div>
-
-`).join("")}
-
-</div>
-
-
-<button
-class="danger-button"
-onclick="clearOfflinePages()">
-
-Clear offline pages
-
-</button>
-
-`;
+    openModal(
+        "Offline Pages",
+        html
+    );
 
 }
 
 
-openModal(
-"Offline Pages",
-html
-);
+function openOfflinePage(index){
 
+    const page=
+        offlinePages[index];
+
+    if(!page)return;
+
+    closeModal();
+
+    navigateTo(
+        page.url,
+        {
+            title:page.title
+        }
+    );
 
 }
 
 
 function deleteOfflinePage(index){
 
-offlinePages.splice(index,1);
+    offlinePages.splice(index,1);
 
-save(
-STORAGE.offlinePages,
-offlinePages
-);
+    save(
+        STORAGE.offlinePages,
+        offlinePages
+    );
 
-openOfflinePages();
+    openOfflinePages();
 
-showToast(
-"Offline page removed"
-);
+    showToast(
+        "Offline page removed"
+    );
 
 }
 
 
 function clearOfflinePages(){
 
-offlinePages=[];
+    offlinePages=[];
 
-save(
-STORAGE.offlinePages,
-offlinePages
-);
+    save(
+        STORAGE.offlinePages,
+        offlinePages
+    );
 
-openOfflinePages();
+    openOfflinePages();
 
-showToast(
-"Offline pages cleared"
-);
+    showToast(
+        "Offline pages cleared"
+    );
 
 }
 
@@ -4437,50 +4462,74 @@ showToast(
 
 function toggleIncognito(){
 
-settings.incognito=
-!settings.incognito;
+    settings.incognito=
+        !settings.incognito;
+
+    save(
+        STORAGE.settings,
+        settings
+    );
+
+    updatePrivacyUI();
+
+    updateFeatureUI("incognito");
 
 
-save(
-STORAGE.settings,
-settings
-);
-
-
-updatePrivacyUI();
-
-
-showToast(
-
-settings.incognito
-?
-"Incognito mode enabled"
-:
-"Incognito mode disabled"
-
-);
+    showToast(
+        settings.incognito
+        ? "Incognito mode enabled"
+        : "Incognito mode disabled"
+    );
 
 }
 
 
 function updatePrivacyUI(){
 
-const menu=
-document.getElementById(
-"incognitoMenuText"
-);
+    const incognito=
+        document.getElementById(
+            "incognitoMenuText"
+        );
+
+    const adblock=
+        document.getElementById(
+            "adBlockMenuText"
+        );
+
+    const dark=
+        document.getElementById(
+            "darkModeMenuText"
+        );
 
 
-if(menu){
+    if(incognito){
 
-menu.textContent=
-settings.incognito
-?
-"Exit incognito"
-:
-"Incognito mode";
+        incognito.textContent=
+            settings.incognito
+            ? "Exit incognito"
+            : "Incognito mode";
 
-}
+    }
+
+
+    if(adblock){
+
+        adblock.textContent=
+            settings.adBlock
+            ? "Ad blocker: ON"
+            : "Ad blocker: OFF";
+
+    }
+
+
+    if(dark){
+
+        dark.textContent=
+            settings.dark
+            ? "Light mode"
+            : "Dark mode";
+
+    }
 
 }
 
@@ -4491,68 +4540,162 @@ settings.incognito
 
 function toggleAdBlock(){
 
-settings.adBlock=
-!settings.adBlock;
+    settings.adBlock=
+        !settings.adBlock;
+
+    save(
+        STORAGE.settings,
+        settings
+    );
+
+    updatePrivacyUI();
+
+    updateFeatureUI("adBlock");
 
 
-save(
-STORAGE.settings,
-settings
-);
-
-
-updatePrivacyUI();
-
-
-showToast(
-
-settings.adBlock
-?
-"Ad blocker enabled"
-:
-"Ad blocker disabled"
-
-);
+    showToast(
+        settings.adBlock
+        ? "Ad blocker enabled"
+        : "Ad blocker disabled"
+    );
 
 }
 
 
-function updatePrivacyUI(){
+/* =====================================================
+   FEATURE TOGGLES
+===================================================== */
 
-const incognito=
-document.getElementById(
-"incognitoMenuText"
-);
+function toggleFeature(event,type){
 
-
-const adblock=
-document.getElementById(
-"adBlockMenuText"
-);
+    if(event){
+        event.stopPropagation();
+    }
 
 
-if(incognito){
+    if(
+        !Object.prototype.hasOwnProperty.call(
+            settings,
+            type
+        )
+    ){
 
-incognito.textContent=
-settings.incognito
-?
-"Exit incognito"
-:
-"Incognito mode";
+        settings[type]=false;
+
+    }
+
+
+    settings[type]=
+        !settings[type];
+
+
+    save(
+        STORAGE.settings,
+        settings
+    );
+
+
+    updateFeatureUI(type);
+
+    updatePrivacyUI();
+
+
+    if(type==="dataSaver"){
+
+        showToast(
+            settings.dataSaver
+            ? "Data Saver enabled"
+            : "Data Saver disabled"
+        );
+
+    }
+
+
+    if(type==="adBlock"){
+
+        showToast(
+            settings.adBlock
+            ? "Ad Blocker enabled"
+            : "Ad Blocker disabled"
+        );
+
+    }
+
+
+    if(type==="incognito"){
+
+        showToast(
+            settings.incognito
+            ? "Incognito mode enabled"
+            : "Incognito mode disabled"
+        );
+
+    }
 
 }
 
 
-if(adblock){
+function updateFeatureUI(type){
 
-adblock.textContent=
-settings.adBlock
-?
-"Ad blocker: ON"
-:
-"Ad blocker: OFF";
+    const mapping={
+
+        dataSaver:{
+            toggle:"dataSaverToggle",
+            status:"dataSaverStatus"
+        },
+
+        adBlock:{
+            toggle:"adBlockToggle",
+            status:"adBlockStatus"
+        },
+
+        incognito:{
+            toggle:"incognitoToggle",
+            status:"incognitoStatus"
+        }
+
+    };
+
+
+    const item=mapping[type];
+
+    if(!item)return;
+
+
+    const toggle=
+        document.getElementById(item.toggle);
+
+    const status=
+        document.getElementById(item.status);
+
+
+    if(!toggle || !status)return;
+
+
+    if(settings[type]){
+
+        toggle.classList.add("active");
+
+        status.textContent="On";
+
+    }else{
+
+        toggle.classList.remove("active");
+
+        status.textContent="Off";
+
+    }
 
 }
+
+
+function updateAllFeatureUI(){
+
+    updateFeatureUI("dataSaver");
+
+    updateFeatureUI("adBlock");
+
+    updateFeatureUI("incognito");
 
 }
 
@@ -4561,184 +4704,188 @@ settings.adBlock
    AI
 ===================================================== */
 
-function aiKey(event){
+function openAIAssistant(){
 
-if(event.key==="Enter"){
+    const input=
+        document.getElementById("aiInput");
 
-askAI();
+    window.scrollTo({
+        top:document.querySelector(".ai-card")
+            ?document.querySelector(".ai-card").offsetTop-80
+            :0,
+        behavior:"smooth"
+    });
+
+    setTimeout(()=>{
+        if(input)input.focus();
+    },350);
 
 }
+
+
+function aiKey(event){
+
+    if(event.key==="Enter"){
+
+        event.preventDefault();
+
+        askAI();
+
+    }
 
 }
 
 
 function addAIMessage(text,type){
 
-const chat=
-document.getElementById(
-"aiChat"
-);
+    const chat=
+        document.getElementById("aiChat");
+
+    if(!chat)return;
 
 
-const message=
-document.createElement("div");
+    const message=
+        document.createElement("div");
+
+    message.className=
+        "ai-message " + type;
+
+    message.textContent=
+        String(text || "");
 
 
-message.className=
-"ai-message "+type;
+    chat.appendChild(message);
 
-
-message.textContent=text;
-
-
-chat.appendChild(message);
-
-
-chat.scrollTop=
-chat.scrollHeight;
+    chat.scrollTop=
+        chat.scrollHeight;
 
 }
 
-
-/*
-   AI CONNECTION ARCHITECTURE
-
-   1. Android native app can provide:
-
-      window.AndroidAI.ask(question)
-
-   2. A secure backend can provide:
-
-      /api/ai
-
-   3. This browser frontend does NOT contain
-      a secret OpenAI API key.
-*/
 
 async function askAI(){
 
-const input=
-document.getElementById(
-"aiInput"
-);
+    const input=
+        document.getElementById("aiInput");
+
+    if(!input)return;
 
 
-const question=
-input.value.trim();
+    const question=
+        input.value.trim();
+
+    if(!question){
+
+        input.focus();
+
+        return;
+
+    }
 
 
-if(!question){
+    addAIMessage(
+        question,
+        "user"
+    );
 
-input.focus();
-
-return;
-
-}
-
-
-addAIMessage(
-question,
-"user"
-);
+    input.value="";
 
 
-input.value="";
+    /*
+       Native Android AI bridge.
+    */
+
+    if(
+        window.AndroidAI &&
+        typeof window.AndroidAI.ask==="function"
+    ){
+
+        try{
+
+            const answer=
+                await window.AndroidAI.ask(
+                    question
+                );
+
+            addAIMessage(
+                answer ||
+                "I couldn't get an answer.",
+                "bot"
+            );
+
+            return;
+
+        }catch(error){
+
+            addAIMessage(
+                "AI connection failed.",
+                "bot"
+            );
+
+            return;
+
+        }
+
+    }
 
 
-/* Android/native bridge */
+    /*
+       Secure backend connection point.
+       Never put a private API key in this file.
+    */
 
-if(
-window.AndroidAI &&
-typeof window.AndroidAI.ask==="function"
-){
+    try{
 
-try{
+        const response=
+            await fetch(
+                "/api/ai",
+                {
+                    method:"POST",
 
-const answer=
-await window.AndroidAI.ask(
-question
-);
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
 
-
-addAIMessage(
-answer||"I couldn't get an answer.",
-"bot"
-);
-
-
-return;
-
-}
-catch(error){
-
-addAIMessage(
-"AI connection failed.",
-"bot"
-);
-
-return;
-
-}
-
-}
+                    body:JSON.stringify({
+                        message:question
+                    })
+                }
+            );
 
 
-/* Secure backend hook */
+        if(response.ok){
 
-try{
-
-const response=
-await fetch("/api/ai",{
-
-method:"POST",
-
-headers:{
-"Content-Type":
-"application/json"
-},
-
-body:JSON.stringify({
-message:question
-})
-
-});
+            const data=
+                await response.json();
 
 
-if(response.ok){
+            if(data && data.answer){
 
-const data=
-await response.json();
+                addAIMessage(
+                    data.answer,
+                    "bot"
+                );
 
+                return;
 
-if(data.answer){
+            }
 
-addAIMessage(
-data.answer,
-"bot"
-);
+        }
 
-return;
+    }catch(error){
 
-}
+        /* Backend not installed. */
 
-}
-
-}catch(error){
-
-/* Backend isn't installed yet. */
-
-}
+    }
 
 
-/* Temporary frontend response */
+    addAIMessage(
 
-addAIMessage(
+        "OrangeBrowse AI is ready, but the GPT connection has not been connected yet. Connect it through the Android/native bridge or a secure backend without exposing a private API key.",
 
-"OrangeBrowse AI is ready, but the GPT connection has not been connected yet. When we build the Android/iOS browser, we can connect this assistant to GPT through the native app or a secure backend without exposing a private API key.",
+        "bot"
 
-"bot"
-
-);
+    );
 
 }
 
@@ -4749,31 +4896,36 @@ addAIMessage(
 
 function jamaLaunchInfo(){
 
-openModal(
+    openModal(
 
-"JAMA Coin",
+        "JAMA Coin",
 
-`
+        `
 
-<div class="empty">
+        <div class="empty">
 
-<i class="fa-solid fa-rocket"></i>
+            <i class="fa-solid fa-rocket"></i>
 
-<h3 style="margin-bottom:10px;color:var(--text);">
-JAMA Coin — Launching Soon
-</h3>
+            <h3
+                style="margin-bottom:10px;color:var(--text);">
 
-<p>
-The JAMA Coin promotional area is ready.
-Official launch information can be added here
-when the project is ready.
-</p>
+                JAMA Coin — Launching Soon
 
-</div>
+            </h3>
 
-`
+            <p>
 
-);
+                The JAMA Coin promotional area is ready.
+                Official launch information can be added
+                here when the project is ready.
+
+            </p>
+
+        </div>
+
+        `
+
+    );
 
 }
 
@@ -4784,30 +4936,32 @@ when the project is ready.
 
 function openDownloads(){
 
-closeMenu();
+    closeMenu();
 
+    openModal(
 
-openModal(
+        "Downloads",
 
-"Downloads",
+        `
 
-`
+        <div class="empty">
 
-<div class="empty">
+            <i class="fa-solid fa-download"></i>
 
-<i class="fa-solid fa-download"></i>
+            <p>
 
-<p>
-Downloads will be connected to the native browser
-download manager when OrangeBrowse becomes an
-Android/iOS application.
-</p>
+                Downloads will be connected to the
+                native browser download manager when
+                OrangeBrowse becomes an Android/iOS
+                application.
 
-</div>
+            </p>
 
-`
+        </div>
 
-);
+        `
+
+    );
 
 }
 
@@ -4818,222 +4972,272 @@ Android/iOS application.
 
 function openSettings(){
 
-closeMenu();
+    closeMenu();
 
 
-openModal(
+    openModal(
 
-"Settings",
+        "Settings",
 
-`
+        `
 
-<div class="setting">
+        <div class="setting">
 
-<div class="setting-row">
+            <div class="setting-row">
 
-<div>
+                <div>
 
-<div class="setting-title">
-Search engine
-</div>
+                    <div class="setting-title">
+                        Search engine
+                    </div>
 
-<div class="setting-description">
-Choose your default search engine.
-</div>
+                    <div class="setting-description">
+                        Choose your default search engine.
+                    </div>
 
-</div>
+                </div>
 
+                <select
+                    id="settingsEngine"
+                    onchange="changeSearchEngine(this.value)">
 
-<select
-id="settingsEngine"
-onchange="changeSearchEngine(this.value)">
+                    <option value="google">
+                        Google
+                    </option>
 
-<option value="google">
-Google
-</option>
+                    <option value="bing">
+                        Bing
+                    </option>
 
-<option value="bing">
-Bing
-</option>
+                    <option value="duckduckgo">
+                        DuckDuckGo
+                    </option>
 
-<option value="duckduckgo">
-DuckDuckGo
-</option>
+                </select>
 
-</select>
+            </div>
 
-</div>
+        </div>
 
-</div>
 
+        <div class="setting">
 
-<div class="setting">
+            <div class="setting-row">
 
-<div class="setting-row">
+                <div>
 
-<div>
+                    <div class="setting-title">
+                        Ad blocker
+                    </div>
 
-<div class="setting-title">
-Ad blocker
-</div>
+                    <div class="setting-description">
+                        Control the browser ad-blocking preference.
+                    </div>
 
-<div class="setting-description">
-Control the browser ad-blocking preference.
-</div>
+                </div>
 
-</div>
+                <button
+                    class="icon-button"
+                    style="background:var(--bg);color:var(--text)"
+                    onclick="toggleAdBlock();openSettings()">
 
+                    <i class="fa-solid fa-shield-halved"></i>
 
-<button
-class="icon-button"
-style="background:var(--bg);color:var(--text)"
-onclick="toggleAdBlock();openSettings()">
+                </button>
 
-<i class="fa-solid fa-shield-halved"></i>
+            </div>
 
-</button>
+        </div>
 
-</div>
 
-</div>
+        <div class="setting">
 
+            <div class="setting-row">
 
-<div class="setting">
+                <div>
 
-<div class="setting-row">
+                    <div class="setting-title">
+                        Incognito mode
+                    </div>
 
-<div>
+                    <div class="setting-description">
+                        Do not add browsing activity to normal history.
+                    </div>
 
-<div class="setting-title">
-Incognito mode
-</div>
+                </div>
 
-<div class="setting-description">
-Do not add browsing activity to normal history.
-</div>
+                <button
+                    class="icon-button"
+                    style="background:var(--bg);color:var(--text)"
+                    onclick="toggleIncognito();openSettings()">
 
-</div>
+                    <i class="fa-solid fa-user-secret"></i>
 
+                </button>
 
-<button
-class="icon-button"
-style="background:var(--bg);color:var(--text)"
-onclick="toggleIncognito();openSettings()">
+            </div>
 
-<i class="fa-solid fa-user-secret"></i>
+        </div>
 
-</button>
 
-</div>
+        <div class="setting">
 
-</div>
+            <div class="setting-row">
 
+                <div>
 
-<div class="setting">
+                    <div class="setting-title">
+                        Data Saver
+                    </div>
 
-<div class="setting-title">
-Offline pages
-</div>
+                    <div class="setting-description">
+                        Reduce optional OrangeBrowse interface resources.
+                    </div>
 
-<div class="setting-description">
-Save the current page reference locally.
-</div>
+                </div>
 
-<button
-class="jama-button"
-style="margin-top:10px"
-onclick="saveCurrentOffline()">
+                <button
+                    class="icon-button"
+                    style="background:var(--bg);color:var(--text)"
+                    onclick="toggleFeature(null,'dataSaver');openSettings()">
 
-Save current page
+                    <i class="fa-solid fa-gauge-high"></i>
 
-</button>
+                </button>
 
-</div>
+            </div>
 
+        </div>
 
-<div class="setting">
 
-<div class="setting-row">
+        <div class="setting">
 
-<div>
+            <div class="setting-title">
+                Offline pages
+            </div>
 
-<div class="setting-title">
-Dark mode
-</div>
+            <div class="setting-description">
+                Save the current page reference locally.
+            </div>
 
-<div class="setting-description">
-Use a darker appearance.
-</div>
+            <button
+                class="jama-button"
+                style="margin-top:10px"
+                onclick="saveCurrentOffline()">
 
-</div>
+                Save current page
 
+            </button>
 
-<button
-class="icon-button"
-style="background:var(--bg);color:var(--text)"
-onclick="toggleDarkMode();openSettings()">
+        </div>
 
-<i class="fa-solid fa-moon"></i>
 
-</button>
+        <div class="setting">
 
-</div>
+            <div class="setting-row">
 
-</div>
+                <div>
 
+                    <div class="setting-title">
+                        Appearance
+                    </div>
 
-<div class="setting">
+                    <div class="setting-description">
+                        Switch between dark and light mode.
+                    </div>
 
-<div class="setting-title">
-Clear browsing data
-</div>
+                </div>
 
-<div class="setting-description">
-Remove locally stored history, bookmarks,
-closed tabs, offline pages and saved tabs.
-</div>
+                <button
+                    class="icon-button"
+                    style="background:var(--bg);color:var(--text)"
+                    onclick="toggleDarkMode();openSettings()">
 
-<button
-class="danger-button"
-onclick="clearAllData()">
+                    <i class="fa-solid fa-moon"></i>
 
-Clear all local browser data
+                </button>
 
-</button>
+            </div>
 
-</div>
+        </div>
 
-`
 
-);
+        <div class="setting">
 
+            <div class="setting-title">
+                Clear browsing data
+            </div>
 
-document.getElementById(
-"settingsEngine"
-).value=
-settings.engine||"google";
+            <div class="setting-description">
+                Remove locally stored history, bookmarks,
+                closed tabs, offline pages and saved tabs.
+            </div>
+
+            <button
+                class="danger-button"
+                onclick="clearAllData()">
+
+                Clear all local browser data
+
+            </button>
+
+        </div>
+
+        `
+
+    );
+
+
+    const engine=
+        document.getElementById(
+            "settingsEngine"
+        );
+
+    if(engine){
+
+        engine.value=
+            settings.engine || "google";
+
+    }
 
 }
 
 
+/* =====================================================
+   SEARCH ENGINE
+===================================================== */
+
 function changeSearchEngine(value){
 
-settings.engine=value;
+    if(
+        !["google","bing","duckduckgo"]
+        .includes(value)
+    ){
 
-save(
-STORAGE.settings,
-settings
-);
+        value="google";
 
-
-document.getElementById(
-"searchEngine"
-).value=value;
+    }
 
 
-showToast(
-"Search engine updated"
-);
+    settings.engine=value;
+
+    save(
+        STORAGE.settings,
+        settings
+    );
+
+
+    const engine=
+        document.getElementById("searchEngine");
+
+    if(engine){
+        engine.value=value;
+    }
+
+
+    showToast(
+        "Search engine updated"
+    );
 
 }
 
@@ -5044,95 +5248,105 @@ showToast(
 
 function toggleDarkMode(){
 
-settings.dark=
-!settings.dark;
+    settings.dark=
+        !settings.dark;
+
+    applyTheme();
+
+    save(
+        STORAGE.settings,
+        settings
+    );
+
+    updatePrivacyUI();
 
 
-document.body.classList.toggle(
-"dark",
-settings.dark
-);
+    showToast(
+        settings.dark
+        ? "Dark mode enabled"
+        : "Dark mode disabled"
+    );
+
+}
 
 
-save(
-STORAGE.settings,
-settings
-);
+function applyTheme(){
 
-
-showToast(
-
-settings.dark
-?
-"Dark mode enabled"
-:
-"Dark mode disabled"
-
-);
+    document.body.classList.toggle(
+        "dark",
+        !!settings.dark
+    );
 
 }
 
 
 /* =====================================================
-   CLEAR ALL DATA
+   SETTINGS APPLY
+===================================================== */
+
+function applySettings(){
+
+    applyTheme();
+
+
+    const engine=
+        document.getElementById("searchEngine");
+
+    if(engine){
+
+        engine.value=
+            settings.engine || "google";
+
+    }
+
+}
+
+
+/* =====================================================
+   CLEAR ALL
 ===================================================== */
 
 function clearAllData(){
 
-const confirmed=
-confirm(
-"Clear all locally saved OrangeBrowse data?"
-);
+    const confirmed=
+        confirm(
+            "Clear all locally saved OrangeBrowse data?"
+        );
+
+    if(!confirmed)return;
 
 
-if(!confirmed)return;
+    Object.values(STORAGE).forEach(key=>{
+        localStorage.removeItem(key);
+    });
 
 
-localStorage.removeItem(
-STORAGE.tabs
-);
+    tabs=[];
 
-localStorage.removeItem(
-STORAGE.activeTab
-);
+    bookmarks=[];
 
-localStorage.removeItem(
-STORAGE.bookmarks
-);
+    historyItems=[];
 
-localStorage.removeItem(
-STORAGE.history
-);
+    closedTabs=[];
 
-localStorage.removeItem(
-STORAGE.closedTabs
-);
-
-localStorage.removeItem(
-STORAGE.offlinePages
-);
+    offlinePages=[];
 
 
-tabs=[];
-
-bookmarks=[];
-
-historyItems=[];
-
-closedTabs=[];
-
-offlinePages=[];
+    activeTabId=null;
 
 
-createTab();
+    settings={
+        ...DEFAULT_SETTINGS
+    };
 
 
-closeModal();
+    createTab(false);
 
+    closeModal();
 
-showToast(
-"Browser data cleared"
-);
+    showToast(
+        "Browser data cleared"
+    );
 
 }
 
@@ -5143,35 +5357,42 @@ showToast(
 
 function openMenu(){
 
-document
-.getElementById(
-"menuOverlay"
-)
-.classList.add("open");
+    const overlay=
+        document.getElementById(
+            "menuOverlay"
+        );
+
+    if(overlay){
+        overlay.classList.add("open");
+    }
 
 }
 
 
 function closeMenu(){
 
-document
-.getElementById(
-"menuOverlay"
-)
-.classList.remove("open");
+    const overlay=
+        document.getElementById(
+            "menuOverlay"
+        );
+
+    if(overlay){
+        overlay.classList.remove("open");
+    }
 
 }
 
 
 function closeMenuOutside(event){
 
-if(
-event.target.id==="menuOverlay"
-){
+    if(
+        event.target &&
+        event.target.id==="menuOverlay"
+    ){
 
-closeMenu();
+        closeMenu();
 
-}
+    }
 
 }
 
@@ -5182,92 +5403,87 @@ closeMenu();
 
 function openModal(title,content){
 
-document.getElementById(
-"modalTitle"
-).textContent=title;
+    const titleElement=
+        document.getElementById(
+            "modalTitle"
+        );
+
+    const contentElement=
+        document.getElementById(
+            "modalContent"
+        );
+
+    const modal=
+        document.getElementById("modal");
 
 
-document.getElementById(
-"modalContent"
-).innerHTML=content;
+    if(titleElement){
+        titleElement.textContent=title;
+    }
 
+    if(contentElement){
+        contentElement.innerHTML=content;
+    }
 
-document.getElementById(
-"modal"
-).classList.add("show");
+    if(modal){
+        modal.classList.add("show");
+    }
 
 }
 
 
 function closeModal(){
 
-document.getElementById(
-"modal"
-).classList.remove("show");
+    const modal=
+        document.getElementById("modal");
+
+    if(modal){
+        modal.classList.remove("show");
+    }
 
 }
 
 
 /* =====================================================
-   BROWSER CONTROLS
-===================================================== */
-
-function goBack(){
-
-window.history.back();
-
-}
-
-
-function goForward(){
-
-window.history.forward();
-
-}
-
-
-function reloadPage(){
-
-location.reload();
-
-}
-
-
-/* =====================================================
-   NETWORK STATUS
+   NETWORK
 ===================================================== */
 
 function updateNetworkStatus(){
 
-const status=
-document.getElementById(
-"offlineStatus"
-);
+    const status=
+        document.getElementById(
+            "offlineStatus"
+        );
+
+    if(!status)return;
 
 
-if(!navigator.onLine){
+    if(!navigator.onLine){
 
-status.classList.add("show");
+        status.classList.add("show");
 
-}
-else{
+        status.innerHTML=`
+            <i class="fa-solid fa-wifi"></i>
+            <span>Offline mode</span>
+        `;
 
-status.classList.remove("show");
+    }else{
 
-}
+        status.classList.remove("show");
+
+    }
 
 }
 
 
 window.addEventListener(
-"online",
-updateNetworkStatus
+    "online",
+    updateNetworkStatus
 );
 
-
 window.addEventListener(
-"offline",
-updateNetworkStatus
+    "offline",
+    updateNetworkStatus
 );
 
 
@@ -5275,74 +5491,52 @@ updateNetworkStatus
    TOAST
 ===================================================== */
 
-let toastTimer;
-
-
 function showToast(message){
 
-const toast=
-document.getElementById(
-"toast"
-);
+    const toast=
+        document.getElementById("toast");
+
+    const text=
+        document.getElementById("toastText");
 
 
-document.getElementById(
-"toastText"
-).textContent=message;
+    if(!toast || !text)return;
 
 
-toast.classList.add("show");
+    text.textContent=
+        String(message || "");
 
 
-clearTimeout(toastTimer);
+    toast.classList.add("show");
 
 
-toastTimer=
-setTimeout(
+    clearTimeout(toastTimer);
 
-()=>{
 
-toast.classList.remove("show");
-
-},
-
-2200
-
-);
+    toastTimer=
+        setTimeout(
+            ()=>{
+                toast.classList.remove("show");
+            },
+            2200
+        );
 
 }
 
 
 /* =====================================================
-   ESCAPE
+   ESCAPE HELPERS
 ===================================================== */
 
 function escapeHTML(value){
 
-return String(value)
+    return String(value ?? "")
 
-.replace(/&/g,"&amp;")
-
-.replace(/</g,"&lt;")
-
-.replace(/>/g,"&gt;")
-
-.replace(/"/g,"&quot;")
-
-.replace(/'/g,"&#039;");
-
-}
-
-
-function escapeJS(value){
-
-return String(value)
-
-.replace(/\\/g,"\\\\")
-
-.replace(/'/g,"\\'")
-
-.replace(/"/g,'\\"');
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
 
 }
 
@@ -5352,64 +5546,82 @@ return String(value)
 ===================================================== */
 
 document.addEventListener(
-"keydown",
-function(event){
+    "keydown",
+    function(event){
+
+        if(
+            (event.ctrlKey || event.metaKey) &&
+            event.key.toLowerCase()==="l"
+        ){
+
+            event.preventDefault();
+
+            const input=
+                document.getElementById(
+                    "addressInput"
+                );
+
+            if(input){
+
+                input.focus();
+
+                input.select();
+
+            }
+
+        }
 
 
-if(
-(event.ctrlKey||event.metaKey)&&
-event.key.toLowerCase()==="l"
-){
+        if(
+            (event.ctrlKey || event.metaKey) &&
+            event.key.toLowerCase()==="t"
+        ){
 
-event.preventDefault();
+            event.preventDefault();
+
+            createTab();
+
+        }
 
 
-const input=
-document.getElementById(
-"addressInput"
+        if(
+            (event.ctrlKey || event.metaKey) &&
+            event.key.toLowerCase()==="w"
+        ){
+
+            event.preventDefault();
+
+            if(activeTabId){
+
+                closeTab(activeTabId);
+
+            }
+
+        }
+
+
+        if(
+            (event.ctrlKey || event.metaKey) &&
+            event.key.toLowerCase()==="r"
+        ){
+
+            event.preventDefault();
+
+            reloadPage();
+
+        }
+
+
+        if(event.key==="Escape"){
+
+            closeModal();
+
+            closeMenu();
+
+        }
+
+    }
 );
-
-
-input.focus();
-
-input.select();
-
-}
-
-
-if(
-(event.ctrlKey||event.metaKey)&&
-event.key.toLowerCase()==="t"
-){
-
-event.preventDefault();
-
-createTab();
-
-}
-
-
-if(
-(event.ctrlKey||event.metaKey)&&
-event.key.toLowerCase()==="w"
-){
-
-event.preventDefault();
-
-closeTab(activeTabId);
-
-}
-
-
-if(event.key==="Escape"){
-
-closeModal();
-
-closeMenu();
-
-}
-
-});
 
 
 /* =====================================================
@@ -5417,35 +5629,37 @@ closeMenu();
 ===================================================== */
 
 document
-.getElementById("modal")
-.addEventListener(
-"click",
-function(event){
+    .getElementById("modal")
+    .addEventListener(
+        "click",
+        function(event){
 
-if(event.target===this){
+            if(event.target===this){
 
-closeModal();
+                closeModal();
 
-}
+            }
 
-});
+        }
+    );
 
 
 /* =====================================================
-   SEARCH ENGINE
+   SEARCH ENGINE SELECT
 ===================================================== */
 
 document
-.getElementById("searchEngine")
-.addEventListener(
-"change",
-function(){
+    .getElementById("searchEngine")
+    .addEventListener(
+        "change",
+        function(){
 
-changeSearchEngine(
-this.value
-);
+            changeSearchEngine(
+                this.value
+            );
 
-});
+        }
+    );
 
 
 /* =====================================================
@@ -5453,126 +5667,166 @@ this.value
 ===================================================== */
 
 window.addEventListener(
-"beforeunload",
-function(){
+    "beforeunload",
+    function(){
 
-save(
-STORAGE.tabs,
-tabs
+        persistTabs();
+
+        save(
+            STORAGE.bookmarks,
+            bookmarks
+        );
+
+        save(
+            STORAGE.history,
+            historyItems
+        );
+
+        save(
+            STORAGE.closedTabs,
+            closedTabs
+        );
+
+        save(
+            STORAGE.offlinePages,
+            offlinePages
+        );
+
+        save(
+            STORAGE.settings,
+            settings
+        );
+
+    }
 );
-
-save(
-STORAGE.bookmarks,
-bookmarks
-);
-
-save(
-STORAGE.history,
-historyItems
-);
-
-save(
-STORAGE.closedTabs,
-closedTabs
-);
-
-save(
-STORAGE.offlinePages,
-offlinePages
-);
-
-save(
-STORAGE.settings,
-settings
-);
-
-
-localStorage.setItem(
-STORAGE.activeTab,
-activeTabId
-);
-
-});
-
-/* =====================================================
-   INITIALIZE APPLICATION
-===================================================== */
-
-initialize();
 
 
 /* =====================================================
-   APP STARTUP LOADER
+   LOADER
 ===================================================== */
 
-(function(){
+function initializeLoader(){
 
-    const loader = document.getElementById("appLoader");
+    const loader=
+        document.getElementById(
+            "appLoader"
+        );
 
-    if(!loader) return;
+    if(!loader)return;
 
-    const loaderTitle = loader.querySelector(".loader-title");
+
+    const loaderTitle=
+        loader.querySelector(
+            ".loader-title"
+        );
+
 
     function updateLoaderTheme(){
 
-        if(document.body.classList.contains("dark")){
+        if(
+            document.body.classList.contains(
+                "dark"
+            )
+        ){
 
-            loader.classList.add("dark-loader");
-            loader.classList.remove("light-loader");
+            loader.classList.add(
+                "dark-loader"
+            );
+
+            loader.classList.remove(
+                "light-loader"
+            );
+
 
             if(loaderTitle){
-                loaderTitle.style.color = "#ffffff";
+
+                loaderTitle.style.color=
+                    "#ffffff";
+
             }
 
         }else{
 
-            loader.classList.add("light-loader");
-            loader.classList.remove("dark-loader");
+            loader.classList.add(
+                "light-loader"
+            );
+
+            loader.classList.remove(
+                "dark-loader"
+            );
+
 
             if(loaderTitle){
-                loaderTitle.style.color = "#111111";
+
+                loaderTitle.style.color=
+                    "#111111";
+
             }
 
         }
 
     }
 
+
     updateLoaderTheme();
 
-    const themeObserver = new MutationObserver(function(){
-        updateLoaderTheme();
-    });
 
-    themeObserver.observe(document.body,{
-        attributes:true,
-        attributeFilter:["class"]
-    });
+    const observer=
+        new MutationObserver(
+            updateLoaderTheme
+        );
 
-    requestAnimationFrame(function(){
 
-        requestAnimationFrame(function(){
+    observer.observe(
+        document.body,
+        {
+            attributes:true,
+            attributeFilter:["class"]
+        }
+    );
 
-            setTimeout(function(){
 
-                loader.classList.add("hide");
+    /*
+       Wait for the application to initialize,
+       then hide the loader.
+    */
 
-                setTimeout(function(){
+    setTimeout(
+        function(){
 
-                    themeObserver.disconnect();
+            loader.classList.add("hide");
+
+
+            setTimeout(
+                function(){
+
+                    observer.disconnect();
+
 
                     if(loader.parentNode){
+
                         loader.remove();
+
                     }
 
-                },500);
+                },
+                500
+            );
 
-            },900);
+        },
+        900
+    );
 
-        });
+}
 
-    });
 
-})();
+/* =====================================================
+   START APPLICATION
+===================================================== */
+
+initialize();
+
+initializeLoader();
 
 </script>
 
