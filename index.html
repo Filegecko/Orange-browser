@@ -3254,33 +3254,40 @@ body.dark .mobile-nav{
 
 <script>
 /* =====================================================
-   ORANGEBROWSE ENGINE
-   FULL INTEGRATED SEARCH-FIXED VERSION
-===================================================== */
-
-
-/* =====================================================
-   NETLIFY SEARCH SERVICE
+   ORANGEBROWSE SEARCH ENGINE
+   GitHub → Netlify → Render SearXNG
 ===================================================== */
 
 /*
-   OrangeBrowse search backend.
+   IMPORTANT ARCHITECTURE
 
-   IMPORTANT:
-   This is intentionally a relative Netlify Function URL.
+   Frontend:
+   OrangeBrowse
 
-   Local:
+   Published through:
+   Netlify
+
+   Search endpoint:
    /.netlify/functions/search
 
-   Netlify:
-   /.netlify/functions/search
+   Backend search server:
+   https://orangebrowse-searxng.onrender.com
 
-   The browser therefore uses the same search endpoint
-   after deployment.
+   The browser DOES NOT directly call Render.
+   Netlify Function handles the request to Render.
 */
+
+
+/* =====================================================
+   SEARCH SERVICES
+===================================================== */
 
 const NETLIFY_SEARCH_ENDPOINT =
     "/.netlify/functions/search";
+
+
+const SEARXNG_URL =
+    "https://orangebrowse-searxng.onrender.com";
 
 
 const SEARCH_URLS = {
@@ -3475,7 +3482,6 @@ function safeURL(
                 location.href
             );
 
-
         if(
             u.protocol === "http:" ||
             u.protocol === "https:"
@@ -3486,7 +3492,6 @@ function safeURL(
         }
 
     }catch(e){}
-
 
     return "#";
 
@@ -3531,10 +3536,8 @@ function initialize(){
 
     applyTheme();
 
-
     const engine =
         $("searchEngine");
-
 
     if(engine){
 
@@ -3543,7 +3546,6 @@ function initialize(){
             "google";
 
     }
-
 
     bindForms();
 
@@ -3555,24 +3557,20 @@ function initialize(){
 
     updateConnection();
 
-
     window.addEventListener(
         "online",
         updateConnection
     );
-
 
     window.addEventListener(
         "offline",
         updateConnection
     );
 
-
     document.addEventListener(
         "keydown",
         handleGlobalKeys
     );
-
 
     requestAnimationFrame(()=>{
 
@@ -3580,7 +3578,6 @@ function initialize(){
 
             const loader =
                 $("appLoader");
-
 
             if(loader){
 
@@ -3593,7 +3590,6 @@ function initialize(){
         },650);
 
     });
-
 
     updateMobileNavigation();
 
@@ -3608,7 +3604,6 @@ function bindForms(){
 
     const mainForm =
         $("mainSearchForm");
-
 
     if(mainForm){
 
@@ -3629,7 +3624,6 @@ function bindForms(){
     const resultsForm =
         $("resultsSearchForm");
 
-
     if(resultsForm){
 
         resultsForm.addEventListener(
@@ -3649,7 +3643,6 @@ function bindForms(){
     const addressForm =
         $("addressForm");
 
-
     if(addressForm){
 
         addressForm.addEventListener(
@@ -3668,7 +3661,6 @@ function bindForms(){
 
     const aiInput =
         $("aiInput");
-
 
     if(aiInput){
 
@@ -3692,7 +3684,6 @@ function bindForms(){
 
     const searchEngine =
         $("searchEngine");
-
 
     if(searchEngine){
 
@@ -3744,15 +3735,14 @@ function performSearch(){
     const input =
         $("mainSearch");
 
-
     if(!input){
-        return;
-    }
 
+        return;
+
+    }
 
     const query =
         input.value.trim();
-
 
     if(!query){
 
@@ -3762,11 +3752,9 @@ function performSearch(){
 
     }
 
-
     state.currentCategory =
         state.currentCategory ||
         "general";
-
 
     searchQuery(
         query,
@@ -3787,19 +3775,17 @@ function submitResultsSearch(
 
     }
 
-
     const input =
         $("resultsSearchInput");
 
-
     if(!input){
-        return;
-    }
 
+        return;
+
+    }
 
     const query =
         input.value.trim();
-
 
     if(!query){
 
@@ -3808,7 +3794,6 @@ function submitResultsSearch(
         return;
 
     }
-
 
     searchQuery(
         query,
@@ -3828,20 +3813,20 @@ function addressSearch(){
     const input =
         $("addressInput");
 
-
     if(!input){
-        return;
-    }
 
+        return;
+
+    }
 
     const value =
         input.value.trim();
 
-
     if(!value){
-        return;
-    }
 
+        return;
+
+    }
 
     if(
         /^https?:\/\//i.test(value)
@@ -3852,7 +3837,6 @@ function addressSearch(){
         return;
 
     }
-
 
     if(
         /^[a-z0-9.-]+\.[a-z]{2,}(\/.*)?$/i
@@ -3866,7 +3850,6 @@ function addressSearch(){
         return;
 
     }
-
 
     searchQuery(
         value,
@@ -3899,7 +3882,6 @@ function buildEngineSearchURL(
                 .trim()
         );
 
-
     if(category === "images"){
 
         if(engine === "bing"){
@@ -3911,14 +3893,12 @@ function buildEngineSearchURL(
 
         }
 
-
         return (
             SEARCH_URLS.googleImages +
             encoded
         );
 
     }
-
 
     if(category === "news"){
 
@@ -3931,14 +3911,12 @@ function buildEngineSearchURL(
 
         }
 
-
         return (
             SEARCH_URLS.googleNews +
             encoded
         );
 
     }
-
 
     if(category === "videos"){
 
@@ -3951,14 +3929,12 @@ function buildEngineSearchURL(
 
         }
 
-
         return (
             SEARCH_URLS.googleVideos +
             encoded
         );
 
     }
-
 
     if(category === "map"){
 
@@ -3969,7 +3945,6 @@ function buildEngineSearchURL(
 
     }
 
-
     switch(engine){
 
         case "bing":
@@ -3979,14 +3954,12 @@ function buildEngineSearchURL(
                 encoded
             );
 
-
         case "duckduckgo":
 
             return (
                 SEARCH_URLS.duckduckgo +
                 encoded
             );
-
 
         case "google":
 
@@ -4003,34 +3976,21 @@ function buildEngineSearchURL(
 
 
 /* =====================================================
-   NETLIFY SEARCH URL
+   NETLIFY SEARCH REQUEST
 ===================================================== */
 
 function buildSearchURL(
-
     query,
-
-    category="general",
-
     page=1
-
 ){
 
     const params =
         new URLSearchParams();
 
-
     params.set(
         "q",
         String(query || "").trim()
     );
-
-
-    params.set(
-        "category",
-        String(category || "general")
-    );
-
 
     params.set(
         "page",
@@ -4042,6 +4002,11 @@ function buildSearchURL(
         )
     );
 
+    params.set(
+        "category",
+        state.currentCategory ||
+        "general"
+    );
 
     return (
         NETLIFY_SEARCH_ENDPOINT +
@@ -4065,7 +4030,6 @@ function openExternalSearch(
         settings.engine ||
         "google";
 
-
     const url =
         buildEngineSearchURL(
             engine,
@@ -4074,11 +4038,11 @@ function openExternalSearch(
             state.currentPage || 1
         );
 
-
     if(!url){
-        return;
-    }
 
+        return;
+
+    }
 
     window.location.href =
         url;
@@ -4105,29 +4069,25 @@ function searchQuery(
             query || ""
         ).trim();
 
-
     if(!query){
-        return;
-    }
 
+        return;
+
+    }
 
     state.currentQuery =
         query;
 
-
     state.currentPage =
         Number(page) || 1;
-
 
     state.currentCategory =
         state.currentCategory ||
         "general";
 
-
     if(pushHistory){
 
         pushSearchState(query);
-
 
         if(!settings.incognito){
 
@@ -4137,18 +4097,14 @@ function searchQuery(
 
     }
 
-
     const mainSearch =
         $("mainSearch");
-
 
     const resultsInput =
         $("resultsSearchInput");
 
-
     const addressInput =
         $("addressInput");
-
 
     if(mainSearch){
 
@@ -4157,14 +4113,12 @@ function searchQuery(
 
     }
 
-
     if(resultsInput){
 
         resultsInput.value =
             query;
 
     }
-
 
     if(addressInput){
 
@@ -4173,15 +4127,11 @@ function searchQuery(
 
     }
 
-
     syncCurrentTabToSearch(query);
-
 
     showSearchView();
 
-
     startSearchLoader();
-
 
     performRemoteSearch(
         query,
@@ -4203,7 +4153,6 @@ function pushSearchState(
     const stack =
         state.historyStack;
 
-
     if(
         state.historyIndex <
         stack.length - 1
@@ -4217,13 +4166,10 @@ function pushSearchState(
 
     }
 
-
     state.historyStack.push(query);
-
 
     state.historyIndex =
         state.historyStack.length - 1;
-
 
     updateNavigationButtons();
 
@@ -4243,53 +4189,51 @@ function goBack(){
 
         state.historyIndex--;
 
-
         const query =
             state.historyStack[
                 state.historyIndex
             ];
 
-
         state.currentQuery =
             query;
-
 
         const main =
             $("mainSearch");
 
-
         const resultInput =
             $("resultsSearchInput");
-
 
         const address =
             $("addressInput");
 
-
         if(main){
-            main.value = query;
-        }
 
+            main.value =
+                query;
+
+        }
 
         if(resultInput){
-            resultInput.value = query;
-        }
 
+            resultInput.value =
+                query;
+
+        }
 
         if(address){
-            address.value = query;
+
+            address.value =
+                query;
+
         }
 
-
         startSearchLoader();
-
 
         performRemoteSearch(
             query,
             1,
             false
         );
-
 
         updateNavigationButtons();
 
@@ -4299,7 +4243,6 @@ function goBack(){
 
     }
 
-
     if(state.searchActive){
 
         showHome();
@@ -4307,7 +4250,6 @@ function goBack(){
         return;
 
     }
-
 
     showToast(
         "Already at OrangeBrowse home"
@@ -4330,53 +4272,48 @@ function goForward(){
 
         state.historyIndex++;
 
-
         const query =
             state.historyStack[
                 state.historyIndex
             ];
 
-
         state.currentQuery =
             query;
-
 
         const main =
             $("mainSearch");
 
-
         const resultInput =
             $("resultsSearchInput");
-
 
         const address =
             $("addressInput");
 
-
         if(main){
-            main.value=query;
-        }
 
+            main.value=query;
+
+        }
 
         if(resultInput){
-            resultInput.value=query;
-        }
 
+            resultInput.value=query;
+
+        }
 
         if(address){
+
             address.value=query;
+
         }
 
-
         startSearchLoader();
-
 
         performRemoteSearch(
             query,
             1,
             false
         );
-
 
         updateNavigationButtons();
 
@@ -4385,7 +4322,6 @@ function goForward(){
         return;
 
     }
-
 
     showToast(
         "No forward search"
@@ -4403,10 +4339,8 @@ function updateNavigationButtons(){
     const back =
         $("backButton");
 
-
     const forward =
         $("forwardButton");
-
 
     if(
         !back ||
@@ -4416,7 +4350,6 @@ function updateNavigationButtons(){
         return;
 
     }
-
 
     if(!state.searchActive){
 
@@ -4428,12 +4361,10 @@ function updateNavigationButtons(){
 
     }
 
-
     back.style.opacity =
         state.historyIndex > 0
         ? "1"
         : ".45";
-
 
     forward.style.opacity =
         state.historyIndex <
@@ -4453,10 +4384,8 @@ function showSearchView(){
     const home =
         $("homeContent");
 
-
     const browserSearch =
         $("browserSearchView");
-
 
     if(home){
 
@@ -4466,7 +4395,6 @@ function showSearchView(){
 
     }
 
-
     if(browserSearch){
 
         browserSearch.classList.add(
@@ -4475,15 +4403,12 @@ function showSearchView(){
 
     }
 
-
     state.searchActive =
         true;
-
 
     updateMobileNavigation();
 
     updateNavigationButtons();
-
 
     window.scrollTo({
 
@@ -4505,10 +4430,8 @@ function showHome(){
     const browserSearch =
         $("browserSearchView");
 
-
     const home =
         $("homeContent");
-
 
     if(browserSearch){
 
@@ -4518,7 +4441,6 @@ function showHome(){
 
     }
 
-
     if(home){
 
         home.classList.remove(
@@ -4527,40 +4449,35 @@ function showHome(){
 
     }
 
-
     state.searchActive =
         false;
-
 
     state.currentQuery =
         "";
 
-
     const address =
         $("addressInput");
-
 
     const main =
         $("mainSearch");
 
-
     if(address){
-        address.value="";
-    }
 
+        address.value="";
+
+    }
 
     if(main){
+
         main.value="";
+
     }
 
-
     stopSearchLoader();
-
 
     updateMobileNavigation();
 
     updateNavigationButtons();
-
 
     window.scrollTo({
 
@@ -4588,22 +4505,17 @@ function startSearchLoader(){
 
     clearTimeout(loaderTimeout);
 
-
     state.loading =
         true;
-
 
     const bar =
         $("searchLoaderBar");
 
-
     const circle =
         $("searchLoaderCircle");
 
-
     const count =
         $("searchLoaderCount");
-
 
     if(bar){
 
@@ -4613,7 +4525,6 @@ function startSearchLoader(){
 
     }
 
-
     if(circle){
 
         circle.classList.add(
@@ -4622,9 +4533,7 @@ function startSearchLoader(){
 
     }
 
-
     let number=3;
-
 
     if(count){
 
@@ -4633,12 +4542,10 @@ function startSearchLoader(){
 
     }
 
-
     loaderTimer =
         setInterval(()=>{
 
             number--;
-
 
             if(
                 number >= 1 &&
@@ -4651,7 +4558,6 @@ function startSearchLoader(){
             }
 
         },700);
-
 
     loaderTimeout =
         setTimeout(()=>{
@@ -4674,18 +4580,14 @@ function stopSearchLoader(){
 
     clearTimeout(loaderTimeout);
 
-
     state.loading =
         false;
-
 
     const bar =
         $("searchLoaderBar");
 
-
     const circle =
         $("searchLoaderCircle");
-
 
     if(bar){
 
@@ -4694,7 +4596,6 @@ function stopSearchLoader(){
         );
 
     }
-
 
     if(circle){
 
@@ -4708,7 +4609,8 @@ function stopSearchLoader(){
 
 
 /* =====================================================
-   REMOTE NETLIFY SEARCH
+   REMOTE SEARCH
+   ORANGEBROWSE → NETLIFY → RENDER SEARXNG
 ===================================================== */
 
 async function performRemoteSearch(
@@ -4724,10 +4626,8 @@ async function performRemoteSearch(
     const generation =
         ++state.searchGeneration;
 
-
     query =
         String(query || "").trim();
-
 
     if(!query){
 
@@ -4736,7 +4636,6 @@ async function performRemoteSearch(
         return;
 
     }
-
 
     renderLoadingState(query);
 
@@ -4760,25 +4659,26 @@ async function performRemoteSearch(
     }
 
 
+    /* -------------------------------------------------
+       NETLIFY SEARCH FUNCTION
+    ------------------------------------------------- */
+
     try{
 
         const url =
             buildSearchURL(
                 query,
-                state.currentCategory || "general",
                 page
             );
 
-
         console.log(
-            "[OrangeBrowse] Netlify search:",
+            "[OrangeBrowse] Searching through Netlify:",
             url
         );
 
 
         const controller =
             new AbortController();
-
 
         const timeout =
             setTimeout(
@@ -4791,34 +4691,28 @@ async function performRemoteSearch(
 
         let response;
 
-
         try{
 
             response =
                 await fetch(
-
                     url,
-
                     {
-
                         method:"GET",
 
                         headers:{
-
                             "Accept":
                                 "application/json"
-
                         },
 
-                        cache:"no-store",
+                        credentials:
+                            "same-origin",
 
-                        credentials:"same-origin",
+                        cache:
+                            "no-store",
 
                         signal:
                             controller.signal
-
                     }
-
                 );
 
         }finally{
@@ -4829,19 +4723,18 @@ async function performRemoteSearch(
 
 
         console.log(
-            "[OrangeBrowse] HTTP status:",
+            "[OrangeBrowse] Netlify HTTP:",
             response.status
         );
 
 
         if(!response.ok){
 
-            let serverMessage = "";
-
+            let message="";
 
             try{
 
-                serverMessage =
+                message =
                     await response.text();
 
             }catch(e){}
@@ -4852,10 +4745,10 @@ async function performRemoteSearch(
                 "Netlify search HTTP " +
                 response.status +
                 (
-                    serverMessage
+                    message
                     ?
                     ": " +
-                    serverMessage.slice(0,300)
+                    message.slice(0,300)
                     :
                     ""
                 )
@@ -4890,19 +4783,17 @@ async function performRemoteSearch(
 
         let data;
 
-
         try{
 
             data =
                 JSON.parse(raw);
 
-        }catch(parseError){
+        }catch(error){
 
             console.error(
-                "[OrangeBrowse] Invalid search JSON:",
+                "[OrangeBrowse] Invalid JSON:",
                 raw.slice(0,1000)
             );
-
 
             throw new Error(
                 "Netlify search returned invalid JSON"
@@ -4928,7 +4819,7 @@ async function performRemoteSearch(
 
 
         const results =
-            normalizeSearchResults(data);
+            normalizeSearXResults(data);
 
 
         state.results =
@@ -4945,7 +4836,6 @@ async function performRemoteSearch(
                 page
             );
 
-
             if(
                 saveResult &&
                 !settings.incognito
@@ -4956,7 +4846,6 @@ async function performRemoteSearch(
                 );
 
             }
-
 
             return;
 
@@ -4973,7 +4862,7 @@ async function performRemoteSearch(
     }catch(error){
 
         console.error(
-            "[OrangeBrowse] Netlify search error:",
+            "[OrangeBrowse] Search error:",
             error
         );
 
@@ -5003,19 +4892,15 @@ async function performRemoteSearch(
 
 
 /* =====================================================
-   NORMALIZE NETLIFY SEARCH RESULTS
+   NORMALIZE SEARXNG / NETLIFY RESULTS
 ===================================================== */
 
-function normalizeSearchResults(
+function normalizeSearXResults(
     data
 ){
 
-    let rawResults = [];
+    let rawResults=[];
 
-
-    /*
-     * Primary saved-search structure.
-     */
 
     if(
         data &&
@@ -5029,12 +4914,6 @@ function normalizeSearchResults(
 
     }
 
-
-    /*
-     * Additional common response
-     * structures are accepted without
-     * changing the UI.
-     */
 
     if(
         !rawResults.length &&
@@ -5061,21 +4940,6 @@ function normalizeSearchResults(
 
         rawResults =
             data.data.results;
-
-    }
-
-
-    if(
-        !rawResults.length &&
-        data &&
-        data.data &&
-        Array.isArray(
-            data.data.items
-        )
-    ){
-
-        rawResults =
-            data.data.items;
 
     }
 
@@ -5159,7 +5023,6 @@ function normalizeSearchResults(
                     item.img_src ||
                     item.image ||
                     item.thumbnail_src ||
-                    item.image_url ||
                     "";
 
 
@@ -5172,21 +5035,27 @@ function normalizeSearchResults(
 
                 return {
 
-                    title:String(title),
+                    title:
+                        String(title),
 
-                    url:String(url),
+                    url:
+                        String(url),
 
-                    content:String(content),
+                    content:
+                        String(content),
 
-                    engine:String(engine),
+                    engine:
+                        String(engine),
 
-                    thumbnail:String(thumbnail),
+                    thumbnail:
+                        String(thumbnail),
 
                     template:
                         item.template ||
                         "",
 
-                    published:String(published)
+                    published:
+                        String(published)
 
                 };
 
@@ -5216,18 +5085,14 @@ function renderLoadingState(
     const label =
         $("resultsQueryLabel");
 
-
     const status =
         $("resultsStatus");
-
 
     const results =
         $("searchResults");
 
-
     const pagination =
         $("searchPagination");
-
 
     if(label){
 
@@ -5238,14 +5103,12 @@ function renderLoadingState(
 
     }
 
-
     if(status){
 
         status.textContent =
             "Loading…";
 
     }
-
 
     if(results){
 
@@ -5273,7 +5136,6 @@ function renderLoadingState(
 
     }
 
-
     if(pagination){
 
         pagination.innerHTML="";
@@ -5288,20 +5150,15 @@ function renderLoadingState(
 ===================================================== */
 
 function renderResults(
-
     results,
-
     page
-
 ){
 
     const label =
         $("resultsQueryLabel");
 
-
     const status =
         $("resultsStatus");
-
 
     if(label){
 
@@ -5313,7 +5170,6 @@ function renderResults(
             '"</strong>';
 
     }
-
 
     if(status){
 
@@ -5328,12 +5184,10 @@ function renderResults(
 
     }
 
-
     if(!results.length){
 
         const box =
             $("searchResults");
-
 
         if(box){
 
@@ -5366,17 +5220,14 @@ function renderResults(
 
         }
 
-
         const pagination =
             $("searchPagination");
-
 
         if(pagination){
 
             pagination.innerHTML="";
 
         }
-
 
         updateSearchFooter();
 
@@ -5422,7 +5273,6 @@ function renderResults(
         results.length
     );
 
-
     updateSearchFooter();
 
 }
@@ -5439,11 +5289,11 @@ function renderWebResults(
     const box =
         $("searchResults");
 
-
     if(!box){
-        return;
-    }
 
+        return;
+
+    }
 
     box.innerHTML =
         results.map(
@@ -5453,7 +5303,6 @@ function renderWebResults(
                     safeURL(
                         result.url
                     );
-
 
                 return `
 
@@ -5473,17 +5322,11 @@ function renderWebResults(
 
                         </div>
 
-
                         <a
-
                             class="web-result-title"
-
                             href="${url}"
-
                             target="_blank"
-
                             rel="noopener noreferrer"
-
                         >
 
                             ${escapeHTML(
@@ -5492,21 +5335,16 @@ function renderWebResults(
 
                         </a>
 
-
                         <div
                             class="web-result-description"
                         >
 
                             ${escapeHTML(
-
                                 result.content ||
-
                                 "Open this result to view the page."
-
                             )}
 
                         </div>
-
 
                         <div
                             class="web-result-source"
@@ -5560,9 +5398,10 @@ function renderImageResults(
     const box =
         $("searchResults");
 
-
     if(!box){
+
         return;
+
     }
 
 
@@ -5574,17 +5413,12 @@ function renderImageResults(
                 result=>`
 
                 <a
-
                     class="image-result"
-
                     href="${safeURL(
                         result.url
                     )}"
-
                     target="_blank"
-
                     rel="noopener noreferrer"
-
                 >
 
                     <div
@@ -5592,25 +5426,19 @@ function renderImageResults(
                     >
 
                         <img
-
                             src="${safeURL(
                                 result.thumbnail
                             )}"
-
                             alt="${escapeHTML(
                                 result.title
                             )}"
-
                             loading="lazy"
-
                             onerror="
                                 this.style.display='none';
                             "
-
                         >
 
                     </div>
-
 
                     <div
                         class="image-result-info"
@@ -5625,7 +5453,6 @@ function renderImageResults(
                             )}
 
                         </div>
-
 
                         <div
                             class="image-result-source"
@@ -5664,28 +5491,23 @@ function renderMediaResults(
     const box =
         $("searchResults");
 
-
     if(!box){
-        return;
-    }
 
+        return;
+
+    }
 
     box.innerHTML =
         results.map(
             result=>`
 
             <a
-
                 class="media-result"
-
                 href="${safeURL(
                     result.url
                 )}"
-
                 target="_blank"
-
                 rel="noopener noreferrer"
-
             >
 
                 <div
@@ -5698,15 +5520,11 @@ function renderMediaResults(
                         ?
 
                         `<img
-
                             src="${safeURL(
                                 result.thumbnail
                             )}"
-
                             alt=""
-
                             loading="lazy"
-
                         >`
 
                         :
@@ -5714,11 +5532,9 @@ function renderMediaResults(
                         `<i
                             class="fa-solid fa-play"
                         ></i>`
-
                     }
 
                 </div>
-
 
                 <div
                     class="media-content"
@@ -5734,7 +5550,6 @@ function renderMediaResults(
 
                     </div>
 
-
                     <div
                         class="media-description"
                     >
@@ -5744,7 +5559,6 @@ function renderMediaResults(
                         )}
 
                     </div>
-
 
                     <div
                         class="media-source"
@@ -5779,20 +5593,18 @@ function renderMapResults(
     const query =
         state.currentQuery;
 
-
     const mapURL =
         SEARCH_URLS.googleMaps +
         encodeURIComponent(query);
 
-
     const box =
         $("searchResults");
 
-
     if(!box){
-        return;
-    }
 
+        return;
+
+    }
 
     box.innerHTML = `
 
@@ -5808,27 +5620,21 @@ function renderMapResults(
 
             </div>
 
-
             <h3>
                 Search Google Maps
             </h3>
-
 
             <p>
                 Find places, businesses,
                 directions and locations.
             </p>
 
-
             <button
-
                 type="button"
-
                 onclick="
                     window.location.href=
                     ${JSON.stringify(mapURL)}
                 "
-
                 style="
                     margin-top:15px;
                     border:0;
@@ -5840,7 +5646,6 @@ function renderMapResults(
                     font-weight:700;
                     cursor:pointer;
                 "
-
             >
 
                 Open Google Maps
@@ -5854,7 +5659,6 @@ function renderMapResults(
 
     const pagination =
         $("searchPagination");
-
 
     if(pagination){
 
@@ -5870,21 +5674,18 @@ function renderMapResults(
 ===================================================== */
 
 function renderPagination(
-
     currentPage,
-
     resultCount
-
 ){
 
     const pagination =
         $("searchPagination");
 
-
     if(!pagination){
-        return;
-    }
 
+        return;
+
+    }
 
     if(!resultCount){
 
@@ -5894,23 +5695,18 @@ function renderPagination(
 
     }
 
-
     pagination.innerHTML = `
 
         <button
-
             class="page-button"
-
             onclick="
                 changePage(
                     ${currentPage - 1}
                 )
             "
-
             ${currentPage <= 1
                 ? "disabled"
                 : ""}
-
         >
 
             <i
@@ -5918,7 +5714,6 @@ function renderPagination(
             ></i>
 
         </button>
-
 
         <button
             class="page-button active"
@@ -5928,17 +5723,13 @@ function renderPagination(
 
         </button>
 
-
         <button
-
             class="page-button"
-
             onclick="
                 changePage(
                     ${currentPage + 1}
                 )
             "
-
         >
 
             <i
@@ -5959,7 +5750,6 @@ function changePage(
     page =
         Number(page);
 
-
     if(
         !Number.isFinite(page) ||
         page < 1
@@ -5969,20 +5759,16 @@ function changePage(
 
     }
 
-
     state.currentPage =
         page;
 
-
     startSearchLoader();
-
 
     performRemoteSearch(
         state.currentQuery,
         page,
         false
     );
-
 
     window.scrollTo({
 
@@ -6000,20 +5786,15 @@ function changePage(
 ===================================================== */
 
 function changeSearchCategory(
-
     category,
-
     button
-
 ){
 
     state.currentCategory =
         category || "general";
 
-
     state.currentPage =
         1;
-
 
     document
         .querySelectorAll(
@@ -6047,7 +5828,6 @@ function changeSearchCategory(
 
             );
 
-
         if(target){
 
             target.classList.add(
@@ -6062,7 +5842,6 @@ function changeSearchCategory(
     if(state.currentQuery){
 
         startSearchLoader();
-
 
         performRemoteSearch(
             state.currentQuery,
@@ -6080,71 +5859,27 @@ function changeSearchCategory(
 ===================================================== */
 
 function renderSearchFallback(
-
     query,
-
     empty=false,
-
     error=null
-
 ){
 
     const category =
         state.currentCategory ||
         "general";
 
-
     const engine =
         settings.engine ||
         "google";
 
-
-    const url =
-        buildEngineSearchURL(
-
-            engine,
-
-            query,
-
-            category,
-
-            state.currentPage || 1
-
-        );
-
-
-    const engineName =
-
-        engine === "bing"
-
-        ?
-
-        "Bing"
-
-        :
-
-        engine === "duckduckgo"
-
-        ?
-
-        "DuckDuckGo"
-
-        :
-
-        "Google";
-
-
     const label =
         $("resultsQueryLabel");
-
 
     const status =
         $("resultsStatus");
 
-
     const results =
         $("searchResults");
-
 
     const pagination =
         $("searchPagination");
@@ -6188,7 +5923,6 @@ function renderSearchFallback(
 
                 </div>
 
-
                 <h3>
 
                     ${
@@ -6201,7 +5935,6 @@ function renderSearchFallback(
 
                 </h3>
 
-
                 <p>
 
                     ${
@@ -6209,11 +5942,11 @@ function renderSearchFallback(
 
                         ?
 
-                        "Netlify search returned no usable results for this search."
+                        "SearXNG returned no usable results for this search."
 
                         :
 
-                        "OrangeBrowse could not connect to its search service."
+                        "OrangeBrowse could not connect to its Netlify search service."
 
                     }
 
@@ -6221,16 +5954,13 @@ function renderSearchFallback(
 
 
                 <button
-
                     type="button"
-
                     onclick="
                         openExternalSearch(
                             ${JSON.stringify(query)},
                             ${JSON.stringify(category)}
                         )
                     "
-
                     style="
                         margin-top:15px;
                         border:0;
@@ -6242,11 +5972,22 @@ function renderSearchFallback(
                         font-weight:700;
                         cursor:pointer;
                     "
-
                 >
 
                     Search
-                    ${escapeHTML(engineName)}
+                    ${
+                        escapeHTML(
+                            engine === "bing"
+                            ?
+                            "Bing"
+                            :
+                            engine === "duckduckgo"
+                            ?
+                            "DuckDuckGo"
+                            :
+                            "Google"
+                        )
+                    }
 
                 </button>
 
@@ -6357,7 +6098,6 @@ function addSearchHistory(
     let history =
         getHistory();
 
-
     history =
         history.filter(
 
@@ -6372,7 +6112,6 @@ function addSearchHistory(
 
         );
 
-
     history.unshift({
 
         query:query,
@@ -6381,19 +6120,16 @@ function addSearchHistory(
 
     });
 
-
     history =
         history.slice(
             0,
             5
         );
 
-
     saveJSON(
         STORAGE.history,
         history
     );
-
 
     renderHistory();
 
@@ -6405,38 +6141,32 @@ function renderHistory(){
     const box =
         $("recentSearches");
 
-
     const list =
         $("recentList");
 
-
     if(!box || !list){
-        return;
-    }
 
+        return;
+
+    }
 
     const history =
         getHistory();
-
 
     if(!history.length){
 
         box.style.display =
             "none";
 
-
         list.innerHTML =
             "";
-
 
         return;
 
     }
 
-
     box.style.display =
         "block";
-
 
     list.innerHTML =
         history.map(
@@ -6457,17 +6187,13 @@ function renderHistory(){
 
                 </div>
 
-
                 <div
-
                     class="recent-content"
-
                     onclick="
                         searchFromHistory(
                             ${index}
                         )
                     "
-
                 >
 
                     <div
@@ -6479,7 +6205,6 @@ function renderHistory(){
                         )}
 
                     </div>
-
 
                     <div
                         class="recent-time"
@@ -6493,17 +6218,13 @@ function renderHistory(){
 
                 </div>
 
-
                 <button
-
                     class="recent-remove"
-
                     onclick="
                         removeHistory(
                             ${index}
                         )
                     "
-
                 >
 
                     <i
@@ -6527,11 +6248,11 @@ function searchFromHistory(
     const history =
         getHistory();
 
-
     if(!history[index]){
-        return;
-    }
 
+        return;
+
+    }
 
     searchQuery(
         history[index].query,
@@ -6549,18 +6270,15 @@ function removeHistory(
     const history =
         getHistory();
 
-
     history.splice(
         index,
         1
     );
 
-
     saveJSON(
         STORAGE.history,
         history
     );
-
 
     renderHistory();
 
@@ -6573,9 +6291,7 @@ function clearHistory(){
         STORAGE.history
     );
 
-
     renderHistory();
-
 
     showToast(
         "Recent searches cleared"
@@ -6594,19 +6310,16 @@ function formatHistoryTime(
             Date.now() - Number(time)
         );
 
-
     const minute =
         Math.floor(
             diff / 60000
         );
-
 
     if(minute < 1){
 
         return "Just now";
 
     }
-
 
     if(minute < 60){
 
@@ -6623,12 +6336,10 @@ function formatHistoryTime(
 
     }
 
-
     const hour =
         Math.floor(
             minute / 60
         );
-
 
     if(hour < 24){
 
@@ -6644,7 +6355,6 @@ function formatHistoryTime(
         );
 
     }
-
 
     return new Date(
         time
@@ -6662,10 +6372,8 @@ function updateConnection(){
     const online =
         navigator.onLine;
 
-
     const offline =
         $("offlineStatus");
-
 
     if(offline){
 
@@ -6676,18 +6384,14 @@ function updateConnection(){
 
     }
 
-
     const icon =
         $("connectionIcon");
-
 
     const title =
         $("connectionTitle");
 
-
     const message =
         $("connectionMessage");
-
 
     if(
         icon &&
@@ -6700,10 +6404,8 @@ function updateConnection(){
             icon.className =
                 "fa-solid fa-wifi";
 
-
             title.textContent =
                 "Online";
-
 
             message.textContent =
                 "Your device appears to be connected to the internet.";
@@ -6713,10 +6415,8 @@ function updateConnection(){
             icon.className =
                 "fa-solid fa-wifi-slash";
 
-
             title.textContent =
                 "Offline";
-
 
             message.textContent =
                 "No active internet connection was detected.";
@@ -6725,11 +6425,9 @@ function updateConnection(){
 
     }
 
-
     showConnectionPopup(
         online
     );
-
 
     updateSearchFooter();
 
@@ -6746,21 +6444,19 @@ function showConnectionPopup(
     const popup =
         $("connectionPopup");
 
-
     if(!popup){
-        return;
-    }
 
+        return;
+
+    }
 
     popup.classList.add(
         "show"
     );
 
-
     clearTimeout(
         connectionPopupTimer
     );
-
 
     connectionPopupTimer =
         setTimeout(()=>{
@@ -6783,15 +6479,14 @@ function updateSearchFooter(){
     const footer =
         $("searchFooterLocation");
 
-
     if(!footer){
-        return;
-    }
 
+        return;
+
+    }
 
     const now =
         new Date();
-
 
     const status =
         navigator.onLine
@@ -6799,7 +6494,6 @@ function updateSearchFooter(){
         "Online"
         :
         "Offline";
-
 
     footer.innerHTML = `
 
@@ -6853,7 +6547,6 @@ function clearAddress(){
     const input =
         $("addressInput");
 
-
     if(input){
 
         input.value="";
@@ -6878,7 +6571,6 @@ function navigateTo(
         const parsed =
             new URL(url);
 
-
         if(
             parsed.protocol !== "http:" &&
             parsed.protocol !== "https:"
@@ -6889,7 +6581,6 @@ function navigateTo(
             );
 
         }
-
 
         window.location.href =
             parsed.href;
@@ -6916,7 +6607,6 @@ function refreshApp(){
         if(state.currentQuery){
 
             startSearchLoader();
-
 
             performRemoteSearch(
                 state.currentQuery,
@@ -6960,7 +6650,6 @@ function initializeTabs(){
     let tabs =
         getTabs();
 
-
     if(!tabs.length){
 
         tabs=[{
@@ -6976,12 +6665,10 @@ function initializeTabs(){
 
         }];
 
-
         saveJSON(
             STORAGE.tabs,
             tabs
         );
-
 
         localStorage.setItem(
             STORAGE.activeTab,
@@ -6990,7 +6677,6 @@ function initializeTabs(){
 
     }
 
-
     state.currentTabId =
 
         localStorage.getItem(
@@ -6998,7 +6684,6 @@ function initializeTabs(){
         ) ||
 
         tabs[0].id;
-
 
     renderTabs();
 
@@ -7010,19 +6695,17 @@ function renderTabs(){
     const container =
         $("tabsContainer");
 
-
     if(!container){
-        return;
-    }
 
+        return;
+
+    }
 
     const tabs =
         getTabs();
 
-
     container.innerHTML =
         "";
-
 
     tabs.forEach(
         tab=>{
@@ -7031,7 +6714,6 @@ function renderTabs(){
                 document.createElement(
                     "div"
                 );
-
 
             div.className =
                 "tab" +
@@ -7043,7 +6725,6 @@ function renderTabs(){
                     :
                     ""
                 );
-
 
             div.innerHTML = `
 
@@ -7057,7 +6738,6 @@ function renderTabs(){
 
                 </div>
 
-
                 <div
                     class="tab-title"
                 >
@@ -7068,13 +6748,9 @@ function renderTabs(){
 
                 </div>
 
-
                 <button
-
                     class="tab-close"
-
                     aria-label="Close tab"
-
                 >
 
                     <i
@@ -7084,7 +6760,6 @@ function renderTabs(){
                 </button>
 
             `;
-
 
             div.addEventListener(
                 "click",
@@ -7100,7 +6775,6 @@ function renderTabs(){
 
                     }
 
-
                     activateTab(
                         tab.id
                     );
@@ -7108,12 +6782,10 @@ function renderTabs(){
                 }
             );
 
-
             const close =
                 div.querySelector(
                     ".tab-close"
                 );
-
 
             if(close){
 
@@ -7132,7 +6804,6 @@ function renderTabs(){
 
             }
 
-
             container.appendChild(div);
 
         }
@@ -7144,18 +6815,14 @@ function renderTabs(){
             "button"
         );
 
-
     newButton.className =
         "new-tab-button";
-
 
     newButton.innerHTML =
         '<i class="fa-solid fa-plus"></i>';
 
-
     newButton.onclick =
         createTab;
-
 
     container.appendChild(
         newButton
@@ -7169,13 +6836,11 @@ function createTab(){
     const tabs =
         getTabs();
 
-
     const id =
         Date.now().toString() +
         Math.random()
             .toString(36)
             .slice(2);
-
 
     tabs.push({
 
@@ -7187,34 +6852,28 @@ function createTab(){
 
     });
 
-
     saveJSON(
         STORAGE.tabs,
         tabs
     );
-
 
     localStorage.setItem(
         STORAGE.activeTab,
         id
     );
 
-
     state.currentTabId =
         id;
-
 
     state.historyStack=[];
 
     state.historyIndex=-1;
-
 
     showHome();
 
     renderTabs();
 
     closeMenu();
-
 
 }
 
@@ -7226,30 +6885,26 @@ function activateTab(
     const tabs =
         getTabs();
 
-
     const tab =
         tabs.find(
             item=>item.id===id
         );
 
-
     if(!tab){
-        return;
-    }
 
+        return;
+
+    }
 
     state.currentTabId =
         id;
-
 
     localStorage.setItem(
         STORAGE.activeTab,
         id
     );
 
-
     renderTabs();
-
 
     if(
         tab.url ===
@@ -7274,7 +6929,6 @@ function activateTab(
                 )
             );
 
-
         searchQuery(
             query,
             false,
@@ -7293,12 +6947,10 @@ function closeTab(
     let tabs =
         getTabs();
 
-
     const closed =
         tabs.find(
             item=>item.id===id
         );
-
 
     if(closed){
 
@@ -7308,18 +6960,15 @@ function closeTab(
                 []
             );
 
-
         recent.unshift(
             closed
         );
-
 
         recent =
             recent.slice(
                 0,
                 10
             );
-
 
         saveJSON(
             STORAGE.closed,
@@ -7328,12 +6977,10 @@ function closeTab(
 
     }
 
-
     tabs =
         tabs.filter(
             item=>item.id!==id
         );
-
 
     if(!tabs.length){
 
@@ -7352,7 +6999,6 @@ function closeTab(
 
     }
 
-
     if(
         !tabs.some(
             item=>
@@ -7366,18 +7012,15 @@ function closeTab(
 
     }
 
-
     saveJSON(
         STORAGE.tabs,
         tabs
     );
 
-
     localStorage.setItem(
         STORAGE.activeTab,
         state.currentTabId
     );
-
 
     renderTabs();
 
@@ -7407,7 +7050,6 @@ function bookmarkCurrent(){
     let bookmarks =
         getBookmarks();
 
-
     const url =
         state.searchActive
         ?
@@ -7418,14 +7060,12 @@ function bookmarkCurrent(){
         :
         "orangebrowse://home";
 
-
     const title =
         state.searchActive
         ?
         state.currentQuery
         :
         "OrangeBrowse";
-
 
     if(
         bookmarks.some(
@@ -7442,7 +7082,6 @@ function bookmarkCurrent(){
 
     }
 
-
     bookmarks.unshift({
 
         title:title,
@@ -7453,12 +7092,10 @@ function bookmarkCurrent(){
 
     });
 
-
     saveJSON(
         STORAGE.bookmarks,
         bookmarks
     );
-
 
     showToast(
         "Added to bookmarks"
@@ -7471,10 +7108,8 @@ function openBookmarks(){
 
     closeMenu();
 
-
     const bookmarks =
         getBookmarks();
-
 
     openModal(
 
@@ -7504,23 +7139,18 @@ function openBookmarks(){
 
                     </div>
 
-
                     <div
                         class="data-content"
                     >
 
                         <div
-
                             class="data-title"
-
                             onclick="
                                 openBookmark(
                                     ${index}
                                 )
                             "
-
                             style="cursor:pointer"
-
                         >
 
                             ${escapeHTML(
@@ -7528,7 +7158,6 @@ function openBookmarks(){
                             )}
 
                         </div>
-
 
                         <div
                             class="data-url"
@@ -7542,17 +7171,13 @@ function openBookmarks(){
 
                     </div>
 
-
                     <button
-
                         class="data-delete"
-
                         onclick="
                             deleteBookmark(
                                 ${index}
                             )
                         "
-
                     >
 
                         <i
@@ -7586,11 +7211,9 @@ function openBookmarks(){
 
             </div>
 
-
             <h3>
                 No bookmarks
             </h3>
-
 
             <p>
                 Save a search or page with the star button.
@@ -7612,18 +7235,16 @@ function openBookmark(
     const bookmarks =
         getBookmarks();
 
-
     const item =
         bookmarks[index];
 
-
     if(!item){
+
         return;
+
     }
 
-
     closeModal();
-
 
     if(
         item.url.startsWith(
@@ -7662,18 +7283,15 @@ function deleteBookmark(
     const bookmarks =
         getBookmarks();
 
-
     bookmarks.splice(
         index,
         1
     );
 
-
     saveJSON(
         STORAGE.bookmarks,
         bookmarks
     );
-
 
     openBookmarks();
 
@@ -7688,10 +7306,8 @@ function openHistory(){
 
     closeMenu();
 
-
     const history =
         getHistory();
-
 
     openModal(
 
@@ -7721,24 +7337,19 @@ function openHistory(){
 
                     </div>
 
-
                     <div
                         class="data-content"
                     >
 
                         <div
-
                             class="data-title"
-
                             onclick="
                                 searchFromHistory(
                                     ${index}
                                 );
                                 closeModal()
                             "
-
                             style="cursor:pointer"
-
                         >
 
                             ${escapeHTML(
@@ -7746,7 +7357,6 @@ function openHistory(){
                             )}
 
                         </div>
-
 
                         <div
                             class="data-url"
@@ -7785,11 +7395,9 @@ function openHistory(){
 
             </div>
 
-
             <h3>
                 No search history
             </h3>
-
 
             <p>
                 Your recent searches will appear here.
@@ -7812,13 +7420,11 @@ function openRecentlyClosed(){
 
     closeMenu();
 
-
     const closed =
         loadJSON(
             STORAGE.closed,
             []
         );
-
 
     openModal(
 
@@ -7848,23 +7454,18 @@ function openRecentlyClosed(){
 
                     </div>
 
-
                     <div
                         class="data-content"
                     >
 
                         <div
-
                             class="data-title"
-
                             onclick="
                                 restoreClosedTab(
                                     ${index}
                                 )
                             "
-
                             style="cursor:pointer"
-
                         >
 
                             ${escapeHTML(
@@ -7872,7 +7473,6 @@ function openRecentlyClosed(){
                             )}
 
                         </div>
-
 
                         <div
                             class="data-url"
@@ -7914,38 +7514,32 @@ function restoreClosedTab(
             []
         );
 
-
     const item =
         closed[index];
 
-
     if(!item){
-        return;
-    }
 
+        return;
+
+    }
 
     const tabs =
         getTabs();
 
-
     tabs.push(item);
-
 
     saveJSON(
         STORAGE.tabs,
         tabs
     );
 
-
     state.currentTabId =
         item.id;
-
 
     localStorage.setItem(
         STORAGE.activeTab,
         item.id
     );
-
 
     renderTabs();
 
@@ -7965,7 +7559,6 @@ function restoreClosedTab(
 function openDownloads(){
 
     closeMenu();
-
 
     openModal(
 
@@ -8000,7 +7593,6 @@ function openOfflinePages(){
 
     closeMenu();
 
-
     openModal(
 
         "Offline Pages",
@@ -8034,7 +7626,6 @@ function openSettings(){
 
     closeMenu();
 
-
     openModal(
 
         "Settings",
@@ -8057,7 +7648,6 @@ function openSettings(){
 
                 </div>
 
-
                 <select
                     onchange="
                         changeEngine(
@@ -8077,7 +7667,6 @@ function openSettings(){
                         Google
                     </option>
 
-
                     <option
                         value="bing"
                         ${
@@ -8088,7 +7677,6 @@ function openSettings(){
                     >
                         Bing
                     </option>
-
 
                     <option
                         value="duckduckgo"
@@ -8124,19 +7712,15 @@ function openSettings(){
 
                 </div>
 
-
                 <button
-
                     class="toggle ${
                         settings.dark
                         ? "active"
                         : ""
                     }"
-
                     onclick="
                         toggleDarkMode()
                     "
-
                 >
 
                     <span></span>
@@ -8149,13 +7733,10 @@ function openSettings(){
 
 
         <button
-
             class="danger-button"
-
             onclick="
                 clearAllOrangeBrowseData()
             "
-
         >
 
             Clear OrangeBrowse local data
@@ -8185,20 +7766,16 @@ function changeEngine(
 
     }
 
-
     settings.engine =
         value;
-
 
     saveJSON(
         STORAGE.settings,
         settings
     );
 
-
     const select =
         $("searchEngine");
-
 
     if(select){
 
@@ -8206,7 +7783,6 @@ function changeEngine(
             value;
 
     }
-
 
     showToast(
 
@@ -8244,16 +7820,13 @@ function toggleFeature(
 
     }
 
-
     settings[feature] =
         !settings[feature];
-
 
     saveJSON(
         STORAGE.settings,
         settings
     );
-
 
     updateFeatureUI();
 
@@ -8289,14 +7862,11 @@ function updateFeatureUI(){
             const ids =
                 map[feature];
 
-
             const button =
                 $(ids[0]);
 
-
             const label =
                 $(ids[1]);
-
 
             if(
                 !button ||
@@ -8307,12 +7877,10 @@ function updateFeatureUI(){
 
             }
 
-
             button.classList.toggle(
                 "active",
                 !!settings[feature]
             );
-
 
             label.textContent =
                 settings[feature]
@@ -8329,7 +7897,6 @@ function updateFeatureUI(){
     const incognitoText =
         $("incognitoMenuText");
 
-
     if(incognitoText){
 
         incognitoText.textContent =
@@ -8345,7 +7912,6 @@ function updateFeatureUI(){
     const adBlockText =
         $("adBlockMenuText");
 
-
     if(adBlockText){
 
         adBlockText.textContent =
@@ -8360,7 +7926,6 @@ function updateFeatureUI(){
 
     const darkText =
         $("darkModeMenuText");
-
 
     if(darkText){
 
@@ -8381,17 +7946,14 @@ function toggleIncognito(){
     settings.incognito =
         !settings.incognito;
 
-
     saveJSON(
         STORAGE.settings,
         settings
     );
 
-
     updateFeatureUI();
 
     closeMenu();
-
 
     showToast(
 
@@ -8411,17 +7973,14 @@ function toggleAdBlock(){
     settings.adBlock =
         !settings.adBlock;
 
-
     saveJSON(
         STORAGE.settings,
         settings
     );
 
-
     updateFeatureUI();
 
     closeMenu();
-
 
     showToast(
 
@@ -8441,12 +8000,10 @@ function toggleDarkMode(){
     settings.dark =
         !settings.dark;
 
-
     saveJSON(
         STORAGE.settings,
         settings
     );
-
 
     applyTheme();
 
@@ -8462,10 +8019,8 @@ function applyTheme(){
         !!settings.dark
     );
 
-
     const loader =
         $("appLoader");
-
 
     if(loader){
 
@@ -8488,29 +8043,29 @@ function askAI(){
     const input =
         $("aiInput");
 
-
     if(!input){
-        return;
-    }
 
+        return;
+
+    }
 
     const text =
         input.value.trim();
 
-
     if(!text){
-        return;
-    }
 
+        return;
+
+    }
 
     const chat =
         $("aiChat");
 
-
     if(!chat){
-        return;
-    }
 
+        return;
+
+    }
 
     chat.insertAdjacentHTML(
 
@@ -8528,9 +8083,7 @@ function askAI(){
 
     );
 
-
     input.value="";
-
 
     setTimeout(()=>{
 
@@ -8555,12 +8108,10 @@ function askAI(){
 
         );
 
-
         chat.scrollTop =
             chat.scrollHeight;
 
     },500);
-
 
     chat.scrollTop =
         chat.scrollHeight;
@@ -8572,14 +8123,12 @@ function openAIAssistant(){
 
     showHome();
 
-
     setTimeout(()=>{
 
         const target =
             document.querySelector(
                 ".ai-card"
             );
-
 
         if(target){
 
@@ -8593,10 +8142,8 @@ function openAIAssistant(){
 
         }
 
-
         const input =
             $("aiInput");
-
 
         if(input){
 
@@ -8648,7 +8195,6 @@ function openMenu(){
     const overlay =
         $("menuOverlay");
 
-
     if(overlay){
 
         overlay.classList.add(
@@ -8664,7 +8210,6 @@ function closeMenu(){
 
     const overlay =
         $("menuOverlay");
-
 
     if(overlay){
 
@@ -8705,14 +8250,11 @@ function openModal(
     const titleBox =
         $("modalTitle");
 
-
     const contentBox =
         $("modalContent");
 
-
     const modal =
         $("modal");
-
 
     if(titleBox){
 
@@ -8721,14 +8263,12 @@ function openModal(
 
     }
 
-
     if(contentBox){
 
         contentBox.innerHTML =
             content;
 
     }
-
 
     if(modal){
 
@@ -8745,7 +8285,6 @@ function closeModal(){
 
     const modal =
         $("modal");
-
 
     if(modal){
 
@@ -8772,29 +8311,25 @@ function showToast(
     const toast =
         $("toast");
 
-
     const text =
         $("toastText");
 
-
     if(!toast || !text){
-        return;
-    }
 
+        return;
+
+    }
 
     text.textContent =
         message;
-
 
     toast.classList.add(
         "show"
     );
 
-
     clearTimeout(
         toastTimer
     );
-
 
     toastTimer =
         setTimeout(()=>{
@@ -8842,14 +8377,11 @@ function updateMobileNavigation(){
     const icon =
         $("mobileHomeIcon");
 
-
     const text =
         $("mobileHomeText");
 
-
     const button =
         $("mobileHomeButton");
-
 
     if(
         !icon ||
@@ -8861,7 +8393,6 @@ function updateMobileNavigation(){
 
     }
 
-
     if(state.searchActive){
 
         if(
@@ -8871,7 +8402,6 @@ function updateMobileNavigation(){
             icon.className =
                 "fa-solid fa-arrow-left";
 
-
             text.textContent =
                 "Back";
 
@@ -8880,12 +8410,10 @@ function updateMobileNavigation(){
             icon.className =
                 "fa-solid fa-house";
 
-
             text.textContent =
                 "Home";
 
         }
-
 
         button.classList.add(
             "active"
@@ -8896,10 +8424,8 @@ function updateMobileNavigation(){
         icon.className =
             "fa-solid fa-house";
 
-
         text.textContent =
             "Home";
-
 
         button.classList.add(
             "active"
@@ -8921,10 +8447,8 @@ function handleGlobalKeys(
     const modal =
         $("modal");
 
-
     const menu =
         $("menuOverlay");
-
 
     if(
         event.key === "Escape" &&
@@ -8938,7 +8462,6 @@ function handleGlobalKeys(
 
     }
 
-
     if(
         event.key === "Escape" &&
         menu &&
@@ -8951,7 +8474,6 @@ function handleGlobalKeys(
 
     }
 
-
     if(
         event.altKey &&
         event.key === "ArrowLeft"
@@ -8962,7 +8484,6 @@ function handleGlobalKeys(
         goBack();
 
     }
-
 
     if(
         event.altKey &&
@@ -8995,7 +8516,6 @@ window.addEventListener(
 
         }
 
-
         if(
             state.searchActive ||
             getTabs().length > 1
@@ -9022,11 +8542,11 @@ function clearAllOrangeBrowseData(){
             "Clear OrangeBrowse local history, bookmarks and saved tabs?"
         );
 
-
     if(!confirmed){
-        return;
-    }
 
+        return;
+
+    }
 
     [
 
@@ -9045,7 +8565,6 @@ function clearAllOrangeBrowseData(){
             localStorage.removeItem(key)
     );
 
-
     settings = {
 
         dark:false,
@@ -9060,12 +8579,10 @@ function clearAllOrangeBrowseData(){
 
     };
 
-
     saveJSON(
         STORAGE.settings,
         settings
     );
-
 
     location.reload();
 
@@ -9083,7 +8600,6 @@ function syncCurrentTabToSearch(
     const tabs =
         getTabs();
 
-
     const tab =
         tabs.find(
             item=>
@@ -9091,26 +8607,23 @@ function syncCurrentTabToSearch(
                 state.currentTabId
         );
 
-
     if(!tab){
-        return;
-    }
 
+        return;
+
+    }
 
     tab.title =
         query;
-
 
     tab.url =
         "search://" +
         encodeURIComponent(query);
 
-
     saveJSON(
         STORAGE.tabs,
         tabs
     );
-
 
     renderTabs();
 
@@ -9128,7 +8641,6 @@ document.addEventListener(
         if(!document.hidden){
 
             updateConnection();
-
 
             if(state.searchActive){
 
@@ -9169,67 +8681,34 @@ async function testSearXNG(){
     const url =
         buildSearchURL(
             "dog",
-            "general",
             1
         );
-
 
     console.log(
         "[OrangeBrowse] Testing Netlify search:",
         url
     );
 
-
     try{
 
-        const controller =
-            new AbortController();
+        const response =
+            await fetch(
+                url,
+                {
+                    method:"GET",
 
+                    headers:{
+                        "Accept":
+                            "application/json"
+                    },
 
-        const timeout =
-            setTimeout(
-                ()=>{
-                    controller.abort();
-                },
-                30000
+                    credentials:
+                        "same-origin",
+
+                    cache:
+                        "no-store"
+                }
             );
-
-
-        let response;
-
-
-        try{
-
-            response =
-                await fetch(
-
-                    url,
-
-                    {
-
-                        method:"GET",
-
-                        headers:{
-                            "Accept":
-                                "application/json"
-                        },
-
-                        cache:"no-store",
-
-                        credentials:"same-origin",
-
-                        signal:
-                            controller.signal
-
-                    }
-
-                );
-
-        }finally{
-
-            clearTimeout(timeout);
-
-        }
 
 
         const text =
@@ -9240,7 +8719,6 @@ async function testSearXNG(){
             "Netlify search status:",
             response.status
         );
-
 
         console.log(
             "Netlify search response:",
@@ -9253,20 +8731,14 @@ async function testSearXNG(){
             throw new Error(
                 "HTTP " +
                 response.status +
-                (
-                    text
-                    ?
-                    ": " + text.slice(0,300)
-                    :
-                    ""
-                )
+                ": " +
+                text.slice(0,300)
             );
 
         }
 
 
         let json;
-
 
         try{
 
@@ -9283,7 +8755,7 @@ async function testSearXNG(){
 
 
         const results =
-            normalizeSearchResults(json);
+            normalizeSearXResults(json);
 
 
         console.log(
@@ -9296,9 +8768,9 @@ async function testSearXNG(){
 
             results.length
             ?
-            "Netlify search connection works"
+            "Search connection works"
             :
-            "Netlify search responded but returned no results"
+            "Search connected but returned no results"
 
         );
 
@@ -9309,7 +8781,6 @@ async function testSearXNG(){
             "Netlify search test failed:",
             error
         );
-
 
         showToast(
             "Netlify search unavailable"
