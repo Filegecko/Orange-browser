@@ -1661,6 +1661,588 @@ body.dark .danger-button{
     }
 }
 
+  /* =====================================================
+   ORANGEBROWSE LIVE BROWSER SEARCH UI
+===================================================== */
+
+.browser-search-view{
+    display:none;
+    width:100%;
+    min-height:calc(100vh - 150px);
+    padding:0 15px 100px;
+}
+
+.browser-search-view.active{
+    display:block;
+}
+
+.search-page-inner{
+    width:100%;
+    max-width:1100px;
+    margin:auto;
+}
+
+/* SMALL TOP LOADER */
+
+.search-loader-bar{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    height:3px;
+    z-index:99998;
+    background:transparent;
+    pointer-events:none;
+    opacity:0;
+    transition:opacity .2s;
+}
+
+.search-loader-bar.active{
+    opacity:1;
+}
+
+.search-loader-line{
+    height:100%;
+    width:35%;
+    background:var(--orange);
+    border-radius:0 5px 5px 0;
+    animation:searchLoaderMove 1s ease-in-out infinite;
+}
+
+@keyframes searchLoaderMove{
+    0%{
+        transform:translateX(-100%);
+    }
+    100%{
+        transform:translateX(310%);
+    }
+}
+
+/* ROTATING LOGO SEARCH LOADER */
+
+.search-loader-circle{
+    position:fixed;
+    right:14px;
+    top:62px;
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:var(--card);
+    border:1px solid var(--border);
+    box-shadow:0 5px 20px rgba(0,0,0,.14);
+    z-index:9990;
+    display:none;
+    align-items:center;
+    justify-content:center;
+}
+
+.search-loader-circle.active{
+    display:flex;
+}
+
+.search-loader-ring{
+    position:absolute;
+    inset:-3px;
+    border:2px solid transparent;
+    border-top-color:var(--orange);
+    border-right-color:var(--orange);
+    border-radius:50%;
+    animation:searchRing .8s linear infinite;
+}
+
+.search-loader-circle img{
+    width:22px;
+    height:22px;
+    object-fit:contain;
+    border-radius:6px;
+}
+
+.search-loader-count{
+    position:absolute;
+    bottom:-8px;
+    right:-5px;
+    min-width:17px;
+    height:17px;
+    padding:0 4px;
+    border-radius:10px;
+    background:var(--orange);
+    color:#fff;
+    font-size:8px;
+    font-weight:800;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+@keyframes searchRing{
+    to{
+        transform:rotate(360deg);
+    }
+}
+
+/* SEARCH PAGE SECOND SEARCH BAR */
+
+.results-search-box{
+    position:sticky;
+    top:0;
+    z-index:500;
+    background:var(--bg);
+    padding:14px 0 10px;
+}
+
+.results-search-form{
+    width:100%;
+    height:48px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:25px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:0 8px 0 15px;
+    box-shadow:0 4px 20px rgba(0,0,0,.06);
+}
+
+.results-search-form:focus-within{
+    border-color:var(--orange);
+    box-shadow:0 0 0 3px rgba(255,106,0,.08);
+}
+
+.results-search-form i{
+    color:var(--orange);
+    font-size:13px;
+}
+
+.results-search-form input{
+    flex:1;
+    min-width:0;
+    height:100%;
+    border:0;
+    outline:0;
+    background:transparent;
+    color:var(--text);
+    font-size:13px;
+}
+
+.results-search-form button{
+    width:36px;
+    height:36px;
+    border:0;
+    border-radius:50%;
+    background:var(--orange);
+    color:#fff;
+}
+
+.search-category-row{
+    display:flex;
+    gap:4px;
+    overflow-x:auto;
+    scrollbar-width:none;
+    padding:5px 0 4px;
+}
+
+.search-category-row::-webkit-scrollbar{
+    display:none;
+}
+
+.search-category{
+    flex:0 0 auto;
+    border:0;
+    background:transparent;
+    color:var(--muted);
+    padding:9px 12px;
+    border-radius:20px;
+    font-size:11px;
+    white-space:nowrap;
+}
+
+.search-category.active{
+    background:var(--orange-light);
+    color:var(--orange);
+    font-weight:700;
+}
+
+/* RESULTS */
+
+.results-meta{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin:10px 0 15px;
+}
+
+.results-query-label{
+    color:var(--muted);
+    font-size:10px;
+}
+
+.results-query-label strong{
+    color:var(--text);
+}
+
+.results-status{
+    color:var(--muted);
+    font-size:9px;
+}
+
+.results-list{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.web-result{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:16px;
+    transition:.18s;
+}
+
+.web-result:hover{
+    border-color:#ffc29b;
+    box-shadow:var(--shadow);
+}
+
+.web-result-url{
+    color:var(--green);
+    font-size:9px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    margin-bottom:5px;
+}
+
+.web-result-title{
+    display:block;
+    color:var(--orange);
+    font-size:16px;
+    font-weight:700;
+    line-height:1.35;
+    margin-bottom:6px;
+    text-decoration:none;
+}
+
+.web-result-title:hover{
+    text-decoration:underline;
+}
+
+.web-result-description{
+    color:var(--muted);
+    font-size:11px;
+    line-height:1.65;
+}
+
+.web-result-source{
+    color:var(--muted);
+    font-size:9px;
+    margin-top:8px;
+}
+
+/* IMAGE RESULTS */
+
+.image-results{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+}
+
+.image-result{
+    overflow:hidden;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    cursor:pointer;
+}
+
+.image-result-image{
+    width:100%;
+    aspect-ratio:1.25;
+    background:var(--bg);
+    overflow:hidden;
+}
+
+.image-result-image img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+}
+
+.image-result-info{
+    padding:9px;
+}
+
+.image-result-title{
+    font-size:10px;
+    font-weight:700;
+    color:var(--text);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.image-result-source{
+    font-size:8px;
+    color:var(--muted);
+    margin-top:3px;
+}
+
+/* VIDEO / NEWS */
+
+.media-result{
+    display:flex;
+    gap:12px;
+    padding:13px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+}
+
+.media-thumb{
+    width:125px;
+    height:75px;
+    flex-shrink:0;
+    border-radius:10px;
+    background:var(--bg);
+    overflow:hidden;
+    position:relative;
+}
+
+.media-thumb img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.media-thumb i{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    background:rgba(0,0,0,.7);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.media-content{
+    flex:1;
+    min-width:0;
+}
+
+.media-title{
+    color:var(--orange);
+    font-size:12px;
+    font-weight:700;
+    line-height:1.45;
+}
+
+.media-description{
+    color:var(--muted);
+    font-size:9px;
+    line-height:1.5;
+    margin-top:5px;
+}
+
+.media-source{
+    color:var(--muted);
+    font-size:8px;
+    margin-top:6px;
+}
+
+/* EMPTY / ERROR */
+
+.search-empty{
+    text-align:center;
+    padding:70px 20px;
+}
+
+.search-empty-icon{
+    width:60px;
+    height:60px;
+    margin:auto auto 15px;
+    border-radius:18px;
+    background:var(--orange-light);
+    color:var(--orange);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:23px;
+}
+
+.search-empty h3{
+    font-size:16px;
+    margin-bottom:6px;
+}
+
+.search-empty p{
+    color:var(--muted);
+    font-size:11px;
+}
+
+/* PAGINATION */
+
+.search-pagination{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:6px;
+    margin:25px 0;
+    flex-wrap:wrap;
+}
+
+.page-button{
+    min-width:35px;
+    height:35px;
+    border:1px solid var(--border);
+    border-radius:9px;
+    background:var(--card);
+    color:var(--text);
+    font-size:10px;
+}
+
+.page-button.active{
+    background:var(--orange);
+    color:#fff;
+    border-color:var(--orange);
+}
+
+.page-button:disabled{
+    opacity:.4;
+    cursor:not-allowed;
+}
+
+/* SEARCH FOOTER */
+
+.search-footer{
+    margin-top:50px;
+    padding:25px 5px 35px;
+    border-top:1px solid var(--border);
+    text-align:center;
+}
+
+.search-footer-location{
+    color:var(--muted);
+    font-size:10px;
+    line-height:1.8;
+}
+
+.search-footer-location strong{
+    color:var(--text);
+}
+
+/* CONNECTION POPUP */
+
+.connection-popup{
+    position:fixed;
+    left:50%;
+    top:75px;
+    transform:translate(-50%,-30px);
+    width:min(350px,calc(100% - 30px));
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:15px;
+    padding:13px;
+    box-shadow:0 15px 45px rgba(0,0,0,.18);
+    z-index:10000;
+    opacity:0;
+    pointer-events:none;
+    transition:.25s;
+}
+
+.connection-popup.show{
+    opacity:1;
+    transform:translate(-50%,0);
+}
+
+.connection-popup-row{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.connection-popup-icon{
+    width:35px;
+    height:35px;
+    border-radius:10px;
+    background:var(--orange-light);
+    color:var(--orange);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.connection-popup-text{
+    flex:1;
+}
+
+.connection-popup-title{
+    font-size:11px;
+    font-weight:800;
+}
+
+.connection-popup-message{
+    color:var(--muted);
+    font-size:9px;
+    margin-top:3px;
+}
+
+/* HOME / SEARCH SWITCH */
+
+.home-content{
+    display:block;
+}
+
+.home-content.hidden{
+    display:none;
+}
+
+.search-view-visible{
+    display:block;
+}
+
+@media(max-width:700px){
+
+    .browser-search-view{
+        padding:0 10px 90px;
+    }
+
+    .search-loader-circle{
+        top:54px;
+        right:10px;
+        width:34px;
+        height:34px;
+    }
+
+    .search-loader-circle img{
+        width:19px;
+        height:19px;
+    }
+
+    .image-results{
+        grid-template-columns:repeat(2,1fr);
+        gap:8px;
+    }
+
+    .web-result{
+        padding:13px;
+    }
+
+    .web-result-title{
+        font-size:14px;
+    }
+
+    .media-thumb{
+        width:100px;
+        height:65px;
+    }
+}
 </style>
 </head>
 
@@ -1784,6 +2366,14 @@ title="Bookmark">
 <i class="fa-regular fa-star"></i>
 
 </button>
+  <button
+    class="icon-button"
+    onclick="reloadPage()"
+    title="Refresh">
+
+    <i class="fa-solid fa-rotate-right"></i>
+
+</button>
 
 <button
 class="icon-button"
@@ -1820,8 +2410,169 @@ title="Menu">
 ===================================================== -->
 
 <main class="main">
+<!-- =====================================================
+     SEARCH LOADER
+===================================================== -->
 
-<div class="page">
+<div class="search-loader-bar" id="searchLoaderBar">
+    <div class="search-loader-line"></div>
+</div>
+
+<div class="search-loader-circle" id="searchLoaderCircle">
+
+    <div class="search-loader-ring"></div>
+
+    <img src="logo.jpg" alt="">
+
+    <span class="search-loader-count" id="searchLoaderCount">
+        3
+    </span>
+
+</div>
+
+
+<!-- =====================================================
+     CONNECTION POPUP
+===================================================== -->
+
+<div class="connection-popup" id="connectionPopup">
+
+    <div class="connection-popup-row">
+
+        <div class="connection-popup-icon">
+            <i id="connectionIcon"
+               class="fa-solid fa-wifi"></i>
+        </div>
+
+        <div class="connection-popup-text">
+
+            <div class="connection-popup-title"
+                 id="connectionTitle">
+                Checking connection...
+            </div>
+
+            <div class="connection-popup-message"
+                 id="connectionMessage">
+                Checking your network connection.
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     SEARCH RESULTS VIEW
+===================================================== -->
+
+<section class="browser-search-view"
+         id="browserSearchView">
+
+    <div class="search-page-inner">
+
+        <div class="results-search-box">
+
+            <form class="results-search-form"
+                  onsubmit="submitResultsSearch(event)">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input
+                    id="resultsSearchInput"
+                    type="search"
+                    placeholder="Search the web..."
+                    autocomplete="off"
+                >
+
+                <button type="submit">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+
+            </form>
+
+
+            <div class="search-category-row">
+
+                <button
+                    class="search-category active"
+                    data-category="general"
+                    onclick="changeSearchCategory('general',this)">
+                    All
+                </button>
+
+                <button
+                    class="search-category"
+                    data-category="images"
+                    onclick="changeSearchCategory('images',this)">
+                    Images
+                </button>
+
+                <button
+                    class="search-category"
+                    data-category="videos"
+                    onclick="changeSearchCategory('videos',this)">
+                    Videos
+                </button>
+
+                <button
+                    class="search-category"
+                    data-category="news"
+                    onclick="changeSearchCategory('news',this)">
+                    News
+                </button>
+
+                <button
+                    class="search-category"
+                    data-category="map"
+                    onclick="changeSearchCategory('map',this)">
+                    Maps
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="results-meta">
+
+            <div class="results-query-label"
+                 id="resultsQueryLabel">
+            </div>
+
+            <div class="results-status"
+                 id="resultsStatus">
+            </div>
+
+        </div>
+
+
+        <div id="searchResults"
+             class="results-list">
+        </div>
+
+
+        <div id="searchPagination"
+             class="search-pagination">
+        </div>
+
+
+        <footer class="search-footer">
+
+            <div class="search-footer-location"
+                 id="searchFooterLocation">
+
+                Checking connection and local information...
+
+            </div>
+
+        </footer>
+
+    </div>
+
+</section>
+<div class="page home-content" id="homeContent">
 
 <section class="hero">
 
@@ -2358,7 +3109,7 @@ Off
 
 </section>
 
-</div>
+</>
 
 </main>
 
@@ -2647,8 +3398,15 @@ const DEFAULT_SETTINGS = {
 const NETLIFY_SEARCH_ENDPOINT =
     "/.netlify/functions/search";
 
+
+/* =====================================================
+   GLOBAL STATE
+===================================================== */
+
 let tabs = load(STORAGE.tabs,[]);
-let activeTabId = localStorage.getItem(STORAGE.activeTab) || null;
+let activeTabId =
+    localStorage.getItem(STORAGE.activeTab) || null;
+
 let bookmarks = load(STORAGE.bookmarks,[]);
 let historyItems = load(STORAGE.history,[]);
 let closedTabs = load(STORAGE.closedTabs,[]);
@@ -2673,6 +3431,13 @@ let searchLoading = false;
 
 
 /* =====================================================
+   RECENT TAB PANEL STATE
+===================================================== */
+
+let recentTabsPanelOpen = false;
+
+
+/* =====================================================
    STORAGE
 ===================================================== */
 
@@ -2680,7 +3445,8 @@ function load(key,fallback){
 
     try{
 
-        const value = localStorage.getItem(key);
+        const value =
+            localStorage.getItem(key);
 
         if(value === null){
             return fallback;
@@ -2690,7 +3456,10 @@ function load(key,fallback){
 
     }catch(error){
 
-        console.warn("OrangeBrowse storage error:",error);
+        console.warn(
+            "OrangeBrowse storage error:",
+            error
+        );
 
         return fallback;
 
@@ -2710,7 +3479,10 @@ function save(key,value){
 
     }catch(error){
 
-        console.warn("OrangeBrowse save error:",error);
+        console.warn(
+            "OrangeBrowse save error:",
+            error
+        );
 
     }
 
@@ -2739,11 +3511,48 @@ function generateTabId(){
 
 function initialize(){
 
-    if(!Array.isArray(tabs)) tabs=[];
-    if(!Array.isArray(bookmarks)) bookmarks=[];
-    if(!Array.isArray(historyItems)) historyItems=[];
-    if(!Array.isArray(closedTabs)) closedTabs=[];
-    if(!Array.isArray(offlinePages)) offlinePages=[];
+    if(!Array.isArray(tabs)){
+        tabs=[];
+    }
+
+    if(!Array.isArray(bookmarks)){
+        bookmarks=[];
+    }
+
+    if(!Array.isArray(historyItems)){
+        historyItems=[];
+    }
+
+    if(!Array.isArray(closedTabs)){
+        closedTabs=[];
+    }
+
+    if(!Array.isArray(offlinePages)){
+        offlinePages=[];
+    }
+
+
+    /*
+       Make sure old tab objects have the newer
+       properties without deleting anything.
+    */
+
+    tabs.forEach(tab=>{
+
+        if(!Array.isArray(tab.history)){
+            tab.history=[];
+        }
+
+        if(typeof tab.historyIndex !== "number"){
+            tab.historyIndex =
+                tab.history.length - 1;
+        }
+
+        if(!tab.searchState){
+            tab.searchState = null;
+        }
+
+    });
 
 
     if(tabs.length === 0){
@@ -2754,16 +3563,23 @@ function initialize(){
 
         if(
             !activeTabId ||
-            !tabs.some(tab=>tab.id===activeTabId)
+            !tabs.some(
+                tab=>tab.id===activeTabId
+            )
         ){
 
-            activeTabId=tabs[0].id;
+            activeTabId =
+                tabs[0].id;
 
         }
 
         persistTabs();
 
-        renderTabs();
+        /*
+           Top tab bar is intentionally disabled.
+        */
+
+        disableTopTabs();
 
         loadActiveTab();
 
@@ -2780,6 +3596,35 @@ function initialize(){
 
     createSearchResultsContainer();
 
+    createRecentTabsPanel();
+
+    updateRecentTabsPanel();
+
+}
+
+
+/* =====================================================
+   REMOVE TOP TAB STRIP
+===================================================== */
+
+function disableTopTabs(){
+
+    const container =
+        document.getElementById(
+            "tabsContainer"
+        );
+
+    if(!container)return;
+
+    /*
+       The old desktop/top tabs are no longer used.
+       The bottom History icon controls recent tabs.
+    */
+
+    container.innerHTML="";
+
+    container.style.display="none";
+
 }
 
 
@@ -2789,17 +3634,34 @@ function initialize(){
 
 function createTab(saveData=true){
 
-    const id=generateTabId();
+    const id =
+        generateTabId();
 
-    const tab={
+    const tab = {
+
         id:id,
+
         title:"New Tab",
+
         url:"",
+
         isNewTab:true,
+
         created:Date.now(),
+
         history:[],
-        historyIndex:-1
+
+        historyIndex:-1,
+
+        /*
+           Stores the exact search currently
+           represented by this tab.
+        */
+
+        searchState:null
+
     };
+
 
     tabs.push(tab);
 
@@ -2808,21 +3670,36 @@ function createTab(saveData=true){
     persistTabs();
 
     if(saveData){
-        save(STORAGE.closedTabs,closedTabs);
+
+        save(
+            STORAGE.closedTabs,
+            closedTabs
+        );
+
     }
 
-    renderTabs();
 
-    showNewTab();
+    disableTopTabs();
+
+    loadActiveTab();
+
+    updateRecentTabsPanel();
 
     showToast("New tab created");
 
 }
 
 
+/* =====================================================
+   PERSIST TABS
+===================================================== */
+
 function persistTabs(){
 
-    save(STORAGE.tabs,tabs);
+    save(
+        STORAGE.tabs,
+        tabs
+    );
 
     localStorage.setItem(
         STORAGE.activeTab,
@@ -2831,6 +3708,10 @@ function persistTabs(){
 
 }
 
+
+/* =====================================================
+   GET ACTIVE TAB
+===================================================== */
 
 function getActiveTab(){
 
@@ -2841,136 +3722,85 @@ function getActiveTab(){
 }
 
 
+/* =====================================================
+   OLD TOP TAB RENDER
+   DISABLED — RECENT TABS USE BOTTOM PANEL
+===================================================== */
+
 function renderTabs(){
 
-    const container=
-        document.getElementById("tabsContainer");
+    disableTopTabs();
 
-    if(!container)return;
-
-    container.innerHTML="";
-
-
-    tabs.forEach(tab=>{
-
-        const element=
-            document.createElement("div");
-
-        element.className=
-            "tab" +
-            (tab.id===activeTabId ? " active":"");
-
-        element.dataset.id=tab.id;
-
-        element.innerHTML=`
-
-            <div class="tab-favicon">
-                <i class="fa-solid fa-globe"></i>
-            </div>
-
-            <span class="tab-title">
-                ${escapeHTML(tab.title || "New Tab")}
-            </span>
-
-            <button
-                class="tab-close"
-                title="Close tab">
-
-                <i class="fa-solid fa-xmark"></i>
-
-            </button>
-        `;
-
-
-        element.addEventListener(
-            "click",
-            function(event){
-
-                if(event.target.closest(".tab-close")){
-                    return;
-                }
-
-                activateTab(tab.id);
-
-            }
-        );
-
-
-        element
-            .querySelector(".tab-close")
-            .addEventListener(
-                "click",
-                function(event){
-
-                    event.stopPropagation();
-
-                    closeTab(tab.id);
-
-                }
-            );
-
-
-        container.appendChild(element);
-
-    });
-
-
-    const newButton=
-        document.createElement("button");
-
-    newButton.className="new-tab-button";
-
-    newButton.title="New tab";
-
-    newButton.innerHTML=
-        '<i class="fa-solid fa-plus"></i>';
-
-    newButton.onclick=()=>createTab(true);
-
-    container.appendChild(newButton);
+    updateRecentTabsPanel();
 
 }
 
 
+/* =====================================================
+   ACTIVATE TAB
+===================================================== */
+
 function activateTab(id){
 
-    const tab=
-        tabs.find(item=>item.id===id);
+    const tab =
+        tabs.find(
+            item=>item.id===id
+        );
 
     if(!tab)return;
+
 
     activeTabId=id;
 
     persistTabs();
 
-    renderTabs();
-
     loadActiveTab();
+
+    updateRecentTabsPanel();
 
 }
 
 
+/* =====================================================
+   CLOSE TAB
+===================================================== */
+
 function closeTab(id){
 
-    const index=
-        tabs.findIndex(tab=>tab.id===id);
+    const index =
+        tabs.findIndex(
+            tab=>tab.id===id
+        );
 
     if(index===-1)return;
 
-    const tab=tabs[index];
 
+    const tab =
+        tabs[index];
+
+
+    /*
+       Save closed tabs unless incognito.
+    */
 
     if(
         !settings.incognito &&
-        (tab.url || !tab.isNewTab)
+        (
+            tab.url ||
+            !tab.isNewTab ||
+            tab.searchState
+        )
     ){
 
         closedTabs.unshift({
+
             ...tab,
+
             closedAt:Date.now()
+
         });
 
-        closedTabs=
+        closedTabs =
             closedTabs.slice(0,20);
 
         save(
@@ -2981,14 +3811,25 @@ function closeTab(id){
     }
 
 
+    const wasActive =
+        activeTabId===id;
+
+
     tabs.splice(index,1);
 
+
+    /*
+       If every tab was closed,
+       create a fresh local tab.
+    */
 
     if(tabs.length===0){
 
         activeTabId=null;
 
         createTab(false);
+
+        updateRecentTabsPanel();
 
         showToast("Tab closed");
 
@@ -2997,25 +3838,108 @@ function closeTab(id){
     }
 
 
-    if(activeTabId===id){
+    if(wasActive){
 
-        const nextTab=
+        const nextTab =
             tabs[index] ||
             tabs[index-1] ||
             tabs[0];
 
-        activeTabId=nextTab.id;
+        activeTabId =
+            nextTab.id;
 
     }
 
 
     persistTabs();
 
-    renderTabs();
-
     loadActiveTab();
 
+    updateRecentTabsPanel();
+
     showToast("Tab closed");
+
+}
+
+
+/* =====================================================
+   CLEAR ALL RECENT TABS
+===================================================== */
+
+function clearAllTabs(){
+
+    if(!tabs.length){
+        return;
+    }
+
+
+    const confirmed =
+        window.confirm(
+            "Clear all saved tabs?"
+        );
+
+
+    if(!confirmed){
+        return;
+    }
+
+
+    /*
+       Preserve closed-tab recovery.
+    */
+
+    if(!settings.incognito){
+
+        tabs.forEach(tab=>{
+
+            if(
+                tab.url ||
+                !tab.isNewTab ||
+                tab.searchState
+            ){
+
+                closedTabs.unshift({
+
+                    ...tab,
+
+                    closedAt:Date.now()
+
+                });
+
+            }
+
+        });
+
+        closedTabs =
+            closedTabs.slice(0,20);
+
+        save(
+            STORAGE.closedTabs,
+            closedTabs
+        );
+
+    }
+
+
+    tabs=[];
+
+    activeTabId=null;
+
+    save(
+        STORAGE.tabs,
+        []
+    );
+
+    localStorage.removeItem(
+        STORAGE.activeTab
+    );
+
+
+    createTab(false);
+
+    closeRecentTabsPanel();
+
+    showToast("All tabs cleared");
 
 }
 
@@ -3026,11 +3950,69 @@ function closeTab(id){
 
 function loadActiveTab(){
 
-    const tab=getActiveTab();
+    const tab =
+        getActiveTab();
+
 
     if(!tab){
 
         showNewTab();
+
+        return;
+
+    }
+
+
+    /*
+       Restore exact saved search.
+    */
+
+    if(
+        tab.searchState &&
+        tab.searchState.query
+    ){
+
+        currentSearchQuery =
+            tab.searchState.query;
+
+        currentSearchCategory =
+            tab.searchState.category ||
+            "general";
+
+        currentSearchPage =
+            Number(
+                tab.searchState.page || 1
+            );
+
+
+        const address =
+            document.getElementById(
+                "addressInput"
+            );
+
+        const mainSearch =
+            document.getElementById(
+                "mainSearch"
+            );
+
+
+        if(address){
+
+            address.value =
+                currentSearchQuery;
+
+        }
+
+
+        if(mainSearch){
+
+            mainSearch.value =
+                currentSearchQuery;
+
+        }
+
+
+        showSearchResults();
 
         return;
 
@@ -3046,41 +4028,70 @@ function loadActiveTab(){
     }
 
 
+    /*
+       Normal URL tab.
+    */
+
     setAddress(tab.url);
 
 }
 
 
+/* =====================================================
+   SHOW NEW TAB
+===================================================== */
+
 function showNewTab(saveTab=true){
 
-    const address=
-        document.getElementById("addressInput");
+    const address =
+        document.getElementById(
+            "addressInput"
+        );
 
-    const search=
-        document.getElementById("mainSearch");
+    const search =
+        document.getElementById(
+            "mainSearch"
+        );
 
 
-    if(address) address.value="";
-    if(search) search.value="";
+    if(address){
+        address.value="";
+    }
+
+    if(search){
+        search.value="";
+    }
+
+
+    currentSearchQuery="";
+    currentSearchCategory="general";
+    currentSearchPage=1;
 
 
     hideSearchResults();
 
 
-    const tab=getActiveTab();
+    const tab =
+        getActiveTab();
 
 
     if(tab){
 
         tab.title="New Tab";
+
         tab.url="";
+
         tab.isNewTab=true;
+
+        tab.searchState=null;
+
 
         if(!Array.isArray(tab.history)){
             tab.history=[];
         }
 
         tab.historyIndex=-1;
+
 
         if(saveTab){
             persistTabs();
@@ -3089,11 +4100,17 @@ function showNewTab(saveTab=true){
     }
 
 
-    renderTabs();
+    disableTopTabs();
+
+    updateRecentTabsPanel();
+
 
     window.scrollTo({
+
         top:0,
+
         behavior:"smooth"
+
     });
 
 }
@@ -3105,7 +4122,9 @@ function showNewTab(saveTab=true){
 
 function buildDestination(value){
 
-    value=String(value || "").trim();
+    value =
+        String(value || "").trim();
+
 
     if(!value){
         return "";
@@ -3113,7 +4132,9 @@ function buildDestination(value){
 
 
     if(/^https?:\/\//i.test(value)){
+
         return value;
+
     }
 
 
@@ -3135,6 +4156,7 @@ function buildDestination(value){
 
 
     return "";
+
 }
 
 
@@ -3144,17 +4166,21 @@ function buildDestination(value){
 
 function navigateTo(value,options={}){
 
-    value=String(value || "").trim();
+    value =
+        String(value || "").trim();
+
 
     if(!value)return;
 
 
     /*
-       Search terms are handled by OrangeBrowse search.
+       Search terms are handled by OrangeBrowse.
     */
 
-    if(!/^https?:\/\//i.test(value) &&
-       !/^[^\s]+\.[^\s]+$/i.test(value)){
+    if(
+        !/^https?:\/\//i.test(value) &&
+        !/^[^\s]+\.[^\s]+$/i.test(value)
+    ){
 
         performSearch(value);
 
@@ -3163,13 +4189,16 @@ function navigateTo(value,options={}){
     }
 
 
-    const destination=
+    const destination =
         buildDestination(value);
+
 
     if(!destination)return;
 
 
-    const tab=getActiveTab();
+    const tab =
+        getActiveTab();
+
 
     if(!tab)return;
 
@@ -3177,35 +4206,50 @@ function navigateTo(value,options={}){
     if(!options.fromHistory){
 
         if(!Array.isArray(tab.history)){
+
             tab.history=[];
+
         }
 
-        tab.history=
+
+        tab.history =
             tab.history.slice(
                 0,
                 tab.historyIndex + 1
             );
 
+
         tab.history.push(destination);
 
-        tab.historyIndex=
+
+        tab.historyIndex =
             tab.history.length-1;
 
     }
 
 
+    /*
+       Normal URL means this is no longer
+       a search tab.
+    */
+
+    tab.searchState=null;
+
     tab.url=destination;
 
-    tab.title=
+    tab.title =
         options.title ||
-        getDisplayTitle(value,destination);
+        getDisplayTitle(
+            value,
+            destination
+        );
 
     tab.isNewTab=false;
 
 
     persistTabs();
 
-    renderTabs();
+    disableTopTabs();
 
     setAddress(destination);
 
@@ -3223,10 +4267,16 @@ function navigateTo(value,options={}){
     }
 
 
+    updateRecentTabsPanel();
+
     openNativeDestination(destination);
 
 }
 
+
+/* =====================================================
+   DISPLAY TITLE
+===================================================== */
 
 function getDisplayTitle(input,url){
 
@@ -3286,6 +4336,7 @@ function openNativeDestination(url){
 
     }
 
+
     return false;
 
 }
@@ -3297,10 +4348,13 @@ function openNativeDestination(url){
 
 function performSearch(value=null){
 
-    const input=
-        document.getElementById("mainSearch");
+    const input =
+        document.getElementById(
+            "mainSearch"
+        );
 
-    const query=
+
+    const query =
         value !== null
         ? String(value).trim()
         : input
@@ -3310,7 +4364,9 @@ function performSearch(value=null){
 
     if(!query){
 
-        if(input)input.focus();
+        if(input){
+            input.focus();
+        }
 
         return;
 
@@ -3321,14 +4377,34 @@ function performSearch(value=null){
 
     currentSearchPage=1;
 
-    currentSearchCategory=
+    currentSearchCategory =
         getActiveSearchCategory();
 
 
     if(input){
+
         input.value=query;
+
     }
 
+
+    const address =
+        document.getElementById(
+            "addressInput"
+        );
+
+
+    if(address){
+
+        address.value=query;
+
+    }
+
+
+    /*
+       Save the search in the user's
+       normal search history.
+    */
 
     addHistory(
         query,
@@ -3336,10 +4412,75 @@ function performSearch(value=null){
     );
 
 
+    /*
+       Save the exact search inside
+       the current tab.
+    */
+
+    saveCurrentSearchToTab();
+
+
     showSearchResults();
 
 }
 
+
+/* =====================================================
+   SAVE EXACT SEARCH TO TAB
+===================================================== */
+
+function saveCurrentSearchToTab(){
+
+    const tab =
+        getActiveTab();
+
+
+    if(!tab)return;
+
+
+    tab.title =
+        currentSearchQuery ||
+        "New Tab";
+
+
+    tab.url =
+        "orangebrowse-search://" +
+        encodeURIComponent(
+            currentSearchQuery
+        );
+
+
+    tab.isNewTab=false;
+
+
+    tab.searchState={
+
+        query:
+            currentSearchQuery,
+
+        category:
+            currentSearchCategory ||
+            "general",
+
+        page:
+            currentSearchPage || 1,
+
+        updated:
+            Date.now()
+
+    };
+
+
+    persistTabs();
+
+    updateRecentTabsPanel();
+
+}
+
+
+/* =====================================================
+   SEARCH KEY
+===================================================== */
 
 function searchKey(event){
 
@@ -3354,19 +4495,27 @@ function searchKey(event){
 }
 
 
+/* =====================================================
+   ADDRESS KEY
+===================================================== */
+
 function addressKey(event){
 
     if(event.key==="Enter"){
 
         event.preventDefault();
 
-        const input=
-            document.getElementById("addressInput");
 
-        const value=
+        const input =
+            document.getElementById(
+                "addressInput"
+            );
+
+
+        const value =
             input
-            ?input.value.trim()
-            :"";
+            ? input.value.trim()
+            : "";
 
 
         if(!value)return;
@@ -3396,13 +4545,7 @@ function addressKey(event){
 
 function getActiveSearchCategory(){
 
-    /*
-       Tries several common class/id patterns so
-       your existing category UI does not need to
-       be redesigned.
-    */
-
-    const active=
+    const active =
         document.querySelector(
             ".search-tab.active, " +
             ".search-category.active, " +
@@ -3413,42 +4556,52 @@ function getActiveSearchCategory(){
 
     if(active){
 
-        const value=
+        const value =
             String(
                 active.dataset.category ||
                 active.dataset.searchCategory ||
                 active.dataset.type ||
                 active.textContent ||
                 ""
-            ).toLowerCase().trim();
+            )
+            .toLowerCase()
+            .trim();
 
 
         if(value.includes("image")){
             return "images";
         }
 
-        if(value.includes("video") &&
-           value.includes("short")){
+
+        if(
+            value.includes("video") &&
+            value.includes("short")
+        ){
 
             return "videos";
 
         }
+
 
         if(value.includes("video")){
             return "videos";
         }
 
+
         if(value.includes("news")){
             return "news";
         }
+
 
         if(value.includes("map")){
             return "map";
         }
 
+
         if(value.includes("book")){
             return "books";
         }
+
 
         if(value.includes("forum")){
             return "forums";
@@ -3469,6 +4622,7 @@ function getActiveSearchCategory(){
 function setSearchCategory(category){
 
     const allowed=[
+
         "general",
         "images",
         "videos",
@@ -3476,16 +4630,19 @@ function setSearchCategory(category){
         "map",
         "books",
         "forums"
+
     ];
 
 
-    category=
+    category =
         String(category || "general")
         .toLowerCase();
 
 
     if(!allowed.includes(category)){
+
         category="general";
+
     }
 
 
@@ -3501,37 +4658,53 @@ function setSearchCategory(category){
         )
         .forEach(button=>{
 
-            const value=
+            const value =
                 String(
                     button.dataset.category ||
                     button.dataset.searchCategory ||
                     button.dataset.type ||
                     button.textContent ||
                     ""
-                ).toLowerCase();
+                )
+                .toLowerCase();
 
 
-            const active=
-                (category==="general" &&
-                 value.includes("all")) ||
+            const active =
 
-                (category==="images" &&
-                 value.includes("image")) ||
+                (
+                    category==="general" &&
+                    value.includes("all")
+                ) ||
 
-                (category==="videos" &&
-                 value.includes("video")) ||
+                (
+                    category==="images" &&
+                    value.includes("image")
+                ) ||
 
-                (category==="news" &&
-                 value.includes("news")) ||
+                (
+                    category==="videos" &&
+                    value.includes("video")
+                ) ||
 
-                (category==="map" &&
-                 value.includes("map")) ||
+                (
+                    category==="news" &&
+                    value.includes("news")
+                ) ||
 
-                (category==="books" &&
-                 value.includes("book")) ||
+                (
+                    category==="map" &&
+                    value.includes("map")
+                ) ||
 
-                (category==="forums" &&
-                 value.includes("forum"));
+                (
+                    category==="books" &&
+                    value.includes("book")
+                ) ||
+
+                (
+                    category==="forums" &&
+                    value.includes("forum")
+                );
 
 
             button.classList.toggle(
@@ -3546,6 +4719,8 @@ function setSearchCategory(category){
 
         currentSearchPage=1;
 
+        saveCurrentSearchToTab();
+
         showSearchResults();
 
     }
@@ -3554,12 +4729,12 @@ function setSearchCategory(category){
 
 
 /* =====================================================
-   CREATE RESULTS CONTAINER
+   CREATE SEARCH RESULTS CONTAINER
 ===================================================== */
 
 function createSearchResultsContainer(){
 
-    let container=
+    let container =
         document.getElementById(
             "orangeSearchResults"
         );
@@ -3568,39 +4743,47 @@ function createSearchResultsContainer(){
     if(container)return;
 
 
-    container=
+    container =
         document.createElement("section");
 
-    container.id=
+
+    container.id =
         "orangeSearchResults";
 
 
     container.style.cssText=`
+
         width:100%;
+
         max-width:1100px;
+
         margin:0 auto;
+
         padding:0 16px 40px;
+
         display:none;
+
     `;
 
 
-    /*
-       Try to place it after the search area.
-    */
-
-    const mainSearch=
-        document.getElementById("mainSearch");
+    const mainSearch =
+        document.getElementById(
+            "mainSearch"
+        );
 
 
     if(mainSearch){
 
-        const parent=
+        const parent =
             mainSearch.closest(
                 "form,.search-box,.search-container,.hero-search"
             );
 
 
-        if(parent && parent.parentNode){
+        if(
+            parent &&
+            parent.parentNode
+        ){
 
             parent.parentNode.insertBefore(
                 container,
@@ -3614,7 +4797,7 @@ function createSearchResultsContainer(){
     }
 
 
-    const main=
+    const main =
         document.querySelector(
             "main"
         );
@@ -3622,11 +4805,15 @@ function createSearchResultsContainer(){
 
     if(main){
 
-        main.appendChild(container);
+        main.appendChild(
+            container
+        );
 
     }else{
 
-        document.body.appendChild(container);
+        document.body.appendChild(
+            container
+        );
 
     }
 
@@ -3642,7 +4829,7 @@ async function showSearchResults(){
     createSearchResultsContainer();
 
 
-    const container=
+    const container =
         document.getElementById(
             "orangeSearchResults"
         );
@@ -3657,6 +4844,13 @@ async function showSearchResults(){
     searchLoading=true;
 
 
+    /*
+       Keep exact search saved before loading.
+    */
+
+    saveCurrentSearchToTab();
+
+
     container.innerHTML=`
 
         <div style="
@@ -3667,8 +4861,11 @@ async function showSearchResults(){
 
             <i
                 class="fa-solid fa-spinner fa-spin"
-                style="font-size:24px;margin-bottom:12px">
-            </i>
+                style="
+                    font-size:24px;
+                    margin-bottom:12px;
+                "
+            ></i>
 
             <div>
                 Searching...
@@ -3679,30 +4876,7 @@ async function showSearchResults(){
     `;
 
 
-    /*
-       Make sure the search controls are visible.
-    */
-
-    const tab=getActiveTab();
-
-    if(tab){
-
-        tab.title=currentSearchQuery;
-        tab.url=
-            "orangebrowse-search://" +
-            encodeURIComponent(
-                currentSearchQuery
-            );
-
-        tab.isNewTab=false;
-
-        persistTabs();
-        renderTabs();
-
-    }
-
-
-    const params=
+    const params =
         new URLSearchParams();
 
 
@@ -3714,7 +4888,8 @@ async function showSearchResults(){
 
     params.set(
         "category",
-        currentSearchCategory || "general"
+        currentSearchCategory ||
+        "general"
     );
 
 
@@ -3726,23 +4901,25 @@ async function showSearchResults(){
 
     try{
 
-        const response=
+        const response =
             await fetch(
                 NETLIFY_SEARCH_ENDPOINT +
                 "?" +
                 params.toString(),
                 {
                     method:"GET",
+
                     headers:{
                         "Accept":
                             "application/json"
                     },
+
                     cache:"no-store"
                 }
             );
 
 
-        const text=
+        const text =
             await response.text();
 
 
@@ -3763,7 +4940,8 @@ async function showSearchResults(){
 
         try{
 
-            data=JSON.parse(text);
+            data =
+                JSON.parse(text);
 
         }catch(error){
 
@@ -3774,9 +4952,7 @@ async function showSearchResults(){
         }
 
 
-        if(
-            data.error
-        ){
+        if(data.error){
 
             throw new Error(
                 data.error
@@ -3785,9 +4961,7 @@ async function showSearchResults(){
         }
 
 
-        renderSearchResults(
-            data
-        );
+        renderSearchResults(data);
 
 
     }catch(error){
@@ -3810,24 +4984,38 @@ async function showSearchResults(){
                     font-size:42px;
                     margin-bottom:12px;
                 ">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
+
+                    <i
+                        class="
+                            fa-solid
+                            fa-triangle-exclamation
+                        "
+                    ></i>
+
                 </div>
+
 
                 <h3 style="
                     margin-bottom:8px;
                     color:var(--text,#111);
                 ">
+
                     Search failed
+
                 </h3>
+
 
                 <p style="
                     margin-bottom:16px;
                 ">
+
                     ${escapeHTML(
                         error.message ||
                         "Could not load search results."
                     )}
+
                 </p>
+
 
                 <button
                     onclick="showSearchResults()"
@@ -3838,7 +5026,9 @@ async function showSearchResults(){
                         cursor:pointer;
                     "
                 >
+
                     Try again
+
                 </button>
 
             </div>
@@ -3860,7 +5050,7 @@ async function showSearchResults(){
 
 function renderSearchResults(data){
 
-    const container=
+    const container =
         document.getElementById(
             "orangeSearchResults"
         );
@@ -3869,10 +5059,10 @@ function renderSearchResults(data){
     if(!container)return;
 
 
-    const results=
+    const results =
         Array.isArray(data.results)
-        ?data.results
-        :[];
+        ? data.results
+        : [];
 
 
     if(results.length===0){
@@ -3885,19 +5075,31 @@ function renderSearchResults(data){
             ">
 
                 <i
-                    class="fa-solid fa-magnifying-glass"
-                    style="font-size:35px">
-                </i>
+                    class="
+                        fa-solid
+                        fa-magnifying-glass
+                    "
+                    style="
+                        font-size:35px;
+                    "
+                ></i>
+
 
                 <h3>
                     No results found
                 </h3>
 
+
                 <p>
+
                     No results were returned for
+
                     <strong>
-                        ${escapeHTML(currentSearchQuery)}
+                        "${escapeHTML(
+                            currentSearchQuery
+                        )}"
                     </strong>.
+
                 </p>
 
             </div>
@@ -3909,19 +5111,33 @@ function renderSearchResults(data){
     }
 
 
-    const title=
+    /*
+       Keep exact page inside local tab.
+    */
+
+    saveCurrentSearchToTab();
+
+
+    const title =
+
         currentSearchCategory==="images"
         ? "Images"
+
         : currentSearchCategory==="videos"
         ? "Videos"
+
         : currentSearchCategory==="news"
         ? "News"
+
         : currentSearchCategory==="map"
         ? "Maps"
+
         : currentSearchCategory==="books"
         ? "Books"
+
         : currentSearchCategory==="forums"
         ? "Forums"
+
         : "Web results";
 
 
@@ -3941,24 +5157,35 @@ function renderSearchResults(data){
                     margin:0 0 4px;
                     font-size:22px;
                 ">
+
                     ${title}
+
                 </h2>
+
 
                 <div style="
                     opacity:.65;
                     font-size:13px;
                 ">
+
                     Results for
-                    "${escapeHTML(currentSearchQuery)}"
+                    "${escapeHTML(
+                        currentSearchQuery
+                    )}"
+
                 </div>
 
             </div>
+
 
             <div style="
                 opacity:.6;
                 font-size:13px;
             ">
-                ${results.length} results
+
+                ${results.length}
+                results
+
             </div>
 
         </div>
@@ -3966,18 +5193,22 @@ function renderSearchResults(data){
     `;
 
 
-    if(currentSearchCategory==="images"){
+    if(
+        currentSearchCategory==="images"
+    ){
 
-        html+=renderImageResults(results);
+        html +=
+            renderImageResults(results);
 
     }else{
 
-        html+=renderNormalResults(results);
+        html +=
+            renderNormalResults(results);
 
     }
 
 
-    html+=`
+    html += `
 
         <div style="
             display:flex;
@@ -3986,9 +5217,16 @@ function renderSearchResults(data){
             margin-top:25px;
         ">
 
+
             <button
                 onclick="previousSearchPage()"
-                ${currentSearchPage<=1 ? "disabled":""}
+
+                ${
+                    currentSearchPage<=1
+                    ? "disabled"
+                    : ""
+                }
+
                 style="
                     padding:10px 16px;
                     border:0;
@@ -3996,12 +5234,22 @@ function renderSearchResults(data){
                     cursor:pointer;
                 "
             >
-                <i class="fa-solid fa-arrow-left"></i>
+
+                <i
+                    class="
+                        fa-solid
+                        fa-arrow-left
+                    "
+                ></i>
+
                 Previous
+
             </button>
+
 
             <button
                 onclick="nextSearchPage()"
+
                 style="
                     padding:10px 16px;
                     border:0;
@@ -4009,8 +5257,16 @@ function renderSearchResults(data){
                     cursor:pointer;
                 "
             >
+
                 Next
-                <i class="fa-solid fa-arrow-right"></i>
+
+                <i
+                    class="
+                        fa-solid
+                        fa-arrow-right
+                    "
+                ></i>
+
             </button>
 
         </div>
@@ -4029,105 +5285,139 @@ function renderSearchResults(data){
 
 function renderNormalResults(results){
 
-    return results.map((result,index)=>{
+    return results.map(
+        (result,index)=>{
 
-        const title=
-            result.title ||
-            result.name ||
-            "Untitled result";
-
-
-        const url=
-            result.url ||
-            result.link ||
-            "#";
+            const title =
+                result.title ||
+                result.name ||
+                "Untitled result";
 
 
-        const content=
-            result.content ||
-            result.description ||
-            result.snippet ||
-            "";
+            const url =
+                result.url ||
+                result.link ||
+                "#";
 
 
-        const engine=
-            result.engine ||
-            "";
+            const content =
+                result.content ||
+                result.description ||
+                result.snippet ||
+                "";
 
 
-        return `
-
-            <article
-                class="orange-search-result"
-                style="
-                    padding:17px 0;
-                    border-bottom:1px solid
-                    rgba(127,127,127,.18);
-                "
-            >
-
-                <div style="
-                    font-size:12px;
-                    opacity:.65;
-                    margin-bottom:5px;
-                    word-break:break-all;
-                ">
-                    ${escapeHTML(
-                        getDomain(url)
-                    )}
-                </div>
+            const engine =
+                result.engine ||
+                "";
 
 
-                <a
-                    href="${escapeHTML(url)}"
-                    onclick="openSearchResult(event,this.href)"
+            return `
+
+                <article
+                    class="orange-search-result"
                     style="
-                        font-size:19px;
-                        font-weight:700;
-                        text-decoration:none;
-                        color:var(--orange,#ff6a00);
+                        padding:17px 0;
+                        border-bottom:1px solid
+                        rgba(127,127,127,.18);
                     "
                 >
-                    ${escapeHTML(title)}
-                </a>
 
 
-                ${
-                    content
-                    ?`
                     <div style="
-                        margin-top:7px;
-                        line-height:1.55;
-                        opacity:.82;
+                        font-size:12px;
+                        opacity:.65;
+                        margin-bottom:5px;
+                        word-break:break-all;
                     ">
+
                         ${escapeHTML(
-                            stripHTML(content)
+                            getDomain(url)
                         )}
+
                     </div>
-                    `
-                    :""
-                }
 
 
-                ${
-                    engine
-                    ?`
-                    <div style="
-                        margin-top:7px;
-                        font-size:11px;
-                        opacity:.55;
-                    ">
-                        ${escapeHTML(engine)}
-                    </div>
-                    `
-                    :""
-                }
+                    <a
+                        href="${escapeHTML(url)}"
 
-            </article>
+                        onclick="
+                            openSearchResult(
+                                event,
+                                this.href
+                            )
+                        "
 
-        `;
+                        style="
+                            font-size:19px;
+                            font-weight:700;
+                            text-decoration:none;
+                            color:
+                                var(
+                                    --orange,
+                                    #ff6a00
+                                );
+                        "
+                    >
 
-    }).join("");
+                        ${escapeHTML(title)}
+
+                    </a>
+
+
+                    ${
+                        content
+                        ?
+                        `
+
+                        <div style="
+                            margin-top:7px;
+                            line-height:1.55;
+                            opacity:.82;
+                        ">
+
+                            ${escapeHTML(
+                                stripHTML(
+                                    content
+                                )
+                            )}
+
+                        </div>
+
+                        `
+                        :
+                        ""
+                    }
+
+
+                    ${
+                        engine
+                        ?
+                        `
+
+                        <div style="
+                            margin-top:7px;
+                            font-size:11px;
+                            opacity:.55;
+                        ">
+
+                            ${escapeHTML(
+                                engine
+                            )}
+
+                        </div>
+
+                        `
+                        :
+                        ""
+                    }
+
+                </article>
+
+            `;
+
+        }
+    ).join("");
 
 }
 
@@ -4138,36 +5428,27 @@ function renderNormalResults(results){
 
 function renderImageResults(results){
 
-    /*
-       SearXNG image results can expose:
-       img_src
-       thumbnail_src
-       image
-       thumbnail
-       url
-       source
-       title
-    */
+    const valid =
+        results.filter(
+            result=>{
 
-    const valid=
-        results.filter(result=>{
+                return (
 
-            return (
-                result.img_src ||
-                result.thumbnail_src ||
-                result.image ||
-                result.thumbnail
-            );
+                    result.img_src ||
 
-        });
+                    result.thumbnail_src ||
+
+                    result.image ||
+
+                    result.thumbnail
+
+                );
+
+            }
+        );
 
 
     if(valid.length===0){
-
-        /*
-           Some engines may return ordinary web
-           results under the images category.
-        */
 
         return `
 
@@ -4175,9 +5456,12 @@ function renderImageResults(results){
                 padding:15px 0 25px;
                 opacity:.7;
             ">
+
                 No direct image thumbnails were returned
                 by the configured image engines.
+
             </div>
+
 
             ${renderNormalResults(results)}
 
@@ -4191,105 +5475,162 @@ function renderImageResults(results){
         <div style="
             display:grid;
             grid-template-columns:
-                repeat(auto-fill,minmax(150px,1fr));
+                repeat(
+                    auto-fill,
+                    minmax(150px,1fr)
+                );
             gap:12px;
         ">
 
-            ${valid.map((result,index)=>{
 
-                const image=
-                    result.img_src ||
-                    result.image ||
-                    result.thumbnail_src ||
-                    result.thumbnail;
+            ${
+                valid.map(
+                    (result,index)=>{
 
+                        const image =
 
-                const thumb=
-                    result.thumbnail_src ||
-                    result.thumbnail ||
-                    image;
+                            result.img_src ||
 
+                            result.image ||
 
-                const title=
-                    result.title ||
-                    "Image result";
+                            result.thumbnail_src ||
+
+                            result.thumbnail;
 
 
-                const pageUrl=
-                    result.url ||
-                    result.source ||
-                    image;
+                        const thumb =
+
+                            result.thumbnail_src ||
+
+                            result.thumbnail ||
+
+                            image;
 
 
-                return `
+                        const title =
 
-                    <article
-                        style="
-                            overflow:hidden;
-                            border-radius:12px;
-                            background:
-                                var(--card,#fff);
-                            border:1px solid
-                                rgba(127,127,127,.18);
-                        "
-                    >
+                            result.title ||
 
-                        <a
-                            href="${escapeHTML(pageUrl)}"
-                            onclick="
-                                openSearchResult(
-                                    event,
-                                    this.href
-                                )
-                            "
-                            style="
-                                display:block;
-                                text-decoration:none;
-                            "
-                        >
+                            "Image result";
 
-                            <div style="
-                                width:100%;
-                                aspect-ratio:4/3;
-                                background:#eee;
-                                overflow:hidden;
-                            ">
 
-                                <img
-                                    src="${escapeHTML(thumb)}"
-                                    alt="${escapeHTML(title)}"
-                                    loading="lazy"
-                                    referrerpolicy="no-referrer"
-                                    onerror="
-                                        this.onerror=null;
-                                        this.src='${escapeHTML(image)}';
+                        const pageUrl =
+
+                            result.url ||
+
+                            result.source ||
+
+                            image;
+
+
+                        return `
+
+                            <article
+                                style="
+                                    overflow:hidden;
+                                    border-radius:12px;
+                                    background:
+                                        var(
+                                            --card,
+                                            #fff
+                                        );
+                                    border:1px solid
+                                        rgba(
+                                            127,
+                                            127,
+                                            127,
+                                            .18
+                                        );
+                                "
+                            >
+
+
+                                <a
+
+                                    href="${escapeHTML(
+                                        pageUrl
+                                    )}"
+
+                                    onclick="
+                                        openSearchResult(
+                                            event,
+                                            this.href
+                                        )
                                     "
+
                                     style="
-                                        width:100%;
-                                        height:100%;
-                                        object-fit:cover;
                                         display:block;
+                                        text-decoration:none;
                                     "
                                 >
 
-                            </div>
 
-                            <div style="
-                                padding:9px;
-                                font-size:13px;
-                                font-weight:600;
-                                line-height:1.35;
-                            ">
-                                ${escapeHTML(title)}
-                            </div>
+                                    <div style="
+                                        width:100%;
+                                        aspect-ratio:4/3;
+                                        background:#eee;
+                                        overflow:hidden;
+                                    ">
 
-                        </a>
 
-                    </article>
+                                        <img
 
-                `;
+                                            src="${escapeHTML(
+                                                thumb
+                                            )}"
 
-            }).join("")}
+                                            alt="${escapeHTML(
+                                                title
+                                            )}"
+
+                                            loading="lazy"
+
+                                            referrerpolicy="
+                                                no-referrer
+                                            "
+
+                                            onerror="
+                                                this.onerror=null;
+                                                this.src='${escapeHTML(
+                                                    image
+                                                )}';
+                                            "
+
+                                            style="
+                                                width:100%;
+                                                height:100%;
+                                                object-fit:cover;
+                                                display:block;
+                                            "
+
+                                        >
+
+                                    </div>
+
+
+                                    <div style="
+                                        padding:9px;
+                                        font-size:13px;
+                                        font-weight:600;
+                                        line-height:1.35;
+                                    ">
+
+                                        ${escapeHTML(
+                                            title
+                                        )}
+
+                                    </div>
+
+
+                                </a>
+
+                            </article>
+
+                        `;
+
+                    }
+                ).join("")
+            }
 
         </div>
 
@@ -4305,19 +5646,21 @@ function renderImageResults(results){
 function openSearchResult(event,url){
 
     if(event){
+
         event.preventDefault();
+
     }
 
 
-    if(!url || url==="#"){
+    if(
+        !url ||
+        url==="#"
+    ){
+
         return;
+
     }
 
-
-    /*
-       Keep the result inside the existing
-       OrangeBrowse/native navigation architecture.
-    */
 
     navigateTo(
         url,
@@ -4337,7 +5680,12 @@ function nextSearchPage(){
 
     if(searchLoading)return;
 
+
     currentSearchPage++;
+
+
+    saveCurrentSearchToTab();
+
 
     showSearchResults();
 
@@ -4348,9 +5696,15 @@ function previousSearchPage(){
 
     if(searchLoading)return;
 
+
     if(currentSearchPage<=1)return;
 
+
     currentSearchPage--;
+
+
+    saveCurrentSearchToTab();
+
 
     showSearchResults();
 
@@ -4365,11 +5719,15 @@ function getDomain(url){
 
     try{
 
-        return new URL(url).hostname;
+        return new URL(
+            url
+        ).hostname;
 
     }catch(error){
 
-        return String(url || "");
+        return String(
+            url || ""
+        );
 
     }
 
@@ -4378,11 +5736,15 @@ function getDomain(url){
 
 function stripHTML(value){
 
-    const div=
-        document.createElement("div");
+    const div =
+        document.createElement(
+            "div"
+        );
 
-    div.innerHTML=
+
+    div.innerHTML =
         String(value || "");
+
 
     return div.textContent ||
         div.innerText ||
@@ -4393,10 +5755,11 @@ function stripHTML(value){
 
 function hideSearchResults(){
 
-    const container=
+    const container =
         document.getElementById(
             "orangeSearchResults"
         );
+
 
     if(container){
 
@@ -4415,44 +5778,182 @@ function hideSearchResults(){
 
 function goBack(){
 
-    const tab=getActiveTab();
+    const tab =
+        getActiveTab();
+
 
     if(!tab)return;
 
 
+    /*
+       SEARCH TAB BACK/FORWARD
+    */
+
+    if(
+        tab.searchState &&
+        Array.isArray(tab.history)
+    ){
+
+        if(
+            tab.historyIndex > 0
+        ){
+
+            tab.historyIndex--;
+
+
+            const previous =
+                tab.history[
+                    tab.historyIndex
+                ];
+
+
+            if(
+                previous &&
+                previous.type==="search"
+            ){
+
+                currentSearchQuery =
+                    previous.query;
+
+                currentSearchCategory =
+                    previous.category ||
+                    "general";
+
+                currentSearchPage =
+                    previous.page || 1;
+
+
+                tab.searchState={
+                    query:
+                        currentSearchQuery,
+
+                    category:
+                        currentSearchCategory,
+
+                    page:
+                        currentSearchPage,
+
+                    updated:
+                        Date.now()
+                };
+
+
+                tab.title =
+                    currentSearchQuery;
+
+                tab.url =
+                    "orangebrowse-search://" +
+                    encodeURIComponent(
+                        currentSearchQuery
+                    );
+
+                tab.isNewTab=false;
+
+
+                persistTabs();
+
+                updateRecentTabsPanel();
+
+                showSearchResults();
+
+                return;
+
+            }
+
+
+            if(
+                previous &&
+                previous.type==="url"
+            ){
+
+                tab.searchState=null;
+
+                tab.url =
+                    previous.url;
+
+                tab.title =
+                    previous.title ||
+                    previous.url;
+
+                tab.isNewTab=false;
+
+
+                persistTabs();
+
+                updateRecentTabsPanel();
+
+                setAddress(
+                    previous.url
+                );
+
+                openNativeDestination(
+                    previous.url
+                );
+
+                return;
+
+            }
+
+        }
+
+    }
+
+
+    /*
+       NORMAL URL HISTORY
+    */
+
     if(
         Array.isArray(tab.history) &&
+        tab.history.length &&
         tab.historyIndex > 0
     ){
 
         tab.historyIndex--;
 
-        const destination=
-            tab.history[tab.historyIndex];
 
-        tab.url=destination;
+        const destination =
+            tab.history[
+                tab.historyIndex
+            ];
+
+
+        tab.url =
+            destination;
+
+        tab.searchState=null;
 
         tab.isNewTab=false;
 
+
         persistTabs();
 
-        renderTabs();
+        updateRecentTabsPanel();
 
-        setAddress(destination);
+        setAddress(
+            destination
+        );
 
-        openNativeDestination(destination);
+        openNativeDestination(
+            destination
+        );
 
         return;
 
     }
 
 
+    /*
+       Median native browser fallback.
+    */
+
     try{
 
         if(
             window.median &&
             window.median.window &&
-            typeof window.median.window.goBack==="function"
+            typeof
+            window.median.window.goBack==="function"
         ){
 
             window.median.window.goBack();
@@ -4464,7 +5965,14 @@ function goBack(){
     }catch(error){}
 
 
-    showToast("No previous page");
+    /*
+       If no OrangeBrowse page exists,
+       stay on the current tab.
+    */
+
+    showToast(
+        "No previous page"
+    );
 
 }
 
@@ -4475,10 +5983,133 @@ function goBack(){
 
 function goForward(){
 
-    const tab=getActiveTab();
+    const tab =
+        getActiveTab();
+
 
     if(!tab)return;
 
+
+    /*
+       SEARCH HISTORY
+    */
+
+    if(
+        tab.searchState &&
+        Array.isArray(tab.history)
+    ){
+
+        if(
+            tab.historyIndex <
+            tab.history.length-1
+        ){
+
+            tab.historyIndex++;
+
+
+            const next =
+                tab.history[
+                    tab.historyIndex
+                ];
+
+
+            if(
+                next &&
+                next.type==="search"
+            ){
+
+                currentSearchQuery =
+                    next.query;
+
+                currentSearchCategory =
+                    next.category ||
+                    "general";
+
+                currentSearchPage =
+                    next.page || 1;
+
+
+                tab.searchState={
+
+                    query:
+                        currentSearchQuery,
+
+                    category:
+                        currentSearchCategory,
+
+                    page:
+                        currentSearchPage,
+
+                    updated:
+                        Date.now()
+
+                };
+
+
+                tab.title =
+                    currentSearchQuery;
+
+                tab.url =
+                    "orangebrowse-search://" +
+                    encodeURIComponent(
+                        currentSearchQuery
+                    );
+
+                tab.isNewTab=false;
+
+
+                persistTabs();
+
+                updateRecentTabsPanel();
+
+                showSearchResults();
+
+                return;
+
+            }
+
+
+            if(
+                next &&
+                next.type==="url"
+            ){
+
+                tab.searchState=null;
+
+                tab.url =
+                    next.url;
+
+                tab.title =
+                    next.title ||
+                    next.url;
+
+                tab.isNewTab=false;
+
+
+                persistTabs();
+
+                updateRecentTabsPanel();
+
+                setAddress(
+                    next.url
+                );
+
+                openNativeDestination(
+                    next.url
+                );
+
+                return;
+
+            }
+
+        }
+
+    }
+
+
+    /*
+       NORMAL URL HISTORY
+    */
 
     if(
         Array.isArray(tab.history) &&
@@ -4488,20 +6119,32 @@ function goForward(){
 
         tab.historyIndex++;
 
-        const destination=
-            tab.history[tab.historyIndex];
 
-        tab.url=destination;
+        const destination =
+            tab.history[
+                tab.historyIndex
+            ];
+
+
+        tab.url =
+            destination;
+
+        tab.searchState=null;
 
         tab.isNewTab=false;
 
+
         persistTabs();
 
-        renderTabs();
+        updateRecentTabsPanel();
 
-        setAddress(destination);
+        setAddress(
+            destination
+        );
 
-        openNativeDestination(destination);
+        openNativeDestination(
+            destination
+        );
 
         return;
 
@@ -4513,7 +6156,8 @@ function goForward(){
         if(
             window.median &&
             window.median.window &&
-            typeof window.median.window.goForward==="function"
+            typeof
+            window.median.window.goForward==="function"
         ){
 
             window.median.window.goForward();
@@ -4525,7 +6169,9 @@ function goForward(){
     }catch(error){}
 
 
-    showToast("No next page");
+    showToast(
+        "No next page"
+    );
 
 }
 
@@ -4536,7 +6182,9 @@ function goForward(){
 
 function reloadPage(){
 
-    const tab=getActiveTab();
+    const tab =
+        getActiveTab();
+
 
     if(tab && tab.url){
 
@@ -4553,9 +6201,13 @@ function reloadPage(){
         }
 
 
-        openNativeDestination(tab.url);
+        openNativeDestination(
+            tab.url
+        );
 
-        showToast("Page reloaded");
+        showToast(
+            "Page reloaded"
+        );
 
         return;
 
@@ -4563,11 +6215,17 @@ function reloadPage(){
 
 
     window.scrollTo({
+
         top:0,
+
         behavior:"smooth"
+
     });
 
-    showToast("New tab refreshed");
+
+    showToast(
+        "New tab refreshed"
+    );
 
 }
 
@@ -4578,11 +6236,17 @@ function reloadPage(){
 
 function setAddress(value){
 
-    const input=
-        document.getElementById("addressInput");
+    const input =
+        document.getElementById(
+            "addressInput"
+        );
+
 
     if(input){
-        input.value=value || "";
+
+        input.value =
+            value || "";
+
     }
 
 }
@@ -4590,10 +6254,14 @@ function setAddress(value){
 
 function clearAddress(){
 
-    const input=
-        document.getElementById("addressInput");
+    const input =
+        document.getElementById(
+            "addressInput"
+        );
+
 
     if(!input)return;
+
 
     input.value="";
 
@@ -4611,21 +6279,33 @@ function addHistory(title,url){
     if(settings.incognito)return;
 
 
+    /*
+       Do not add empty values.
+    */
+
+    if(!title && !url)return;
+
+
     historyItems.unshift({
 
         id:Date.now(),
 
-        title:title || url,
+        title:
+            title || url,
 
         url:url,
 
-        time:new Date().toISOString()
+        time:
+            new Date().toISOString()
 
     });
 
 
-    historyItems=
-        historyItems.slice(0,100);
+    historyItems =
+        historyItems.slice(
+            0,
+            100
+        );
 
 
     save(
@@ -4642,7 +6322,9 @@ function addHistory(title,url){
 
 function bookmarkCurrent(){
 
-    const tab=getActiveTab();
+    const tab =
+        getActiveTab();
+
 
     if(!tab || !tab.url){
 
@@ -4661,7 +6343,9 @@ function bookmarkCurrent(){
         )
     ){
 
-        showToast("Already bookmarked");
+        showToast(
+            "Already bookmarked"
+        );
 
         return;
 
@@ -4672,7 +6356,9 @@ function bookmarkCurrent(){
 
         id:Date.now(),
 
-        title:tab.title || tab.url,
+        title:
+            tab.title ||
+            tab.url,
 
         url:tab.url
 
@@ -4685,7 +6371,9 @@ function bookmarkCurrent(){
     );
 
 
-    showToast("Page bookmarked");
+    showToast(
+        "Page bookmarked"
+    );
 
 }
 
@@ -4696,23 +6384,31 @@ function bookmarkCurrent(){
 
 function toggleIncognito(){
 
-    settings.incognito=
+    settings.incognito =
         !settings.incognito;
+
 
     save(
         STORAGE.settings,
         settings
     );
 
+
     updatePrivacyUI();
 
-    updateFeatureUI("incognito");
+    updateFeatureUI(
+        "incognito"
+    );
 
 
     showToast(
+
         settings.incognito
+
         ? "Incognito mode enabled"
+
         : "Incognito mode disabled"
+
     );
 
 }
@@ -4720,17 +6416,19 @@ function toggleIncognito(){
 
 function updatePrivacyUI(){
 
-    const incognito=
+    const incognito =
         document.getElementById(
             "incognitoMenuText"
         );
 
-    const adblock=
+
+    const adblock =
         document.getElementById(
             "adBlockMenuText"
         );
 
-    const dark=
+
+    const dark =
         document.getElementById(
             "darkModeMenuText"
         );
@@ -4738,9 +6436,12 @@ function updatePrivacyUI(){
 
     if(incognito){
 
-        incognito.textContent=
+        incognito.textContent =
+
             settings.incognito
+
             ? "Exit incognito"
+
             : "Incognito mode";
 
     }
@@ -4748,9 +6449,12 @@ function updatePrivacyUI(){
 
     if(adblock){
 
-        adblock.textContent=
+        adblock.textContent =
+
             settings.adBlock
+
             ? "Ad blocker: ON"
+
             : "Ad blocker: OFF";
 
     }
@@ -4758,9 +6462,12 @@ function updatePrivacyUI(){
 
     if(dark){
 
-        dark.textContent=
+        dark.textContent =
+
             settings.dark
+
             ? "Light mode"
+
             : "Dark mode";
 
     }
@@ -4774,23 +6481,31 @@ function updatePrivacyUI(){
 
 function toggleAdBlock(){
 
-    settings.adBlock=
+    settings.adBlock =
         !settings.adBlock;
+
 
     save(
         STORAGE.settings,
         settings
     );
 
+
     updatePrivacyUI();
 
-    updateFeatureUI("adBlock");
+    updateFeatureUI(
+        "adBlock"
+    );
 
 
     showToast(
+
         settings.adBlock
+
         ? "Ad blocker enabled"
+
         : "Ad blocker disabled"
+
     );
 
 }
@@ -4803,7 +6518,9 @@ function toggleAdBlock(){
 function toggleFeature(event,type){
 
     if(event){
+
         event.stopPropagation();
+
     }
 
 
@@ -4819,7 +6536,7 @@ function toggleFeature(event,type){
     }
 
 
-    settings[type]=
+    settings[type] =
         !settings[type];
 
 
@@ -4841,46 +6558,75 @@ function updateFeatureUI(type){
     const mapping={
 
         dataSaver:{
-            toggle:"dataSaverToggle",
-            status:"dataSaverStatus"
+
+            toggle:
+                "dataSaverToggle",
+
+            status:
+                "dataSaverStatus"
+
         },
 
         adBlock:{
-            toggle:"adBlockToggle",
-            status:"adBlockStatus"
+
+            toggle:
+                "adBlockToggle",
+
+            status:
+                "adBlockStatus"
+
         },
 
         incognito:{
-            toggle:"incognitoToggle",
-            status:"incognitoStatus"
+
+            toggle:
+                "incognitoToggle",
+
+            status:
+                "incognitoStatus"
+
         }
 
     };
 
 
-    const item=mapping[type];
+    const item =
+        mapping[type];
+
 
     if(!item)return;
 
 
-    const toggle=
-        document.getElementById(item.toggle);
+    const toggle =
+        document.getElementById(
+            item.toggle
+        );
 
-    const status=
-        document.getElementById(item.status);
+
+    const status =
+        document.getElementById(
+            item.status
+        );
 
 
     if(!toggle || !status)return;
 
 
     toggle.classList.toggle(
+
         "active",
+
         !!settings[type]
+
     );
 
-    status.textContent=
+
+    status.textContent =
+
         settings[type]
+
         ? "On"
+
         : "Off";
 
 }
@@ -4888,9 +6634,17 @@ function updateFeatureUI(type){
 
 function updateAllFeatureUI(){
 
-    updateFeatureUI("dataSaver");
-    updateFeatureUI("adBlock");
-    updateFeatureUI("incognito");
+    updateFeatureUI(
+        "dataSaver"
+    );
+
+    updateFeatureUI(
+        "adBlock"
+    );
+
+    updateFeatureUI(
+        "incognito"
+    );
 
 }
 
@@ -4901,15 +6655,18 @@ function updateAllFeatureUI(){
 
 function toggleDarkMode(){
 
-    settings.dark=
+    settings.dark =
         !settings.dark;
 
+
     applyTheme();
+
 
     save(
         STORAGE.settings,
         settings
     );
+
 
     updatePrivacyUI();
 
@@ -4931,7 +6688,7 @@ function applySettings(){
     applyTheme();
 
 
-    const engine=
+    const engine =
         document.getElementById(
             "searchEngine"
         );
@@ -4939,8 +6696,9 @@ function applySettings(){
 
     if(engine){
 
-        engine.value=
-            settings.engine || "google";
+        engine.value =
+            settings.engine ||
+            "google";
 
     }
 
@@ -4954,8 +6712,11 @@ function applySettings(){
 function changeSearchEngine(value){
 
     if(
-        !["google","bing","duckduckgo"]
-        .includes(value)
+        ![
+            "google",
+            "bing",
+            "duckduckgo"
+        ].includes(value)
     ){
 
         value="google";
@@ -4965,23 +6726,29 @@ function changeSearchEngine(value){
 
     settings.engine=value;
 
+
     save(
         STORAGE.settings,
         settings
     );
 
 
-    const engine=
+    const engine =
         document.getElementById(
             "searchEngine"
         );
 
+
     if(engine){
+
         engine.value=value;
+
     }
 
 
-    showToast("Search engine updated");
+    showToast(
+        "Search engine updated"
+    );
 
 }
 
@@ -4992,30 +6759,40 @@ function changeSearchEngine(value){
 
 function openAIAssistant(){
 
-    const input=
-        document.getElementById("aiInput");
+    const input =
+        document.getElementById(
+            "aiInput"
+        );
 
-    const card=
-        document.querySelector(".ai-card");
+
+    const card =
+        document.querySelector(
+            ".ai-card"
+        );
 
 
     window.scrollTo({
 
         top:
             card
-            ?card.offsetTop-80
-            :0,
+            ? card.offsetTop - 80
+            : 0,
 
         behavior:"smooth"
 
     });
 
 
-    setTimeout(()=>{
+    setTimeout(
+        ()=>{
 
-        if(input)input.focus();
+            if(input){
+                input.focus();
+            }
 
-    },350);
+        },
+        350
+    );
 
 }
 
@@ -5035,25 +6812,36 @@ function aiKey(event){
 
 function addAIMessage(text,type){
 
-    const chat=
-        document.getElementById("aiChat");
+    const chat =
+        document.getElementById(
+            "aiChat"
+        );
+
 
     if(!chat)return;
 
 
-    const message=
-        document.createElement("div");
+    const message =
+        document.createElement(
+            "div"
+        );
 
-    message.className=
-        "ai-message " + type;
 
-    message.textContent=
+    message.className =
+        "ai-message " +
+        type;
+
+
+    message.textContent =
         String(text || "");
 
 
-    chat.appendChild(message);
+    chat.appendChild(
+        message
+    );
 
-    chat.scrollTop=
+
+    chat.scrollTop =
         chat.scrollHeight;
 
 }
@@ -5061,14 +6849,18 @@ function addAIMessage(text,type){
 
 async function askAI(){
 
-    const input=
-        document.getElementById("aiInput");
+    const input =
+        document.getElementById(
+            "aiInput"
+        );
+
 
     if(!input)return;
 
 
-    const question=
+    const question =
         input.value.trim();
+
 
     if(!question){
 
@@ -5084,26 +6876,33 @@ async function askAI(){
         "user"
     );
 
+
     input.value="";
 
 
     if(
         window.AndroidAI &&
-        typeof window.AndroidAI.ask==="function"
+        typeof
+        window.AndroidAI.ask==="function"
     ){
 
         try{
 
-            const answer=
+            const answer =
                 await window.AndroidAI.ask(
                     question
                 );
 
+
             addAIMessage(
+
                 answer ||
                 "I couldn't get an answer.",
+
                 "bot"
+
             );
+
 
             return;
 
@@ -5123,29 +6922,38 @@ async function askAI(){
 
     try{
 
-        const response=
+        const response =
             await fetch(
                 "/api/ai",
                 {
+
                     method:"POST",
+
                     headers:{
                         "Content-Type":
                             "application/json"
                     },
-                    body:JSON.stringify({
-                        message:question
-                    })
+
+                    body:
+                        JSON.stringify({
+                            message:
+                                question
+                        })
+
                 }
             );
 
 
         if(response.ok){
 
-            const data=
+            const data =
                 await response.json();
 
 
-            if(data && data.answer){
+            if(
+                data &&
+                data.answer
+            ){
 
                 addAIMessage(
                     data.answer,
@@ -5162,8 +6970,11 @@ async function askAI(){
 
 
     addAIMessage(
+
         "OrangeBrowse AI is ready, but the GPT connection has not been connected yet.",
+
         "bot"
+
     );
 
 }
@@ -5176,11 +6987,15 @@ async function askAI(){
 function jamaLaunchInfo(){
 
     openModal(
+
         "JAMA Coin",
+
         `
+
         <div class="empty">
 
             <i class="fa-solid fa-rocket"></i>
+
 
             <h3
                 style="
@@ -5188,15 +7003,22 @@ function jamaLaunchInfo(){
                     color:var(--text);
                 "
             >
+
                 JAMA Coin — Launching Soon
+
             </h3>
 
+
             <p>
+
                 The JAMA Coin promotional area is ready.
+
             </p>
 
         </div>
+
         `
+
     );
 
 }
@@ -5208,30 +7030,46 @@ function jamaLaunchInfo(){
 
 function openModal(title,content){
 
-    const titleElement=
+    const titleElement =
         document.getElementById(
             "modalTitle"
         );
 
-    const contentElement=
+
+    const contentElement =
         document.getElementById(
             "modalContent"
         );
 
-    const modal=
-        document.getElementById("modal");
+
+    const modal =
+        document.getElementById(
+            "modal"
+        );
 
 
     if(titleElement){
-        titleElement.textContent=title;
+
+        titleElement.textContent =
+            title;
+
     }
+
 
     if(contentElement){
-        contentElement.innerHTML=content;
+
+        contentElement.innerHTML =
+            content;
+
     }
 
+
     if(modal){
-        modal.classList.add("show");
+
+        modal.classList.add(
+            "show"
+        );
+
     }
 
 }
@@ -5239,11 +7077,18 @@ function openModal(title,content){
 
 function closeModal(){
 
-    const modal=
-        document.getElementById("modal");
+    const modal =
+        document.getElementById(
+            "modal"
+        );
+
 
     if(modal){
-        modal.classList.remove("show");
+
+        modal.classList.remove(
+            "show"
+        );
+
     }
 
 }
@@ -5255,13 +7100,18 @@ function closeModal(){
 
 function openMenu(){
 
-    const overlay=
+    const overlay =
         document.getElementById(
             "menuOverlay"
         );
 
+
     if(overlay){
-        overlay.classList.add("open");
+
+        overlay.classList.add(
+            "open"
+        );
+
     }
 
 }
@@ -5269,13 +7119,18 @@ function openMenu(){
 
 function closeMenu(){
 
-    const overlay=
+    const overlay =
         document.getElementById(
             "menuOverlay"
         );
 
+
     if(overlay){
-        overlay.classList.remove("open");
+
+        overlay.classList.remove(
+            "open"
+        );
+
     }
 
 }
@@ -5301,26 +7156,37 @@ function closeMenuOutside(event){
 
 function updateNetworkStatus(){
 
-    const status=
+    const status =
         document.getElementById(
             "offlineStatus"
         );
+
 
     if(!status)return;
 
 
     if(!navigator.onLine){
 
-        status.classList.add("show");
+        status.classList.add(
+            "show"
+        );
+
 
         status.innerHTML=`
+
             <i class="fa-solid fa-wifi"></i>
-            <span>Offline mode</span>
+
+            <span>
+                Offline mode
+            </span>
+
         `;
 
     }else{
 
-        status.classList.remove("show");
+        status.classList.remove(
+            "show"
+        );
 
     }
 
@@ -5331,6 +7197,7 @@ window.addEventListener(
     "online",
     updateNetworkStatus
 );
+
 
 window.addEventListener(
     "offline",
@@ -5344,32 +7211,48 @@ window.addEventListener(
 
 function showToast(message){
 
-    const toast=
-        document.getElementById("toast");
+    const toast =
+        document.getElementById(
+            "toast"
+        );
 
-    const text=
-        document.getElementById("toastText");
+
+    const text =
+        document.getElementById(
+            "toastText"
+        );
 
 
     if(!toast || !text)return;
 
 
-    text.textContent=
+    text.textContent =
         String(message || "");
 
 
-    toast.classList.add("show");
+    toast.classList.add(
+        "show"
+    );
 
 
-    clearTimeout(toastTimer);
+    clearTimeout(
+        toastTimer
+    );
 
 
-    toastTimer=
+    toastTimer =
         setTimeout(
+
             ()=>{
-                toast.classList.remove("show");
+
+                toast.classList.remove(
+                    "show"
+                );
+
             },
+
             2200
+
         );
 
 }
@@ -5382,13 +7265,1180 @@ function showToast(message){
 function escapeHTML(value){
 
     return String(value ?? "")
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
+
+
+/* =====================================================
+   RECENT TABS PANEL
+===================================================== */
+
+function createRecentTabsPanel(){
+
+    let panel =
+        document.getElementById(
+            "orangeRecentTabsPanel"
+        );
+
+
+    if(panel)return;
+
+
+    panel =
+        document.createElement(
+            "div"
+        );
+
+
+    panel.id =
+        "orangeRecentTabsPanel";
+
+
+    panel.innerHTML=`
+
+        <div
+            class="orange-recent-tabs-overlay"
+            id="orangeRecentTabsOverlay"
+        ></div>
+
+
+        <section
+            class="orange-recent-tabs-sheet"
+            id="orangeRecentTabsSheet"
+        >
+
+            <div class="orange-recent-tabs-header">
+
+                <div>
+
+                    <strong>
+                        Recent tabs
+                    </strong>
+
+                    <small
+                        id="orangeRecentTabsCount"
+                    >
+                        0 tabs
+                    </small>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="orangeClearAllTabs"
+                    title="Clear all tabs"
+                >
+
+                    Clear all
+
+                </button>
+
+            </div>
+
+
+            <div
+                class="orange-recent-tabs-scroll"
+                id="orangeRecentTabsList"
+            ></div>
+
+
+            <button
+                type="button"
+                class="orange-close-tabs-panel"
+                id="orangeCloseTabsPanel"
+                aria-label="Close recent tabs"
+            >
+
+                <i
+                    class="fa-solid fa-chevron-down"
+                ></i>
+
+            </button>
+
+        </section>
+
+    `;
+
+
+    /*
+       Add styles here so this feature works
+       without requiring a second stylesheet.
+    */
+
+    const style =
+        document.createElement(
+            "style"
+        );
+
+
+    style.id =
+        "orangeRecentTabsStyles";
+
+
+    style.textContent=`
+
+        #orangeRecentTabsPanel{
+
+            position:fixed;
+
+            inset:0;
+
+            z-index:9998;
+
+            display:none;
+
+        }
+
+
+        #orangeRecentTabsPanel.show{
+
+            display:block;
+
+        }
+
+
+        .orange-recent-tabs-overlay{
+
+            position:absolute;
+
+            inset:0;
+
+            background:
+                rgba(0,0,0,.42);
+
+            backdrop-filter:
+                blur(3px);
+
+        }
+
+
+        .orange-recent-tabs-sheet{
+
+            position:absolute;
+
+            left:0;
+
+            right:0;
+
+            bottom:0;
+
+            background:
+                var(
+                    --card,
+                    #ffffff
+                );
+
+            color:
+                var(
+                    --text,
+                    #111111
+                );
+
+            border-radius:
+                22px 22px 0 0;
+
+            padding:
+                16px 14px
+                calc(
+                    18px +
+                    env(
+                        safe-area-inset-bottom
+                    )
+                );
+
+            box-shadow:
+                0 -12px 40px
+                rgba(0,0,0,.18);
+
+            max-height:
+                72vh;
+
+        }
+
+
+        .orange-recent-tabs-header{
+
+            display:flex;
+
+            align-items:center;
+
+            justify-content:space-between;
+
+            gap:12px;
+
+            margin-bottom:13px;
+
+        }
+
+
+        .orange-recent-tabs-header strong{
+
+            display:block;
+
+            font-size:17px;
+
+        }
+
+
+        .orange-recent-tabs-header small{
+
+            display:block;
+
+            margin-top:3px;
+
+            opacity:.6;
+
+            font-size:11px;
+
+        }
+
+
+        #orangeClearAllTabs{
+
+            border:0;
+
+            background:
+                transparent;
+
+            color:
+                var(
+                    --orange,
+                    #ff6a00
+                );
+
+            font-weight:700;
+
+            cursor:pointer;
+
+            padding:7px 4px;
+
+        }
+
+
+        .orange-recent-tabs-scroll{
+
+            display:flex;
+
+            gap:12px;
+
+            overflow-x:auto;
+
+            overflow-y:hidden;
+
+            padding:
+                3px 2px 10px;
+
+            scroll-snap-type:x proximity;
+
+            -webkit-overflow-scrolling:touch;
+
+        }
+
+
+        .orange-recent-tabs-scroll::-webkit-scrollbar{
+
+            height:4px;
+
+        }
+
+
+        .orange-recent-tab-card{
+
+            flex:
+                0 0 205px;
+
+            width:205px;
+
+            min-height:118px;
+
+            position:relative;
+
+            scroll-snap-align:start;
+
+            border:
+                1px solid
+                rgba(127,127,127,.18);
+
+            border-radius:15px;
+
+            background:
+                var(
+                    --bg,
+                    #f5f5f5
+                );
+
+            padding:14px;
+
+            cursor:pointer;
+
+            transition:
+                transform .18s ease,
+                border-color .18s ease,
+                box-shadow .18s ease;
+
+        }
+
+
+        .orange-recent-tab-card:active{
+
+            transform:scale(.97);
+
+        }
+
+
+        .orange-recent-tab-card.active{
+
+            border-color:
+                var(
+                    --orange,
+                    #ff6a00
+                );
+
+            box-shadow:
+                0 6px 22px
+                rgba(255,106,0,.14);
+
+        }
+
+
+        .orange-recent-tab-card-top{
+
+            display:flex;
+
+            align-items:center;
+
+            gap:8px;
+
+            padding-right:28px;
+
+        }
+
+
+        .orange-recent-tab-icon{
+
+            width:31px;
+
+            height:31px;
+
+            border-radius:9px;
+
+            display:flex;
+
+            align-items:center;
+
+            justify-content:center;
+
+            flex:none;
+
+            background:
+                var(
+                    --orange-light,
+                    #fff1e8
+                );
+
+            color:
+                var(
+                    --orange,
+                    #ff6a00
+                );
+
+        }
+
+
+        .orange-recent-tab-title{
+
+            font-size:13px;
+
+            font-weight:700;
+
+            overflow:hidden;
+
+            text-overflow:ellipsis;
+
+            white-space:nowrap;
+
+        }
+
+
+        .orange-recent-tab-url{
+
+            margin-top:10px;
+
+            font-size:11px;
+
+            line-height:1.4;
+
+            opacity:.62;
+
+            overflow:hidden;
+
+            display:
+                -webkit-box;
+
+            -webkit-line-clamp:2;
+
+            -webkit-box-orient:vertical;
+
+            word-break:break-word;
+
+        }
+
+
+        .orange-recent-tab-close{
+
+            position:absolute;
+
+            top:9px;
+
+            right:9px;
+
+            width:28px;
+
+            height:28px;
+
+            border:0;
+
+            border-radius:50%;
+
+            background:
+                rgba(127,127,127,.10);
+
+            color:
+                inherit;
+
+            display:flex;
+
+            align-items:center;
+
+            justify-content:center;
+
+            cursor:pointer;
+
+        }
+
+
+        .orange-recent-tab-active-label{
+
+            position:absolute;
+
+            left:14px;
+
+            bottom:10px;
+
+            font-size:10px;
+
+            color:
+                var(
+                    --orange,
+                    #ff6a00
+                );
+
+            font-weight:700;
+
+        }
+
+
+        .orange-recent-empty{
+
+            width:100%;
+
+            text-align:center;
+
+            padding:30px 12px;
+
+            opacity:.62;
+
+        }
+
+
+        .orange-close-tabs-panel{
+
+            display:block;
+
+            margin:8px auto 0;
+
+            width:42px;
+
+            height:32px;
+
+            border:0;
+
+            border-radius:12px;
+
+            background:
+                rgba(127,127,127,.10);
+
+            color:inherit;
+
+            cursor:pointer;
+
+        }
+
+
+        body.dark
+        .orange-recent-tabs-sheet{
+
+            background:
+                var(
+                    --black2,
+                    #181818
+                );
+
+        }
+
+
+        body.dark
+        .orange-recent-tab-card{
+
+            background:
+                rgba(255,255,255,.045);
+
+            border-color:
+                rgba(255,255,255,.10);
+
+        }
+
+
+        @media(max-width:600px){
+
+            .orange-recent-tab-card{
+
+                flex-basis:
+                    min(
+                        78vw,
+                        260px
+                    );
+
+                width:
+                    min(
+                        78vw,
+                        260px
+                    );
+
+            }
+
+        }
+
+    `;
+
+
+    document.head.appendChild(
+        style
+    );
+
+    document.body.appendChild(
+        panel
+    );
+
+
+    const overlay =
+        document.getElementById(
+            "orangeRecentTabsOverlay"
+        );
+
+
+    const closeButton =
+        document.getElementById(
+            "orangeCloseTabsPanel"
+        );
+
+
+    const clearButton =
+        document.getElementById(
+            "orangeClearAllTabs"
+        );
+
+
+    if(overlay){
+
+        overlay.addEventListener(
+            "click",
+            closeRecentTabsPanel
+        );
+
+    }
+
+
+    if(closeButton){
+
+        closeButton.addEventListener(
+            "click",
+            closeRecentTabsPanel
+        );
+
+    }
+
+
+    if(clearButton){
+
+        clearButton.addEventListener(
+            "click",
+            clearAllTabs
+        );
+
+    }
+
+
+    /*
+       Connect the existing bottom History icon.
+    */
+
+    attachHistoryNavButton();
+
+}
+
+
+/* =====================================================
+   FIND BOTTOM HISTORY BUTTON
+===================================================== */
+
+function attachHistoryNavButton(){
+
+    const candidates =
+        Array.from(
+            document.querySelectorAll(
+                "button, a, .mobile-nav-item, .nav-item"
+            )
+        );
+
+
+    candidates.forEach(element=>{
+
+        if(
+            element.dataset.orangeHistoryBound==="1"
+        ){
+
+            return;
+
+        }
+
+
+        const icon =
+            element.querySelector(
+                "i"
+            );
+
+
+        if(!icon)return;
+
+
+        const iconClass =
+            String(
+                icon.className || ""
+            ).toLowerCase();
+
+
+        const text =
+            String(
+                element.textContent || ""
+            ).toLowerCase();
+
+
+        const isHistory =
+            iconClass.includes(
+                "fa-clock"
+            ) ||
+            iconClass.includes(
+                "fa-history"
+            ) ||
+            text.includes(
+                "history"
+            );
+
+
+        if(!isHistory)return;
+
+
+        element.dataset.orangeHistoryBound="1";
+
+
+        element.addEventListener(
+            "click",
+            function(event){
+
+                /*
+                   Keep the existing nav item
+                   behavior from opening the old
+                   history modal.
+                */
+
+                event.preventDefault();
+
+                event.stopPropagation();
+
+                openRecentTabsPanel();
+
+            },
+            true
+        );
+
+    });
+
+}
+
+
+/* =====================================================
+   OPEN RECENT TABS PANEL
+===================================================== */
+
+function openRecentTabsPanel(){
+
+    createRecentTabsPanel();
+
+    updateRecentTabsPanel();
+
+
+    const panel =
+        document.getElementById(
+            "orangeRecentTabsPanel"
+        );
+
+
+    if(!panel)return;
+
+
+    panel.classList.add(
+        "show"
+    );
+
+
+    recentTabsPanelOpen=true;
+
+
+    /*
+       Scroll the active card into view.
+    */
+
+    setTimeout(()=>{
+
+        const active =
+            panel.querySelector(
+                ".orange-recent-tab-card.active"
+            );
+
+
+        if(active){
+
+            active.scrollIntoView({
+
+                behavior:"smooth",
+
+                block:"nearest",
+
+                inline:"center"
+
+            });
+
+        }
+
+    },80);
+
+}
+
+
+/* =====================================================
+   CLOSE RECENT TABS PANEL
+===================================================== */
+
+function closeRecentTabsPanel(){
+
+    const panel =
+        document.getElementById(
+            "orangeRecentTabsPanel"
+        );
+
+
+    if(panel){
+
+        panel.classList.remove(
+            "show"
+        );
+
+    }
+
+
+    recentTabsPanelOpen=false;
+
+}
+
+
+/* =====================================================
+   UPDATE RECENT TABS
+===================================================== */
+
+function updateRecentTabsPanel(){
+
+    const list =
+        document.getElementById(
+            "orangeRecentTabsList"
+        );
+
+
+    const count =
+        document.getElementById(
+            "orangeRecentTabsCount"
+        );
+
+
+    if(!list)return;
+
+
+    if(count){
+
+        count.textContent =
+            tabs.length === 1
+            ? "1 tab"
+            : tabs.length + " tabs";
+
+    }
+
+
+    if(!tabs.length){
+
+        list.innerHTML=`
+
+            <div class="
+                orange-recent-empty
+            ">
+
+                <i
+                    class="
+                        fa-solid
+                        fa-window-restore
+                    "
+                    style="
+                        font-size:28px;
+                        margin-bottom:9px;
+                    "
+                ></i>
+
+                <div>
+                    No saved tabs
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    list.innerHTML =
+        tabs.map(
+            tab=>{
+
+                const active =
+                    tab.id===activeTabId;
+
+
+                const hasSearch =
+                    !!(
+                        tab.searchState &&
+                        tab.searchState.query
+                    );
+
+
+                const title =
+                    hasSearch
+
+                    ? tab.searchState.query
+
+                    : (
+                        tab.title ||
+                        "New Tab"
+                    );
+
+
+                let description =
+                    "New tab";
+
+
+                if(hasSearch){
+
+                    description =
+                        "Search · " +
+                        (
+                            tab.searchState.category ||
+                            "general"
+                        ) +
+                        " · page " +
+                        (
+                            tab.searchState.page ||
+                            1
+                        );
+
+                }else if(tab.url){
+
+                    description =
+                        tab.url;
+
+                }
+
+
+                return `
+
+                    <article
+
+                        class="
+                            orange-recent-tab-card
+                            ${active ? "active" : ""}
+                        "
+
+                        data-tab-id="${escapeHTML(
+                            tab.id
+                        )}"
+
+                        role="button"
+
+                        tabindex="0"
+
+                        aria-label="
+                            Open ${escapeHTML(
+                                title
+                            )}
+                        "
+                    >
+
+
+                        <div
+                            class="
+                                orange-recent-tab-card-top
+                            "
+                        >
+
+                            <div
+                                class="
+                                    orange-recent-tab-icon
+                                "
+                            >
+
+                                <i
+                                    class="
+                                        fa-solid
+                                        ${
+                                            hasSearch
+                                            ? "fa-magnifying-glass"
+                                            : "fa-globe"
+                                        }
+                                    "
+                                ></i>
+
+                            </div>
+
+
+                            <div
+                                class="
+                                    orange-recent-tab-title
+                                "
+                            >
+
+                                ${escapeHTML(
+                                    title
+                                )}
+
+                            </div>
+
+                        </div>
+
+
+                        <div
+                            class="
+                                orange-recent-tab-url
+                            "
+                        >
+
+                            ${escapeHTML(
+                                description
+                            )}
+
+                        </div>
+
+
+                        ${
+                            active
+                            ?
+                            `
+
+                            <div
+                                class="
+                                    orange-recent-tab-active-label
+                                "
+                            >
+
+                                CURRENT TAB
+
+                            </div>
+
+                            `
+                            :
+                            ""
+                        }
+
+
+                        <button
+
+                            type="button"
+
+                            class="
+                                orange-recent-tab-close
+                            "
+
+                            data-close-tab="${escapeHTML(
+                                tab.id
+                            )}"
+
+                            aria-label="
+                                Close tab
+                            "
+
+                            title="
+                                Close tab
+                            "
+                        >
+
+                            <i
+                                class="
+                                    fa-solid
+                                    fa-xmark
+                                "
+                            ></i>
+
+                        </button>
+
+
+                    </article>
+
+                `;
+
+            }
+        ).join("");
+
+
+    /*
+       Card activation.
+    */
+
+    list
+        .querySelectorAll(
+            ".orange-recent-tab-card"
+        )
+        .forEach(card=>{
+
+            card.addEventListener(
+                "click",
+                function(event){
+
+                    const close =
+                        event.target.closest(
+                            "[data-close-tab]"
+                        );
+
+
+                    if(close){
+
+                        event.preventDefault();
+
+                        event.stopPropagation();
+
+                        const id =
+                            close.dataset.closeTab;
+
+                        closeTab(id);
+
+                        return;
+
+                    }
+
+
+                    const id =
+                        card.dataset.tabId;
+
+
+                    if(id){
+
+                        activateTab(id);
+
+                        closeRecentTabsPanel();
+
+                    }
+
+                }
+            );
+
+
+            card.addEventListener(
+                "keydown",
+                function(event){
+
+                    if(
+                        event.key==="Enter" ||
+                        event.key===" "
+                    ){
+
+                        event.preventDefault();
+
+                        const id =
+                            card.dataset.tabId;
+
+                        if(id){
+
+                            activateTab(id);
+
+                            closeRecentTabsPanel();
+
+                        }
+
+                    }
+
+                }
+            );
+
+        });
+
+}
+
+
+/* =====================================================
+   RE-BIND HISTORY ICON
+   AFTER DYNAMIC DOM CHANGES
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        attachHistoryNavButton();
+
+    }
+);
 
 
 /* =====================================================
@@ -5406,14 +8456,17 @@ document.addEventListener(
 
             event.preventDefault();
 
-            const input=
+
+            const input =
                 document.getElementById(
                     "addressInput"
                 );
 
+
             if(input){
 
                 input.focus();
+
                 input.select();
 
             }
@@ -5440,8 +8493,13 @@ document.addEventListener(
 
             event.preventDefault();
 
+
             if(activeTabId){
-                closeTab(activeTabId);
+
+                closeTab(
+                    activeTabId
+                );
+
             }
 
         }
@@ -5462,7 +8520,10 @@ document.addEventListener(
         if(event.key==="Escape"){
 
             closeModal();
+
             closeMenu();
+
+            closeRecentTabsPanel();
 
         }
 
@@ -5474,8 +8535,11 @@ document.addEventListener(
    MODAL EVENTS
 ===================================================== */
 
-const modalElement=
-    document.getElementById("modal");
+const modalElement =
+    document.getElementById(
+        "modal"
+    );
+
 
 if(modalElement){
 
@@ -5483,8 +8547,12 @@ if(modalElement){
         "click",
         function(event){
 
-            if(event.target===this){
+            if(
+                event.target===this
+            ){
+
                 closeModal();
+
             }
 
         }
@@ -5497,10 +8565,11 @@ if(modalElement){
    SEARCH ENGINE SELECT
 ===================================================== */
 
-const searchEngineElement=
+const searchEngineElement =
     document.getElementById(
         "searchEngine"
     );
+
 
 if(searchEngineElement){
 
@@ -5528,25 +8597,30 @@ window.addEventListener(
 
         persistTabs();
 
+
         save(
             STORAGE.bookmarks,
             bookmarks
         );
+
 
         save(
             STORAGE.history,
             historyItems
         );
 
+
         save(
             STORAGE.closedTabs,
             closedTabs
         );
 
+
         save(
             STORAGE.offlinePages,
             offlinePages
         );
+
 
         save(
             STORAGE.settings,
@@ -5563,15 +8637,16 @@ window.addEventListener(
 
 function initializeLoader(){
 
-    const loader=
+    const loader =
         document.getElementById(
             "appLoader"
         );
 
+
     if(!loader)return;
 
 
-    const loaderTitle=
+    const loaderTitle =
         loader.querySelector(
             ".loader-title"
         );
@@ -5589,6 +8664,7 @@ function initializeLoader(){
                 "dark-loader"
             );
 
+
             loader.classList.remove(
                 "light-loader"
             );
@@ -5596,7 +8672,7 @@ function initializeLoader(){
 
             if(loaderTitle){
 
-                loaderTitle.style.color=
+                loaderTitle.style.color =
                     "#ffffff";
 
             }
@@ -5607,6 +8683,7 @@ function initializeLoader(){
                 "light-loader"
             );
 
+
             loader.classList.remove(
                 "dark-loader"
             );
@@ -5614,7 +8691,7 @@ function initializeLoader(){
 
             if(loaderTitle){
 
-                loaderTitle.style.color=
+                loaderTitle.style.color =
                     "#111111";
 
             }
@@ -5627,7 +8704,7 @@ function initializeLoader(){
     updateLoaderTheme();
 
 
-    const observer=
+    const observer =
         new MutationObserver(
             updateLoaderTheme
         );
@@ -5637,7 +8714,9 @@ function initializeLoader(){
         document.body,
         {
             attributes:true,
-            attributeFilter:["class"]
+            attributeFilter:[
+                "class"
+            ]
         }
     );
 
@@ -5645,7 +8724,9 @@ function initializeLoader(){
     setTimeout(
         function(){
 
-            loader.classList.add("hide");
+            loader.classList.add(
+                "hide"
+            );
 
 
             setTimeout(
@@ -5655,7 +8736,9 @@ function initializeLoader(){
 
 
                     if(loader.parentNode){
+
                         loader.remove();
+
                     }
 
                 },
@@ -5686,7 +8769,7 @@ document.addEventListener(
     "click",
     function(event){
 
-        const button=
+        const button =
             event.target.closest(
                 "[data-search-category]"
             );
@@ -5695,7 +8778,7 @@ document.addEventListener(
         if(!button)return;
 
 
-        const category=
+        const category =
             button.dataset.searchCategory ||
             button.dataset.category;
 
@@ -5704,10 +8787,52 @@ document.addEventListener(
 
             event.preventDefault();
 
-            setSearchCategory(category);
+            setSearchCategory(
+                category
+            );
 
         }
 
+    }
+);
+
+
+/* =====================================================
+   SUPPORT BOTTOM HISTORY BUTTON
+   AFTER ALL ORIGINAL HTML IS LOADED
+===================================================== */
+
+setTimeout(
+    function(){
+
+        attachHistoryNavButton();
+
+    },
+    300
+);
+
+
+/* =====================================================
+   WATCH FOR NAVIGATION CHANGES
+   This catches bottom-nav elements that may
+   be rendered/changed by the existing UI.
+===================================================== */
+
+const orangeNavObserver =
+    new MutationObserver(
+        function(){
+
+            attachHistoryNavButton();
+
+        }
+    );
+
+
+orangeNavObserver.observe(
+    document.body,
+    {
+        childList:true,
+        subtree:true
     }
 );
 
