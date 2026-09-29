@@ -3255,7 +3255,7 @@ body.dark .mobile-nav{
 <script>
 /* =====================================================
    ORANGEBROWSE ENGINE
-   FULL INTEGRATED VERSION
+   FULL INTEGRATED SEARCH-FIXED VERSION
 ===================================================== */
 
 
@@ -3434,30 +3434,15 @@ function escapeHTML(
 
     return String(value ?? "")
 
-        .replace(
-            /&/g,
-            "&amp;"
-        )
+        .replace(/&/g,"&amp;")
 
-        .replace(
-            /</g,
-            "&lt;"
-        )
+        .replace(/</g,"&lt;")
 
-        .replace(
-            />/g,
-            "&gt;"
-        )
+        .replace(/>/g,"&gt;")
 
-        .replace(
-            /"/g,
-            "&quot;"
-        )
+        .replace(/"/g,"&quot;")
 
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+        .replace(/'/g,"&#039;");
 
 }
 
@@ -3470,7 +3455,7 @@ function safeURL(
 
         const u =
             new URL(
-                url,
+                String(url || ""),
                 location.href
             );
 
@@ -3498,12 +3483,14 @@ function hostName(
 
     try{
 
-        return new URL(url)
-            .hostname
-            .replace(
-                /^www\./,
-                ""
-            );
+        return new URL(
+            url
+        )
+        .hostname
+        .replace(
+            /^www\./,
+            ""
+        );
 
     }catch(e){
 
@@ -3544,15 +3531,11 @@ function initialize(){
 
     bindForms();
 
-
     initializeTabs();
-
 
     renderHistory();
 
-
     updateFeatureUI();
-
 
     updateConnection();
 
@@ -3639,9 +3622,7 @@ function bindForms(){
 
                 event.preventDefault();
 
-                submitResultsSearch(
-                    event
-                );
+                submitResultsSearch(event);
 
             }
         );
@@ -3679,9 +3660,7 @@ function bindForms(){
             "keydown",
             function(event){
 
-                if(
-                    event.key === "Enter"
-                ){
+                if(event.key === "Enter"){
 
                     event.preventDefault();
 
@@ -3768,6 +3747,11 @@ function performSearch(){
     }
 
 
+    state.currentCategory =
+        state.currentCategory ||
+        "general";
+
+
     searchQuery(
         query,
         true,
@@ -3843,14 +3827,8 @@ function addressSearch(){
     }
 
 
-    /*
-       Full URL.
-    */
-
     if(
-        /^https?:\/\//i.test(
-            value
-        )
+        /^https?:\/\//i.test(value)
     ){
 
         navigateTo(value);
@@ -3860,28 +3838,19 @@ function addressSearch(){
     }
 
 
-    /*
-       Domain.
-    */
-
     if(
         /^[a-z0-9.-]+\.[a-z]{2,}(\/.*)?$/i
-            .test(value)
+        .test(value)
     ){
 
         navigateTo(
-            "https://" +
-            value
+            "https://" + value
         );
 
         return;
 
     }
 
-
-    /*
-       Everything else is search.
-    */
 
     searchQuery(
         value,
@@ -3915,17 +3884,9 @@ function buildEngineSearchURL(
         );
 
 
-    /*
-       IMAGE SEARCH
-    */
+    if(category === "images"){
 
-    if(
-        category === "images"
-    ){
-
-        if(
-            engine === "bing"
-        ){
+        if(engine === "bing"){
 
             return (
                 SEARCH_URLS.bingImages +
@@ -3943,17 +3904,9 @@ function buildEngineSearchURL(
     }
 
 
-    /*
-       NEWS SEARCH
-    */
+    if(category === "news"){
 
-    if(
-        category === "news"
-    ){
-
-        if(
-            engine === "bing"
-        ){
+        if(engine === "bing"){
 
             return (
                 SEARCH_URLS.bingNews +
@@ -3971,17 +3924,9 @@ function buildEngineSearchURL(
     }
 
 
-    /*
-       VIDEO SEARCH
-    */
+    if(category === "videos"){
 
-    if(
-        category === "videos"
-    ){
-
-        if(
-            engine === "bing"
-        ){
+        if(engine === "bing"){
 
             return (
                 SEARCH_URLS.bingVideos +
@@ -3999,13 +3944,7 @@ function buildEngineSearchURL(
     }
 
 
-    /*
-       MAP SEARCH
-    */
-
-    if(
-        category === "map"
-    ){
+    if(category === "map"){
 
         return (
             SEARCH_URLS.googleMaps +
@@ -4014,10 +3953,6 @@ function buildEngineSearchURL(
 
     }
 
-
-    /*
-       NORMAL WEB SEARCH
-    */
 
     switch(engine){
 
@@ -4052,7 +3987,7 @@ function buildEngineSearchURL(
 
 
 /* =====================================================
-   SEARXNG SEARCH URL
+   SEARXNG URL
 ===================================================== */
 
 function buildSearchURL(
@@ -4064,6 +3999,7 @@ function buildSearchURL(
         String(
             SEARXNG_URL || ""
         )
+        .trim()
         .replace(
             /\/+$/,
             ""
@@ -4083,9 +4019,7 @@ function buildSearchURL(
 
     params.set(
         "q",
-        String(
-            query || ""
-        ).trim()
+        String(query || "").trim()
     );
 
 
@@ -4098,7 +4032,10 @@ function buildSearchURL(
     params.set(
         "page",
         String(
-            page || 1
+            Math.max(
+                1,
+                Number(page) || 1
+            )
         )
     );
 
@@ -4188,7 +4125,7 @@ function searchQuery(
 
 
     state.currentPage =
-        page;
+        Number(page) || 1;
 
 
     state.currentCategory =
@@ -4198,16 +4135,12 @@ function searchQuery(
 
     if(pushHistory){
 
-        pushSearchState(
-            query
-        );
+        pushSearchState(query);
 
 
         if(!settings.incognito){
 
-            addSearchHistory(
-                query
-            );
+            addSearchHistory(query);
 
         }
 
@@ -4250,9 +4183,7 @@ function searchQuery(
     }
 
 
-    syncCurrentTabToSearch(
-        query
-    );
+    syncCurrentTabToSearch(query);
 
 
     showSearchView();
@@ -4263,7 +4194,7 @@ function searchQuery(
 
     performRemoteSearch(
         query,
-        page,
+        state.currentPage,
         true
     );
 
@@ -4296,9 +4227,7 @@ function pushSearchState(
     }
 
 
-    state.historyStack.push(
-        query
-    );
+    state.historyStack.push(query);
 
 
     state.historyIndex =
@@ -4347,17 +4276,17 @@ function goBack(){
 
 
         if(main){
-            main.value=query;
+            main.value = query;
         }
 
 
         if(resultInput){
-            resultInput.value=query;
+            resultInput.value = query;
         }
 
 
         if(address){
-            address.value=query;
+            address.value = query;
         }
 
 
@@ -4373,6 +4302,7 @@ function goBack(){
 
         updateNavigationButtons();
 
+        updateMobileNavigation();
 
         return;
 
@@ -4459,6 +4389,7 @@ function goForward(){
 
         updateNavigationButtons();
 
+        updateMobileNavigation();
 
         return;
 
@@ -4560,7 +4491,6 @@ function showSearchView(){
 
     updateMobileNavigation();
 
-
     updateNavigationButtons();
 
 
@@ -4638,7 +4568,6 @@ function showHome(){
 
     updateMobileNavigation();
 
-
     updateNavigationButtons();
 
 
@@ -4664,14 +4593,9 @@ let loaderTimeout=null;
 
 function startSearchLoader(){
 
-    clearInterval(
-        loaderTimer
-    );
+    clearInterval(loaderTimer);
 
-
-    clearTimeout(
-        loaderTimeout
-    );
+    clearTimeout(loaderTimeout);
 
 
     state.loading =
@@ -4755,14 +4679,9 @@ function startSearchLoader(){
 
 function stopSearchLoader(){
 
-    clearInterval(
-        loaderTimer
-    );
+    clearInterval(loaderTimer);
 
-
-    clearTimeout(
-        loaderTimeout
-    );
+    clearTimeout(loaderTimeout);
 
 
     state.loading =
@@ -4815,14 +4734,25 @@ async function performRemoteSearch(
         ++state.searchGeneration;
 
 
-    renderLoadingState(
-        query
-    );
+    query =
+        String(query || "").trim();
 
 
-    /*
+    if(!query){
+
+        stopSearchLoader();
+
+        return;
+
+    }
+
+
+    renderLoadingState(query);
+
+
+    /* -------------------------------------------------
        MAPS
-    */
+    ------------------------------------------------- */
 
     if(
         state.currentCategory === "map"
@@ -4830,30 +4760,22 @@ async function performRemoteSearch(
 
         stopSearchLoader();
 
-
-        renderMapResults(
-            []
-        );
-
+        renderMapResults([]);
 
         updateSearchFooter();
-
 
         return;
 
     }
 
 
-    /*
-       Check server.
-    */
+    /* -------------------------------------------------
+       SERVER CHECK
+    ------------------------------------------------- */
 
-    if(
-        !SEARXNG_URL
-    ){
+    if(!SEARXNG_URL){
 
         stopSearchLoader();
-
 
         renderSearchFallback(
             query,
@@ -4862,7 +4784,6 @@ async function performRemoteSearch(
                 "SearXNG URL is empty"
             )
         );
-
 
         return;
 
@@ -4879,48 +4800,166 @@ async function performRemoteSearch(
 
 
         console.log(
-            "OrangeBrowse SearXNG:",
+            "[OrangeBrowse] Searching:",
             url
         );
 
 
-        const response =
-            await fetch(
+        /*
+         * Important:
+         * Keep this as a normal CORS GET request.
+         * Do not use no-cors because that makes
+         * the response unreadable.
+         */
 
-                url,
+        const controller =
+            new AbortController();
 
-                {
 
-                    method:"GET",
-
-                    headers:{
-
-                        "Accept":
-                            "application/json"
-
-                    },
-
-                    mode:"cors",
-
-                    cache:"no-store"
-
-                }
-
+        const timeout =
+            setTimeout(
+                ()=>{
+                    controller.abort();
+                },
+                30000
             );
+
+
+        let response;
+
+
+        try{
+
+            response =
+                await fetch(
+
+                    url,
+
+                    {
+
+                        method:"GET",
+
+                        headers:{
+
+                            "Accept":
+                                "application/json"
+
+                        },
+
+                        mode:"cors",
+
+                        cache:"no-store",
+
+                        credentials:"omit",
+
+                        signal:
+                            controller.signal
+
+                    }
+
+                );
+
+        }finally{
+
+            clearTimeout(timeout);
+
+        }
+
+
+        console.log(
+            "[OrangeBrowse] HTTP status:",
+            response.status
+        );
 
 
         if(!response.ok){
 
+            let serverMessage = "";
+
+
+            try{
+
+                serverMessage =
+                    await response.text();
+
+            }catch(e){}
+
+
             throw new Error(
+
                 "SearXNG HTTP " +
-                response.status
+                response.status +
+                (
+                    serverMessage
+                    ?
+                    ": " + serverMessage.slice(0,300)
+                    :
+                    ""
+                )
+
             );
 
         }
 
 
-        const data =
-            await response.json();
+        /*
+         * Read text first instead of calling
+         * response.json() directly.
+         *
+         * This makes the parser safer when
+         * the server sends unexpected content.
+         */
+
+        const raw =
+            await response.text();
+
+
+        if(
+            generation !==
+            state.searchGeneration
+        ){
+
+            return;
+
+        }
+
+
+        if(!raw.trim()){
+
+            throw new Error(
+                "SearXNG returned an empty response"
+            );
+
+        }
+
+
+        let data;
+
+
+        try{
+
+            data =
+                JSON.parse(raw);
+
+        }catch(parseError){
+
+            console.error(
+                "[OrangeBrowse] Invalid JSON:",
+                raw.slice(0,1000)
+            );
+
+
+            throw new Error(
+                "SearXNG returned invalid JSON"
+            );
+
+        }
+
+
+        console.log(
+            "[OrangeBrowse] Response:",
+            data
+        );
 
 
         if(
@@ -4934,9 +4973,7 @@ async function performRemoteSearch(
 
 
         const results =
-            normalizeSearXResults(
-                data
-            );
+            normalizeSearXResults(data);
 
 
         state.results =
@@ -4947,17 +4984,27 @@ async function performRemoteSearch(
 
 
         /*
-           SearXNG worked but returned
-           no results.
-        */
+         * SearXNG successfully responded.
+         */
 
-        if(!results.length){
+        if(results.length){
 
-            renderSearchFallback(
-                query,
-                true,
-                null
+            renderResults(
+                results,
+                page
             );
+
+
+            if(
+                saveResult &&
+                !settings.incognito
+            ){
+
+                showToast(
+                    "Search results loaded"
+                );
+
+            }
 
 
             return;
@@ -4965,28 +5012,21 @@ async function performRemoteSearch(
         }
 
 
-        renderResults(
-            results,
-            page
+        /*
+         * No result from SearXNG.
+         */
+
+        renderSearchFallback(
+            query,
+            true,
+            null
         );
-
-
-        if(
-            saveResult &&
-            !settings.incognito
-        ){
-
-            showToast(
-                "Search results loaded"
-            );
-
-        }
 
 
     }catch(error){
 
         console.error(
-            "OrangeBrowse SearXNG error:",
+            "[OrangeBrowse] SearXNG search error:",
             error
         );
 
@@ -5004,13 +5044,6 @@ async function performRemoteSearch(
         stopSearchLoader();
 
 
-        /*
-           IMPORTANT:
-           Do not crash the search page.
-           Give the user a real external
-           search URL.
-        */
-
         renderSearchFallback(
             query,
             false,
@@ -5023,17 +5056,60 @@ async function performRemoteSearch(
 
 
 /* =====================================================
-   NORMALIZE SEARXNG
+   NORMALIZE SEARXNG RESULTS
 ===================================================== */
 
 function normalizeSearXResults(
     data
 ){
 
+    /*
+     * Standard SearXNG JSON:
+     *
+     * {
+     *   results: [...]
+     * }
+     */
+
+    let rawResults = [];
+
+
     if(
-        !data ||
-        !Array.isArray(
+        data &&
+        Array.isArray(
             data.results
+        )
+    ){
+
+        rawResults =
+            data.results;
+
+    }
+
+
+    /*
+     * Some installations may return
+     * results in a slightly different
+     * structure.
+     */
+
+    if(
+        !rawResults.length &&
+        data &&
+        Array.isArray(
+            data.items
+        )
+    ){
+
+        rawResults =
+            data.items;
+
+    }
+
+
+    if(
+        !Array.isArray(
+            rawResults
         )
     ){
 
@@ -5042,59 +5118,114 @@ function normalizeSearXResults(
     }
 
 
-    return data.results
+    return rawResults
 
         .map(
-            item=>({
+            item=>{
 
-                title:
-                    item.title ||
-                    "Untitled result",
+                if(!item){
 
-                url:
+                    return null;
+
+                }
+
+
+                const url =
                     item.url ||
                     item.link ||
-                    "",
+                    item.href ||
+                    "";
 
-                content:
+
+                const title =
+                    item.title ||
+                    item.name ||
+                    "Untitled result";
+
+
+                const content =
                     item.content ||
                     item.description ||
-                    "",
+                    item.snippet ||
+                    item.abstract ||
+                    "";
 
-                engine:
+
+                let engine =
                     item.engine ||
-                    (
-                        Array.isArray(
-                            item.engines
-                        )
-                        ?
+                    item.source ||
+                    item.publisher ||
+                    "";
+
+
+                if(
+                    !engine &&
+                    Array.isArray(
+                        item.engines
+                    )
+                ){
+
+                    engine =
                         item.engines.join(
                             ", "
-                        )
-                        :
-                        item.engines
-                    ) ||
-                    "Web",
+                        );
 
-                thumbnail:
+                }
+
+
+                if(!engine){
+
+                    engine =
+                        "Web";
+
+                }
+
+
+                const thumbnail =
                     item.thumbnail ||
                     item.img_src ||
-                    "",
+                    item.image ||
+                    item.thumbnail_src ||
+                    "";
 
-                template:
-                    item.template ||
-                    "",
 
-                published:
+                const published =
                     item.publishedDate ||
                     item.published ||
-                    ""
+                    item.pubdate ||
+                    "";
 
-            })
+
+                return {
+
+                    title:String(title),
+
+                    url:String(url),
+
+                    content:String(content),
+
+                    engine:String(engine),
+
+                    thumbnail:String(thumbnail),
+
+                    template:
+                        item.template ||
+                        "",
+
+                    published:String(published)
+
+                };
+
+            }
         )
 
         .filter(
-            item=>item.url
+            item=>
+                item &&
+                item.url &&
+                /^https?:\/\//i.test(
+                    item.url
+                )
         );
 
 }
@@ -5275,7 +5406,6 @@ function renderResults(
 
         updateSearchFooter();
 
-
         return;
 
     }
@@ -5285,25 +5415,18 @@ function renderResults(
         state.currentCategory;
 
 
-    if(
-        category === "images"
-    ){
+    if(category === "images"){
 
-        renderImageResults(
-            results
-        );
+        renderImageResults(results);
 
     }else if(
 
         category === "videos" ||
-
         category === "news"
 
     ){
 
-        renderMediaResults(
-            results
-        );
+        renderMediaResults(results);
 
     }else if(
 
@@ -5311,15 +5434,11 @@ function renderResults(
 
     ){
 
-        renderMapResults(
-            results
-        );
+        renderMapResults(results);
 
     }else{
 
-        renderWebResults(
-            results
-        );
+        renderWebResults(results);
 
     }
 
@@ -5420,12 +5539,8 @@ function renderWebResults(
                         >
 
                             ${escapeHTML(
-
-                                String(
-                                    result.engine ||
-                                    "Web"
-                                )
-
+                                result.engine ||
+                                "Web"
                             )}
 
                         </div>
@@ -5451,16 +5566,17 @@ function renderImageResults(
 
     const withImages =
         results.filter(
-            item=>item.thumbnail
+            item=>
+                item.thumbnail &&
+                /^https?:\/\//i.test(
+                    item.thumbnail
+                )
         );
 
 
     if(!withImages.length){
 
-        renderWebResults(
-            results
-        );
-
+        renderWebResults(results);
 
         return;
 
@@ -5514,8 +5630,7 @@ function renderImageResults(
                             loading="lazy"
 
                             onerror="
-                                this.parentElement.innerHTML=
-                                '<div style=&quot;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:10px&quot;>Image unavailable</div>'
+                                this.style.display='none';
                             "
 
                         >
@@ -5693,9 +5808,7 @@ function renderMapResults(
 
     const mapURL =
         SEARCH_URLS.googleMaps +
-        encodeURIComponent(
-            query
-        );
+        encodeURIComponent(query);
 
 
     const box =
@@ -5891,13 +6004,9 @@ function changePage(
 
 
     performRemoteSearch(
-
         state.currentQuery,
-
         page,
-
         false
-
     );
 
 
@@ -5959,9 +6068,7 @@ function changeSearchCategory(
             document.querySelector(
 
                 '.search-category[data-category="' +
-
                 state.currentCategory +
-
                 '"]'
 
             );
@@ -5984,13 +6091,9 @@ function changeSearchCategory(
 
 
         performRemoteSearch(
-
             state.currentQuery,
-
             1,
-
             false
-
         );
 
     }
@@ -6076,13 +6179,8 @@ function renderSearchFallback(
     if(label){
 
         label.innerHTML =
-
             'Search for <strong>"' +
-
-            escapeHTML(
-                query
-            ) +
-
+            escapeHTML(query) +
             '"</strong>';
 
     }
@@ -6091,7 +6189,11 @@ function renderSearchFallback(
     if(status){
 
         status.textContent =
-            "External search";
+            empty
+            ?
+            "No results"
+            :
+            "Search service unavailable";
 
     }
 
@@ -6115,10 +6217,13 @@ function renderSearchFallback(
 
                 <h3>
 
-                    Open
-                    ${escapeHTML(
-                        engineName
-                    )}
+                    ${
+                        empty
+                        ?
+                        "No results found"
+                        :
+                        "Search service unavailable"
+                    }
 
                 </h3>
 
@@ -6130,11 +6235,11 @@ function renderSearchFallback(
 
                         ?
 
-                        "SearXNG returned no results for this search."
+                        "SearXNG returned no usable results for this search."
 
                         :
 
-                        "The OrangeBrowse search service could not be reached."
+                        "OrangeBrowse could not connect to its search service."
 
                     }
 
@@ -6167,9 +6272,7 @@ function renderSearchFallback(
                 >
 
                     Search
-                    ${escapeHTML(
-                        engineName
-                    )}
+                    ${escapeHTML(engineName)}
 
                 </button>
 
@@ -6193,96 +6296,68 @@ function renderSearchFallback(
 
 
 /* =====================================================
-   SEARCH ENGINE DIRECT LINKS
+   DIRECT SEARCH LINKS
 ===================================================== */
 
-function googleSearch(
-    query
-){
+function googleSearch(query){
 
     window.location.href =
         SEARCH_URLS.google +
-        encodeURIComponent(
-            query
-        );
+        encodeURIComponent(query);
 
 }
 
 
-function bingSearch(
-    query
-){
+function bingSearch(query){
 
     window.location.href =
         SEARCH_URLS.bing +
-        encodeURIComponent(
-            query
-        );
+        encodeURIComponent(query);
 
 }
 
 
-function duckDuckGoSearch(
-    query
-){
+function duckDuckGoSearch(query){
 
     window.location.href =
         SEARCH_URLS.duckduckgo +
-        encodeURIComponent(
-            query
-        );
+        encodeURIComponent(query);
 
 }
 
 
-function googleImagesSearch(
-    query
-){
+function googleImagesSearch(query){
 
     window.location.href =
         SEARCH_URLS.googleImages +
-        encodeURIComponent(
-            query
-        );
+        encodeURIComponent(query);
 
 }
 
 
-function googleNewsSearch(
-    query
-){
+function googleNewsSearch(query){
 
     window.location.href =
         SEARCH_URLS.googleNews +
-        encodeURIComponent(
-            query
-        );
+        encodeURIComponent(query);
 
 }
 
 
-function googleVideosSearch(
-    query
-){
+function googleVideosSearch(query){
 
     window.location.href =
         SEARCH_URLS.googleVideos +
-        encodeURIComponent(
-            query
-        );
+        encodeURIComponent(query);
 
 }
 
 
-function googleMapsSearch(
-    query
-){
+function googleMapsSearch(query){
 
     window.location.href =
         SEARCH_URLS.googleMaps +
-        encodeURIComponent(
-            query
-        );
+        encodeURIComponent(query);
 
 }
 
@@ -6294,11 +6369,8 @@ function googleMapsSearch(
 function getHistory(){
 
     return loadJSON(
-
         STORAGE.history,
-
         []
-
     );
 
 }
@@ -6344,11 +6416,8 @@ function addSearchHistory(
 
 
     saveJSON(
-
         STORAGE.history,
-
         history
-
     );
 
 
@@ -6472,7 +6541,6 @@ function renderHistory(){
             </div>
 
         `
-
         ).join("");
 
 }
@@ -6492,13 +6560,9 @@ function searchFromHistory(
 
 
     searchQuery(
-
         history[index].query,
-
         true,
-
         1
-
     );
 
 }
@@ -6519,11 +6583,8 @@ function removeHistory(
 
 
     saveJSON(
-
         STORAGE.history,
-
         history
-
     );
 
 
@@ -6555,12 +6616,8 @@ function formatHistoryTime(
 
     const diff =
         Math.max(
-
             0,
-
-            Date.now() -
-            Number(time)
-
+            Date.now() - Number(time)
         );
 
 
@@ -6580,19 +6637,14 @@ function formatHistoryTime(
     if(minute < 60){
 
         return (
-
             minute +
-
             " minute" +
-
             (
                 minute === 1
                 ? ""
                 : "s"
             ) +
-
             " ago"
-
         );
 
     }
@@ -6607,19 +6659,14 @@ function formatHistoryTime(
     if(hour < 24){
 
         return (
-
             hour +
-
             " hour" +
-
             (
                 hour === 1
                 ? ""
                 : "s"
             ) +
-
             " ago"
-
         );
 
     }
@@ -6649,11 +6696,8 @@ function updateConnection(){
     if(offline){
 
         offline.classList.toggle(
-
             "show",
-
             !online
-
         );
 
     }
@@ -6718,8 +6762,7 @@ function updateConnection(){
 }
 
 
-let connectionPopupTimer =
-    null;
+let connectionPopupTimer=null;
 
 
 function showConnectionPopup(
@@ -6859,17 +6902,12 @@ function navigateTo(
     try{
 
         const parsed =
-            new URL(
-                url
-            );
+            new URL(url);
 
 
         if(
-
             parsed.protocol !== "http:" &&
-
             parsed.protocol !== "https:"
-
         ){
 
             throw new Error(
@@ -6907,13 +6945,9 @@ function refreshApp(){
 
 
             performRemoteSearch(
-
                 state.currentQuery,
-
                 state.currentPage,
-
                 false
-
             );
 
         }
@@ -6940,11 +6974,8 @@ function refreshApp(){
 function getTabs(){
 
     return loadJSON(
-
         STORAGE.tabs,
-
         []
-
     );
 
 }
@@ -6973,20 +7004,14 @@ function initializeTabs(){
 
 
         saveJSON(
-
             STORAGE.tabs,
-
             tabs
-
         );
 
 
         localStorage.setItem(
-
             STORAGE.activeTab,
-
             tabs[0].id
-
         );
 
     }
@@ -6995,9 +7020,7 @@ function initializeTabs(){
     state.currentTabId =
 
         localStorage.getItem(
-
             STORAGE.activeTab
-
         ) ||
 
         tabs[0].id;
@@ -7037,22 +7060,14 @@ function renderTabs(){
 
 
             div.className =
-
                 "tab" +
-
                 (
-
                     tab.id ===
                     state.currentTabId
-
                     ?
-
                     " active"
-
                     :
-
                     ""
-
                 );
 
 
@@ -7098,9 +7113,7 @@ function renderTabs(){
 
 
             div.addEventListener(
-
                 "click",
-
                 function(event){
 
                     if(
@@ -7119,7 +7132,6 @@ function renderTabs(){
                     );
 
                 }
-
             );
 
 
@@ -7132,9 +7144,7 @@ function renderTabs(){
             if(close){
 
                 close.addEventListener(
-
                     "click",
-
                     function(event){
 
                         event.stopPropagation();
@@ -7144,15 +7154,12 @@ function renderTabs(){
                         );
 
                     }
-
                 );
 
             }
 
 
-            container.appendChild(
-                div
-            );
+            container.appendChild(div);
 
         }
     );
@@ -7190,9 +7197,7 @@ function createTab(){
 
 
     const id =
-
         Date.now().toString() +
-
         Math.random()
             .toString(36)
             .slice(2);
@@ -7202,30 +7207,22 @@ function createTab(){
 
         id:id,
 
-        title:
-            "OrangeBrowse",
+        title:"OrangeBrowse",
 
-        url:
-            "orangebrowse://home"
+        url:"orangebrowse://home"
 
     });
 
 
     saveJSON(
-
         STORAGE.tabs,
-
         tabs
-
     );
 
 
     localStorage.setItem(
-
         STORAGE.activeTab,
-
         id
-
     );
 
 
@@ -7233,19 +7230,14 @@ function createTab(){
         id;
 
 
-    state.historyStack =
-        [];
+    state.historyStack=[];
 
-
-    state.historyIndex =
-        -1;
+    state.historyIndex=-1;
 
 
     showHome();
 
-
     renderTabs();
-
 
     closeMenu();
 
@@ -7276,11 +7268,8 @@ function activateTab(
 
 
     localStorage.setItem(
-
         STORAGE.activeTab,
-
         id
-
     );
 
 
@@ -7294,7 +7283,6 @@ function activateTab(
 
         showHome();
 
-
     }else if(
 
         tab.url.startsWith(
@@ -7304,28 +7292,18 @@ function activateTab(
     ){
 
         const query =
-
             decodeURIComponent(
-
                 tab.url.replace(
-
                     "search://",
-
                     ""
-
                 )
-
             );
 
 
         searchQuery(
-
             query,
-
             false,
-
             1
-
         );
 
     }
@@ -7351,11 +7329,8 @@ function closeTab(
 
         let recent =
             loadJSON(
-
                 STORAGE.closed,
-
                 []
-
             );
 
 
@@ -7372,11 +7347,8 @@ function closeTab(
 
 
         saveJSON(
-
             STORAGE.closed,
-
             recent
-
         );
 
     }
@@ -7421,30 +7393,21 @@ function closeTab(
 
 
     saveJSON(
-
         STORAGE.tabs,
-
         tabs
-
     );
 
 
     localStorage.setItem(
-
         STORAGE.activeTab,
-
         state.currentTabId
-
     );
 
 
     renderTabs();
 
-
     activateTab(
-
         state.currentTabId
-
     );
 
 }
@@ -7457,11 +7420,8 @@ function closeTab(
 function getBookmarks(){
 
     return loadJSON(
-
         STORAGE.bookmarks,
-
         []
-
     );
 
 }
@@ -7474,51 +7434,34 @@ function bookmarkCurrent(){
 
 
     const url =
-
         state.searchActive
-
         ?
-
         "search://" +
-
         encodeURIComponent(
             state.currentQuery
         )
-
         :
-
         "orangebrowse://home";
 
 
     const title =
-
         state.searchActive
-
         ?
-
         state.currentQuery
-
         :
-
         "OrangeBrowse";
 
 
     if(
-
         bookmarks.some(
-
             item=>
-                item.url ===
-                url
-
+                item.url === url
         )
-
     ){
 
         showToast(
             "Already bookmarked"
         );
-
 
         return;
 
@@ -7537,11 +7480,8 @@ function bookmarkCurrent(){
 
 
     saveJSON(
-
         STORAGE.bookmarks,
-
         bookmarks
-
     );
 
 
@@ -7604,9 +7544,7 @@ function openBookmarks(){
                                 )
                             "
 
-                            style="
-                                cursor:pointer
-                            "
+                            style="cursor:pointer"
 
                         >
 
@@ -7721,15 +7659,10 @@ function openBookmark(
         searchQuery(
 
             decodeURIComponent(
-
                 item.url.replace(
-
                     "search://",
-
                     ""
-
                 )
-
             ),
 
             false,
@@ -7762,11 +7695,8 @@ function deleteBookmark(
 
 
     saveJSON(
-
         STORAGE.bookmarks,
-
         bookmarks
-
     );
 
 
@@ -7832,9 +7762,7 @@ function openHistory(){
                                 closeModal()
                             "
 
-                            style="
-                                cursor:pointer
-                            "
+                            style="cursor:pointer"
 
                         >
 
@@ -7850,11 +7778,9 @@ function openHistory(){
                         >
 
                             ${escapeHTML(
-
                                 formatHistoryTime(
                                     item.time
                                 )
-
                             )}
 
                         </div>
@@ -7872,9 +7798,7 @@ function openHistory(){
 
         `
 
-        <div
-            class="search-empty"
-        >
+        <div class="search-empty">
 
             <div
                 class="search-empty-icon"
@@ -7916,11 +7840,8 @@ function openRecentlyClosed(){
 
     const closed =
         loadJSON(
-
             STORAGE.closed,
-
             []
-
         );
 
 
@@ -7967,9 +7888,7 @@ function openRecentlyClosed(){
                                 )
                             "
 
-                            style="
-                                cursor:pointer
-                            "
+                            style="cursor:pointer"
 
                         >
 
@@ -8001,15 +7920,9 @@ function openRecentlyClosed(){
 
         :
 
-        `
-
-        <div class="empty">
-
+        `<div class="empty">
             No recently closed tabs.
-
-        </div>
-
-        `
+        </div>`
 
     );
 
@@ -8022,11 +7935,8 @@ function restoreClosedTab(
 
     const closed =
         loadJSON(
-
             STORAGE.closed,
-
             []
-
         );
 
 
@@ -8043,17 +7953,12 @@ function restoreClosedTab(
         getTabs();
 
 
-    tabs.push(
-        item
-    );
+    tabs.push(item);
 
 
     saveJSON(
-
         STORAGE.tabs,
-
         tabs
-
     );
 
 
@@ -8062,19 +7967,14 @@ function restoreClosedTab(
 
 
     localStorage.setItem(
-
         STORAGE.activeTab,
-
         item.id
-
     );
 
 
     renderTabs();
 
-
     closeModal();
-
 
     activateTab(
         item.id
@@ -8103,7 +8003,6 @@ function openDownloads(){
             <i
                 class="fa-solid fa-download"
             ></i>
-
 
             <p>
                 Downloads are managed by your device/browser.
@@ -8138,7 +8037,6 @@ function openOfflinePages(){
             <i
                 class="fa-solid fa-cloud-arrow-down"
             ></i>
-
 
             <p>
                 No offline pages have been saved.
@@ -8178,7 +8076,6 @@ function openSettings(){
                         Search engine
                     </div>
 
-
                     <div class="setting-description">
                         Select the default search engine.
                     </div>
@@ -8196,16 +8093,11 @@ function openSettings(){
 
                     <option
                         value="google"
-
                         ${
-                            settings.engine ===
-                            "google"
-                            ?
-                            "selected"
-                            :
-                            ""
+                            settings.engine === "google"
+                            ? "selected"
+                            : ""
                         }
-
                     >
                         Google
                     </option>
@@ -8213,16 +8105,11 @@ function openSettings(){
 
                     <option
                         value="bing"
-
                         ${
-                            settings.engine ===
-                            "bing"
-                            ?
-                            "selected"
-                            :
-                            ""
+                            settings.engine === "bing"
+                            ? "selected"
+                            : ""
                         }
-
                     >
                         Bing
                     </option>
@@ -8230,16 +8117,11 @@ function openSettings(){
 
                     <option
                         value="duckduckgo"
-
                         ${
-                            settings.engine ===
-                            "duckduckgo"
-                            ?
-                            "selected"
-                            :
-                            ""
+                            settings.engine === "duckduckgo"
+                            ? "selected"
+                            : ""
                         }
-
                     >
                         DuckDuckGo
                     </option>
@@ -8261,7 +8143,6 @@ function openSettings(){
                         Dark mode
                     </div>
 
-
                     <div class="setting-description">
                         Change OrangeBrowse appearance.
                     </div>
@@ -8273,10 +8154,8 @@ function openSettings(){
 
                     class="toggle ${
                         settings.dark
-                        ?
-                        "active"
-                        :
-                        ""
+                        ? "active"
+                        : ""
                     }"
 
                     onclick="
@@ -8320,17 +8199,14 @@ function changeEngine(
 ){
 
     if(
-
         ![
             "google",
             "bing",
             "duckduckgo"
         ].includes(value)
-
     ){
 
-        value =
-            "google";
+        value="google";
 
     }
 
@@ -8340,11 +8216,8 @@ function changeEngine(
 
 
     saveJSON(
-
         STORAGE.settings,
-
         settings
-
     );
 
 
@@ -8366,23 +8239,14 @@ function changeEngine(
 
         (
             value === "bing"
-
             ?
-
             "Bing"
-
             :
-
             value === "duckduckgo"
-
             ?
-
             "DuckDuckGo"
-
             :
-
             "Google"
-
         )
 
     );
@@ -8395,11 +8259,8 @@ function changeEngine(
 ===================================================== */
 
 function toggleFeature(
-
     event,
-
     feature
-
 ){
 
     if(event){
@@ -8414,11 +8275,8 @@ function toggleFeature(
 
 
     saveJSON(
-
         STORAGE.settings,
-
         settings
-
     );
 
 
@@ -8476,24 +8334,16 @@ function updateFeatureUI(){
 
 
             button.classList.toggle(
-
                 "active",
-
                 !!settings[feature]
-
             );
 
 
             label.textContent =
-
                 settings[feature]
-
                 ?
-
                 "On"
-
                 :
-
                 "Off";
 
         }
@@ -8508,15 +8358,10 @@ function updateFeatureUI(){
     if(incognitoText){
 
         incognitoText.textContent =
-
             settings.incognito
-
             ?
-
             "Incognito: On"
-
             :
-
             "Incognito mode";
 
     }
@@ -8529,15 +8374,10 @@ function updateFeatureUI(){
     if(adBlockText){
 
         adBlockText.textContent =
-
             settings.adBlock
-
             ?
-
             "Ad blocker: On"
-
             :
-
             "Ad blocker";
 
     }
@@ -8550,15 +8390,10 @@ function updateFeatureUI(){
     if(darkText){
 
         darkText.textContent =
-
             settings.dark
-
             ?
-
             "Light mode"
-
             :
-
             "Dark mode";
 
     }
@@ -8573,16 +8408,12 @@ function toggleIncognito(){
 
 
     saveJSON(
-
         STORAGE.settings,
-
         settings
-
     );
 
 
     updateFeatureUI();
-
 
     closeMenu();
 
@@ -8590,13 +8421,9 @@ function toggleIncognito(){
     showToast(
 
         settings.incognito
-
         ?
-
         "Incognito mode enabled"
-
         :
-
         "Incognito mode disabled"
 
     );
@@ -8611,16 +8438,12 @@ function toggleAdBlock(){
 
 
     saveJSON(
-
         STORAGE.settings,
-
         settings
-
     );
 
 
     updateFeatureUI();
-
 
     closeMenu();
 
@@ -8628,13 +8451,9 @@ function toggleAdBlock(){
     showToast(
 
         settings.adBlock
-
         ?
-
         "Ad blocker enabled"
-
         :
-
         "Ad blocker disabled"
 
     );
@@ -8649,16 +8468,12 @@ function toggleDarkMode(){
 
 
     saveJSON(
-
         STORAGE.settings,
-
         settings
-
     );
 
 
     applyTheme();
-
 
     updateFeatureUI();
 
@@ -8668,11 +8483,8 @@ function toggleDarkMode(){
 function applyTheme(){
 
     document.body.classList.toggle(
-
         "dark",
-
         !!settings.dark
-
     );
 
 
@@ -8683,11 +8495,8 @@ function applyTheme(){
     if(loader){
 
         loader.classList.toggle(
-
             "dark-loader",
-
             !!settings.dark
-
         );
 
     }
@@ -8736,9 +8545,7 @@ function askAI(){
 
         <div class="ai-message user">
 
-            ${escapeHTML(
-                text
-            )}
+            ${escapeHTML(text)}
 
         </div>
 
@@ -8776,7 +8583,6 @@ function askAI(){
 
         chat.scrollTop =
             chat.scrollHeight;
-
 
     },500);
 
@@ -8841,7 +8647,6 @@ function jamaLaunchInfo(){
             <i
                 class="fa-solid fa-rocket"
             ></i>
-
 
             <p>
 
@@ -8918,11 +8723,8 @@ function closeMenuOutside(
 ===================================================== */
 
 function openModal(
-
     title,
-
     content
-
 ){
 
     const titleBox =
@@ -8985,8 +8787,7 @@ function closeModal(){
    TOAST
 ===================================================== */
 
-let toastTimer =
-    null;
+let toastTimer=null;
 
 
 function showToast(
@@ -9151,15 +8952,9 @@ function handleGlobalKeys(
 
 
     if(
-
         event.key === "Escape" &&
-
         modal &&
-
-        modal.classList.contains(
-            "show"
-        )
-
+        modal.classList.contains("show")
     ){
 
         closeModal();
@@ -9170,15 +8965,9 @@ function handleGlobalKeys(
 
 
     if(
-
         event.key === "Escape" &&
-
         menu &&
-
-        menu.classList.contains(
-            "open"
-        )
-
+        menu.classList.contains("open")
     ){
 
         closeMenu();
@@ -9189,11 +8978,8 @@ function handleGlobalKeys(
 
 
     if(
-
         event.altKey &&
-
         event.key === "ArrowLeft"
-
     ){
 
         event.preventDefault();
@@ -9204,11 +8990,8 @@ function handleGlobalKeys(
 
 
     if(
-
         event.altKey &&
-
         event.key === "ArrowRight"
-
     ){
 
         event.preventDefault();
@@ -9224,14 +9007,11 @@ function handleGlobalKeys(
    EXIT CONFIRMATION
 ===================================================== */
 
-let allowUnload =
-    false;
+let allowUnload=false;
 
 
 window.addEventListener(
-
     "beforeunload",
-
     function(event){
 
         if(allowUnload){
@@ -9242,11 +9022,8 @@ window.addEventListener(
 
 
         if(
-
             state.searchActive ||
-
             getTabs().length > 1
-
         ){
 
             event.preventDefault();
@@ -9256,7 +9033,6 @@ window.addEventListener(
         }
 
     }
-
 );
 
 
@@ -9268,9 +9044,7 @@ function clearAllOrangeBrowseData(){
 
     const confirmed =
         confirm(
-
             "Clear OrangeBrowse local history, bookmarks and saved tabs?"
-
         );
 
 
@@ -9292,13 +9066,8 @@ function clearAllOrangeBrowseData(){
         STORAGE.closed
 
     ].forEach(
-
         key=>
-
-            localStorage.removeItem(
-                key
-            )
-
+            localStorage.removeItem(key)
     );
 
 
@@ -9318,11 +9087,8 @@ function clearAllOrangeBrowseData(){
 
 
     saveJSON(
-
         STORAGE.settings,
-
         settings
-
     );
 
 
@@ -9345,12 +9111,9 @@ function syncCurrentTabToSearch(
 
     const tab =
         tabs.find(
-
             item=>
-
                 item.id ===
                 state.currentTabId
-
         );
 
 
@@ -9364,20 +9127,13 @@ function syncCurrentTabToSearch(
 
 
     tab.url =
-
         "search://" +
-
-        encodeURIComponent(
-            query
-        );
+        encodeURIComponent(query);
 
 
     saveJSON(
-
         STORAGE.tabs,
-
         tabs
-
     );
 
 
@@ -9391,9 +9147,7 @@ function syncCurrentTabToSearch(
 ===================================================== */
 
 document.addEventListener(
-
     "visibilitychange",
-
     function(){
 
         if(!document.hidden){
@@ -9401,9 +9155,7 @@ document.addEventListener(
             updateConnection();
 
 
-            if(
-                state.searchActive
-            ){
+            if(state.searchActive){
 
                 updateSearchFooter();
 
@@ -9412,7 +9164,6 @@ document.addEventListener(
         }
 
     }
-
 );
 
 
@@ -9421,21 +9172,16 @@ document.addEventListener(
 ===================================================== */
 
 setInterval(
-
     ()=>{
 
-        if(
-            state.searchActive
-        ){
+        if(state.searchActive){
 
             updateSearchFooter();
 
         }
 
     },
-
     30000
-
 );
 
 
@@ -9453,36 +9199,63 @@ async function testSearXNG(){
 
 
     console.log(
-        "Testing SearXNG:",
+        "[OrangeBrowse] Testing SearXNG:",
         url
     );
 
 
     try{
 
-        const response =
-            await fetch(
+        const controller =
+            new AbortController();
 
-                url,
 
-                {
-
-                    method:"GET",
-
-                    headers:{
-
-                        "Accept":
-                            "application/json"
-
-                    },
-
-                    mode:"cors",
-
-                    cache:"no-store"
-
-                }
-
+        const timeout =
+            setTimeout(
+                ()=>{
+                    controller.abort();
+                },
+                30000
             );
+
+
+        let response;
+
+
+        try{
+
+            response =
+                await fetch(
+
+                    url,
+
+                    {
+
+                        method:"GET",
+
+                        headers:{
+                            "Accept":
+                                "application/json"
+                        },
+
+                        mode:"cors",
+
+                        cache:"no-store",
+
+                        credentials:"omit",
+
+                        signal:
+                            controller.signal
+
+                    }
+
+                );
+
+        }finally{
+
+            clearTimeout(timeout);
+
+        }
 
 
         const text =
@@ -9504,17 +9277,48 @@ async function testSearXNG(){
         if(!response.ok){
 
             throw new Error(
-
                 "HTTP " +
                 response.status
-
             );
 
         }
 
 
+        let json;
+
+
+        try{
+
+            json =
+                JSON.parse(text);
+
+        }catch(e){
+
+            throw new Error(
+                "Invalid JSON response"
+            );
+
+        }
+
+
+        const results =
+            normalizeSearXResults(json);
+
+
+        console.log(
+            "Normalized results:",
+            results
+        );
+
+
         showToast(
+
+            results.length
+            ?
             "SearXNG connection works"
+            :
+            "SearXNG responded but returned no results"
+
         );
 
 
@@ -9540,82 +9344,39 @@ async function testSearXNG(){
 ===================================================== */
 
 window.addEventListener(
-
     "error",
-
     function(event){
 
         console.error(
-
             "OrangeBrowse error:",
-
             event.error ||
             event.message
-
         );
 
     }
-
 );
 
 
 /* =====================================================
-   EXACT SEARCH URL EXAMPLES
+   UNHANDLED PROMISE ERRORS
 ===================================================== */
 
-/*
+window.addEventListener(
+    "unhandledrejection",
+    function(event){
 
-NORMAL:
+        console.error(
+            "OrangeBrowse promise error:",
+            event.reason
+        );
 
-Google:
-https://www.google.com/search?q=dog
-
-Bing:
-https://www.bing.com/search?q=dog
-
-DuckDuckGo:
-https://html.duckduckgo.com/html/?q=dog
-
-
-IMAGES:
-
-Google:
-https://www.google.com/search?tbm=isch&q=dog
-
-Bing:
-https://www.bing.com/images/search?q=dog
+    }
+);
 
 
-NEWS:
-
-Google:
-https://www.google.com/search?tbm=nws&q=dog
-
-Bing:
-https://www.bing.com/news/search?q=dog
-
-
-VIDEOS:
-
-Google:
-https://www.google.com/search?tbm=vid&q=dog
-
-Bing:
-https://www.bing.com/videos/search?q=dog
-
-
-MAPS:
-
-Google Maps:
-https://www.google.com/maps/search/?api=1&query=dog
-
-
-SEARXNG:
-
-https://orangebrowse-searxng.onrender.com/search?q=dog&format=json&page=1&language=all&safesearch=0
-
-*/
-
+/* =====================================================
+   END ORANGEBROWSE ENGINE
+===================================================== */
 </script>
 
 </div>
