@@ -2623,7 +2623,7 @@ Information
 <script>
 
 /* =====================================================
-   ORANGEBROWSE CORE + SEARXNG SEARCH
+   ORANGEBROWSE CORE + NETLIFY SEARCH
 ===================================================== */
 
 const STORAGE = {
@@ -2638,26 +2638,14 @@ const STORAGE = {
 
 const DEFAULT_SETTINGS = {
     dark:false,
-    engine:"searxng",
+    engine:"google",
     adBlock:true,
     incognito:false,
     dataSaver:false
 };
 
-/*
-   IMPORTANT
-
-   Browser -> Netlify Function -> Render SearXNG
-
-   The browser NEVER contacts Render directly.
-
-   Your Netlify function must be available at:
-
-   /api/search?q=dog&category=general
-*/
-
-const SEARCH_ENDPOINT = "/api/search";
-
+const NETLIFY_SEARCH_ENDPOINT =
+    "/.netlify/functions/search";
 
 let tabs = load(STORAGE.tabs,[]);
 let activeTabId = localStorage.getItem(STORAGE.activeTab) || null;
@@ -2673,7 +2661,12 @@ let settings = {
 
 let toastTimer = null;
 
-let currentSearch = "";
+
+/* =====================================================
+   SEARCH STATE
+===================================================== */
+
+let currentSearchQuery = "";
 let currentSearchCategory = "general";
 let currentSearchPage = 1;
 let searchLoading = false;
@@ -2746,25 +2739,11 @@ function generateTabId(){
 
 function initialize(){
 
-    if(!Array.isArray(tabs)){
-        tabs=[];
-    }
-
-    if(!Array.isArray(bookmarks)){
-        bookmarks=[];
-    }
-
-    if(!Array.isArray(historyItems)){
-        historyItems=[];
-    }
-
-    if(!Array.isArray(closedTabs)){
-        closedTabs=[];
-    }
-
-    if(!Array.isArray(offlinePages)){
-        offlinePages=[];
-    }
+    if(!Array.isArray(tabs)) tabs=[];
+    if(!Array.isArray(bookmarks)) bookmarks=[];
+    if(!Array.isArray(historyItems)) historyItems=[];
+    if(!Array.isArray(closedTabs)) closedTabs=[];
+    if(!Array.isArray(offlinePages)) offlinePages=[];
 
 
     if(tabs.length === 0){
@@ -2801,13 +2780,11 @@ function initialize(){
 
     createSearchResultsContainer();
 
-    connectSearchCategoryButtons();
-
 }
 
 
 /* =====================================================
-   TAB HISTORY
+   TAB FUNCTIONS
 ===================================================== */
 
 function createTab(saveData=true){
@@ -2824,18 +2801,15 @@ function createTab(saveData=true){
         historyIndex:-1
     };
 
-
     tabs.push(tab);
 
     activeTabId=id;
 
     persistTabs();
 
-
     if(saveData){
         save(STORAGE.closedTabs,closedTabs);
     }
-
 
     renderTabs();
 
@@ -2867,10 +2841,6 @@ function getActiveTab(){
 }
 
 
-/* =====================================================
-   RENDER TABS
-===================================================== */
-
 function renderTabs(){
 
     const container=
@@ -2891,7 +2861,6 @@ function renderTabs(){
             (tab.id===activeTabId ? " active":"");
 
         element.dataset.id=tab.id;
-
 
         element.innerHTML=`
 
@@ -2963,17 +2932,12 @@ function renderTabs(){
 }
 
 
-/* =====================================================
-   ACTIVATE TAB
-===================================================== */
-
 function activateTab(id){
 
     const tab=
         tabs.find(item=>item.id===id);
 
     if(!tab)return;
-
 
     activeTabId=id;
 
@@ -2986,17 +2950,12 @@ function activateTab(id){
 }
 
 
-/* =====================================================
-   CLOSE TAB
-===================================================== */
-
 function closeTab(id){
 
     const index=
         tabs.findIndex(tab=>tab.id===id);
 
     if(index===-1)return;
-
 
     const tab=tabs[index];
 
@@ -3062,7 +3021,7 @@ function closeTab(id){
 
 
 /* =====================================================
-   LOAD ACTIVE TAB
+   ACTIVE TAB
 ===================================================== */
 
 function loadActiveTab(){
@@ -3092,10 +3051,6 @@ function loadActiveTab(){
 }
 
 
-/* =====================================================
-   NEW TAB
-===================================================== */
-
 function showNewTab(saveTab=true){
 
     const address=
@@ -3105,13 +3060,11 @@ function showNewTab(saveTab=true){
         document.getElementById("mainSearch");
 
 
-    if(address){
-        address.value="";
-    }
+    if(address) address.value="";
+    if(search) search.value="";
 
-    if(search){
-        search.value="";
-    }
+
+    hideSearchResults();
 
 
     const tab=getActiveTab();
@@ -3120,14 +3073,10 @@ function showNewTab(saveTab=true){
     if(tab){
 
         tab.title="New Tab";
-
         tab.url="";
-
         tab.isNewTab=true;
 
-        if(
-            !Array.isArray(tab.history)
-        ){
+        if(!Array.isArray(tab.history)){
             tab.history=[];
         }
 
@@ -3142,8 +3091,6 @@ function showNewTab(saveTab=true){
 
     renderTabs();
 
-    hideSearchResults();
-
     window.scrollTo({
         top:0,
         behavior:"smooth"
@@ -3153,7 +3100,7 @@ function showNewTab(saveTab=true){
 
 
 /* =====================================================
-   NORMALIZE URL / SEARCH
+   NORMAL URL / SEARCH
 ===================================================== */
 
 function buildDestination(value){
@@ -3165,12 +3112,8 @@ function buildDestination(value){
     }
 
 
-    if(
-        /^https?:\/\//i.test(value)
-    ){
-
+    if(/^https?:\/\//i.test(value)){
         return value;
-
     }
 
 
@@ -3184,23 +3127,14 @@ function buildDestination(value){
     }
 
 
-    if(
-        /^[^\s]+\.[^\s]+$/i.test(value)
-    ){
+    if(/^[^\s]+\.[^\s]+$/i.test(value)){
 
         return "https://" + value;
 
     }
 
 
-    /*
-       Search queries are handled by
-       OrangeBrowse SearXNG instead of
-       navigating directly to Google.
-    */
-
-    return value;
-
+    return "";
 }
 
 
@@ -3212,26 +3146,17 @@ function navigateTo(value,options={}){
 
     value=String(value || "").trim();
 
-    if(!value){
-        return;
-    }
+    if(!value)return;
 
 
     /*
-       If this is a normal search phrase,
-       use OrangeBrowse search UI.
+       Search terms are handled by OrangeBrowse search.
     */
 
-    const looksLikeURL =
-        /^https?:\/\//i.test(value) ||
-        /^localhost(?::\d+)?(?:\/.*)?$/i.test(value) ||
-        /^(?:\d{1,3}\.){3}\d{1,3}(?::\d+)?(?:\/.*)?$/i.test(value) ||
-        /^[^\s]+\.[^\s]+$/i.test(value);
+    if(!/^https?:\/\//i.test(value) &&
+       !/^[^\s]+\.[^\s]+$/i.test(value)){
 
-
-    if(!looksLikeURL && !options.fromHistoryURL){
-
-        performOrangeSearch(value);
+        performSearch(value);
 
         return;
 
@@ -3241,16 +3166,12 @@ function navigateTo(value,options={}){
     const destination=
         buildDestination(value);
 
-    if(!destination){
-        return;
-    }
+    if(!destination)return;
 
 
     const tab=getActiveTab();
 
-    if(!tab){
-        return;
-    }
+    if(!tab)return;
 
 
     if(!options.fromHistory){
@@ -3259,25 +3180,16 @@ function navigateTo(value,options={}){
             tab.history=[];
         }
 
-        if(
-            tab.historyIndex >= 0 &&
-            tab.history[tab.historyIndex]===destination
-        ){
+        tab.history=
+            tab.history.slice(
+                0,
+                tab.historyIndex + 1
+            );
 
-        }else{
+        tab.history.push(destination);
 
-            tab.history=
-                tab.history.slice(
-                    0,
-                    tab.historyIndex + 1
-                );
-
-            tab.history.push(destination);
-
-            tab.historyIndex=
-                tab.history.length-1;
-
-        }
+        tab.historyIndex=
+            tab.history.length-1;
 
     }
 
@@ -3316,28 +3228,17 @@ function navigateTo(value,options={}){
 }
 
 
-/* =====================================================
-   DISPLAY TITLE
-===================================================== */
-
 function getDisplayTitle(input,url){
 
-    if(
-        !input ||
-        !input.trim()
-    ){
-
-        return url;
-
-    }
-
-    return input.trim();
+    return input && input.trim()
+        ? input.trim()
+        : url;
 
 }
 
 
 /* =====================================================
-   MEDIAN / NATIVE NAVIGATION
+   NATIVE NAVIGATION
 ===================================================== */
 
 function openNativeDestination(url){
@@ -3394,26 +3295,48 @@ function openNativeDestination(url){
    SEARCH INPUT
 ===================================================== */
 
-function performSearch(){
+function performSearch(value=null){
 
     const input=
         document.getElementById("mainSearch");
 
-    if(!input)return;
+    const query=
+        value !== null
+        ? String(value).trim()
+        : input
+            ? input.value.trim()
+            : "";
 
 
-    const value=input.value.trim();
+    if(!query){
 
-    if(!value){
-
-        input.focus();
+        if(input)input.focus();
 
         return;
 
     }
 
 
-    performOrangeSearch(value);
+    currentSearchQuery=query;
+
+    currentSearchPage=1;
+
+    currentSearchCategory=
+        getActiveSearchCategory();
+
+
+    if(input){
+        input.value=query;
+    }
+
+
+    addHistory(
+        query,
+        "#search:" + query
+    );
+
+
+    showSearchResults();
 
 }
 
@@ -3441,11 +3364,24 @@ function addressKey(event){
             document.getElementById("addressInput");
 
         const value=
-            input.value.trim();
+            input
+            ?input.value.trim()
+            :"";
 
-        if(value){
+
+        if(!value)return;
+
+
+        if(
+            /^https?:\/\//i.test(value) ||
+            /^[^\s]+\.[^\s]+$/i.test(value)
+        ){
 
             navigateTo(value);
+
+        }else{
+
+            performSearch(value);
 
         }
 
@@ -3455,104 +3391,346 @@ function addressKey(event){
 
 
 /* =====================================================
-   ORANGEBROWSE SEARCH
+   SEARCH CATEGORY DETECTION
 ===================================================== */
 
-async function performOrangeSearch(
-    query,
-    category="general",
-    page=1
-){
+function getActiveSearchCategory(){
 
-    query=String(query || "").trim();
+    /*
+       Tries several common class/id patterns so
+       your existing category UI does not need to
+       be redesigned.
+    */
 
-    if(!query){
-        return;
+    const active=
+        document.querySelector(
+            ".search-tab.active, " +
+            ".search-category.active, " +
+            ".result-tab.active, " +
+            "[data-search-category].active"
+        );
+
+
+    if(active){
+
+        const value=
+            String(
+                active.dataset.category ||
+                active.dataset.searchCategory ||
+                active.dataset.type ||
+                active.textContent ||
+                ""
+            ).toLowerCase().trim();
+
+
+        if(value.includes("image")){
+            return "images";
+        }
+
+        if(value.includes("video") &&
+           value.includes("short")){
+
+            return "videos";
+
+        }
+
+        if(value.includes("video")){
+            return "videos";
+        }
+
+        if(value.includes("news")){
+            return "news";
+        }
+
+        if(value.includes("map")){
+            return "map";
+        }
+
+        if(value.includes("book")){
+            return "books";
+        }
+
+        if(value.includes("forum")){
+            return "forums";
+        }
+
     }
 
 
-    if(searchLoading){
-        return;
+    return "general";
+
+}
+
+
+/* =====================================================
+   CATEGORY SELECTOR
+===================================================== */
+
+function setSearchCategory(category){
+
+    const allowed=[
+        "general",
+        "images",
+        "videos",
+        "news",
+        "map",
+        "books",
+        "forums"
+    ];
+
+
+    category=
+        String(category || "general")
+        .toLowerCase();
+
+
+    if(!allowed.includes(category)){
+        category="general";
     }
 
-
-    currentSearch=query;
 
     currentSearchCategory=category;
 
-    currentSearchPage=page;
 
+    document
+        .querySelectorAll(
+            "[data-search-category], " +
+            ".search-tab, " +
+            ".search-category, " +
+            ".result-tab"
+        )
+        .forEach(button=>{
+
+            const value=
+                String(
+                    button.dataset.category ||
+                    button.dataset.searchCategory ||
+                    button.dataset.type ||
+                    button.textContent ||
+                    ""
+                ).toLowerCase();
+
+
+            const active=
+                (category==="general" &&
+                 value.includes("all")) ||
+
+                (category==="images" &&
+                 value.includes("image")) ||
+
+                (category==="videos" &&
+                 value.includes("video")) ||
+
+                (category==="news" &&
+                 value.includes("news")) ||
+
+                (category==="map" &&
+                 value.includes("map")) ||
+
+                (category==="books" &&
+                 value.includes("book")) ||
+
+                (category==="forums" &&
+                 value.includes("forum"));
+
+
+            button.classList.toggle(
+                "active",
+                active
+            );
+
+        });
+
+
+    if(currentSearchQuery){
+
+        currentSearchPage=1;
+
+        showSearchResults();
+
+    }
+
+}
+
+
+/* =====================================================
+   CREATE RESULTS CONTAINER
+===================================================== */
+
+function createSearchResultsContainer(){
+
+    let container=
+        document.getElementById(
+            "orangeSearchResults"
+        );
+
+
+    if(container)return;
+
+
+    container=
+        document.createElement("section");
+
+    container.id=
+        "orangeSearchResults";
+
+
+    container.style.cssText=`
+        width:100%;
+        max-width:1100px;
+        margin:0 auto;
+        padding:0 16px 40px;
+        display:none;
+    `;
+
+
+    /*
+       Try to place it after the search area.
+    */
 
     const mainSearch=
         document.getElementById("mainSearch");
 
+
     if(mainSearch){
-        mainSearch.value=query;
+
+        const parent=
+            mainSearch.closest(
+                "form,.search-box,.search-container,.hero-search"
+            );
+
+
+        if(parent && parent.parentNode){
+
+            parent.parentNode.insertBefore(
+                container,
+                parent.nextSibling
+            );
+
+            return;
+
+        }
+
     }
 
 
-    const address=
-        document.getElementById("addressInput");
+    const main=
+        document.querySelector(
+            "main"
+        );
 
-    if(address){
-        address.value=query;
+
+    if(main){
+
+        main.appendChild(container);
+
+    }else{
+
+        document.body.appendChild(container);
+
     }
 
+}
+
+
+/* =====================================================
+   SHOW SEARCH RESULTS
+===================================================== */
+
+async function showSearchResults(){
+
+    createSearchResultsContainer();
+
+
+    const container=
+        document.getElementById(
+            "orangeSearchResults"
+        );
+
+
+    if(!container)return;
+
+
+    container.style.display="block";
+
+
+    searchLoading=true;
+
+
+    container.innerHTML=`
+
+        <div style="
+            padding:35px 10px;
+            text-align:center;
+            color:var(--text,#555);
+        ">
+
+            <i
+                class="fa-solid fa-spinner fa-spin"
+                style="font-size:24px;margin-bottom:12px">
+            </i>
+
+            <div>
+                Searching...
+            </div>
+
+        </div>
+
+    `;
+
+
+    /*
+       Make sure the search controls are visible.
+    */
 
     const tab=getActiveTab();
 
     if(tab){
 
-        tab.title=query;
-
+        tab.title=currentSearchQuery;
         tab.url=
-            "/search?q=" +
-            encodeURIComponent(query);
+            "orangebrowse-search://" +
+            encodeURIComponent(
+                currentSearchQuery
+            );
 
         tab.isNewTab=false;
 
         persistTabs();
-
         renderTabs();
 
     }
 
 
-    if(
-        !settings.incognito &&
-        page===1
-    ){
-
-        addHistory(
-            query,
-            "/search?q="+encodeURIComponent(query)
-        );
-
-    }
+    const params=
+        new URLSearchParams();
 
 
-    showSearchResults();
+    params.set(
+        "q",
+        currentSearchQuery
+    );
 
-    setSearchLoading(true);
+
+    params.set(
+        "category",
+        currentSearchCategory || "general"
+    );
+
+
+    params.set(
+        "page",
+        String(currentSearchPage)
+    );
 
 
     try{
 
-        const endpoint=
-            SEARCH_ENDPOINT +
-            "?q=" +
-            encodeURIComponent(query) +
-            "&category=" +
-            encodeURIComponent(
-                normalizeSearchCategory(category)
-            ) +
-            "&page=" +
-            encodeURIComponent(page);
-
-
         const response=
             await fetch(
-                endpoint,
+                NETLIFY_SEARCH_ENDPOINT +
+                "?" +
+                params.toString(),
                 {
                     method:"GET",
                     headers:{
@@ -3564,16 +3742,28 @@ async function performOrangeSearch(
             );
 
 
-        const raw=
+        const text=
             await response.text();
 
 
-        let data=null;
+        if(!response.ok){
+
+            throw new Error(
+                "Netlify search HTTP " +
+                response.status +
+                ": " +
+                text.slice(0,300)
+            );
+
+        }
+
+
+        let data;
 
 
         try{
 
-            data=JSON.parse(raw);
+            data=JSON.parse(text);
 
         }catch(error){
 
@@ -3584,39 +3774,19 @@ async function performOrangeSearch(
         }
 
 
-        if(!response.ok){
+        if(
+            data.error
+        ){
 
             throw new Error(
-                data.error ||
-                "Search request failed (" +
-                response.status +
-                ")"
+                data.error
             );
 
         }
 
 
-        /*
-           Some proxies return the actual SearXNG
-           object directly. Others may wrap it.
-        */
-
-        if(
-            data &&
-            data.data &&
-            typeof data.data==="object"
-        ){
-
-            data=data.data;
-
-        }
-
-
         renderSearchResults(
-            data,
-            query,
-            category,
-            page
+            data
         );
 
 
@@ -3628,331 +3798,56 @@ async function performOrangeSearch(
         );
 
 
-        renderSearchError(
-            error.message ||
-            "Failed to fetch search results."
-        );
-
-
-    }finally{
-
-        setSearchLoading(false);
-
-    }
-
-}
-
-
-/* =====================================================
-   CATEGORY NORMALIZER
-===================================================== */
-
-function normalizeSearchCategory(category){
-
-    category=String(
-        category || "general"
-    ).toLowerCase();
-
-
-    const map={
-
-        all:"general",
-
-        general:"general",
-
-        images:"images",
-
-        image:"images",
-
-        videos:"videos",
-
-        video:"videos",
-
-        "short videos":"videos",
-
-        news:"news",
-
-        maps:"map",
-
-        map:"map",
-
-        books:"books",
-
-        book:"books",
-
-        forums:"social media",
-
-        forum:"social media",
-
-        files:"files",
-
-        "social media":"social media"
-
-    };
-
-
-    return map[category] || "general";
-
-}
-
-
-/* =====================================================
-   SEARCH CONTAINER
-===================================================== */
-
-function createSearchResultsContainer(){
-
-    if(
-        document.getElementById(
-            "orangeSearchResults"
-        )
-    ){
-
-        return;
-
-    }
-
-
-    const container=
-        document.createElement("section");
-
-    container.id=
-        "orangeSearchResults";
-
-
-    container.innerHTML=`
-
-        <div class="orange-search-shell">
-
-            <div class="orange-search-tabs">
-
-                <button
-                    type="button"
-                    class="orange-search-tab active"
-                    data-search-category="general">
-                    All
-                </button>
-
-                <button
-                    type="button"
-                    class="orange-search-tab"
-                    data-search-category="images">
-                    Images
-                </button>
-
-                <button
-                    type="button"
-                    class="orange-search-tab"
-                    data-search-category="videos">
-                    Videos
-                </button>
-
-                <button
-                    type="button"
-                    class="orange-search-tab"
-                    data-search-category="news">
-                    News
-                </button>
-
-                <button
-                    type="button"
-                    class="orange-search-tab"
-                    data-search-category="map">
-                    Maps
-                </button>
-
-                <button
-                    type="button"
-                    class="orange-search-tab"
-                    data-search-category="books">
-                    Books
-                </button>
-
-                <button
-                    type="button"
-                    class="orange-search-tab"
-                    data-search-category="social media">
-                    Forums
-                </button>
-
-            </div>
-
-
-            <div
-                id="orangeSearchContent"
-                class="orange-search-content">
-            </div>
-
-        </div>
-
-    `;
-
-
-    /*
-       Put results after the browser's main content.
-       If a known content wrapper exists, use it.
-    */
-
-    const candidates=[
-        document.querySelector("main"),
-        document.querySelector(".main-content"),
-        document.querySelector(".content"),
-        document.querySelector(".browser-content"),
-        document.body
-    ];
-
-
-    const parent=
-        candidates.find(Boolean);
-
-
-    if(parent){
-
-        parent.appendChild(container);
-
-    }
-
-}
-
-
-/* =====================================================
-   CONNECT CATEGORY BUTTONS
-===================================================== */
-
-function connectSearchCategoryButtons(){
-
-    const buttons=
-        document.querySelectorAll(
-            "[data-search-category]"
-        );
-
-
-    buttons.forEach(button=>{
-
-        if(button.dataset.orangeSearchConnected){
-            return;
-        }
-
-
-        button.dataset.orangeSearchConnected="1";
-
-
-        button.addEventListener(
-            "click",
-            function(){
-
-                const category=
-                    this.dataset.searchCategory ||
-                    "general";
-
-
-                if(!currentSearch){
-
-                    return;
-
-                }
-
-
-                performOrangeSearch(
-                    currentSearch,
-                    category,
-                    1
-                );
-
-
-                document
-                    .querySelectorAll(
-                        "[data-search-category]"
-                    )
-                    .forEach(item=>{
-                        item.classList.remove("active");
-                    });
-
-
-                this.classList.add("active");
-
-            }
-        );
-
-    });
-
-}
-
-
-/* =====================================================
-   SHOW / HIDE SEARCH RESULTS
-===================================================== */
-
-function showSearchResults(){
-
-    createSearchResultsContainer();
-
-    const container=
-        document.getElementById(
-            "orangeSearchResults"
-        );
-
-    if(container){
-
-        container.classList.add("visible");
-
-    }
-
-
-    connectSearchCategoryButtons();
-
-}
-
-
-function hideSearchResults(){
-
-    const container=
-        document.getElementById(
-            "orangeSearchResults"
-        );
-
-    if(container){
-
-        container.classList.remove("visible");
-
-    }
-
-}
-
-
-/* =====================================================
-   SEARCH LOADING
-===================================================== */
-
-function setSearchLoading(loading){
-
-    searchLoading=loading;
-
-
-    const content=
-        document.getElementById(
-            "orangeSearchContent"
-        );
-
-
-    if(
-        loading &&
-        content
-    ){
-
-        content.innerHTML=`
-
-            <div class="orange-search-loading">
-
-                <div class="orange-search-spinner"></div>
-
-                <p>
-                    Searching the web...
+        container.innerHTML=`
+
+            <div style="
+                padding:35px 16px;
+                text-align:center;
+                color:var(--text,#555);
+            ">
+
+                <div style="
+                    font-size:42px;
+                    margin-bottom:12px;
+                ">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+
+                <h3 style="
+                    margin-bottom:8px;
+                    color:var(--text,#111);
+                ">
+                    Search failed
+                </h3>
+
+                <p style="
+                    margin-bottom:16px;
+                ">
+                    ${escapeHTML(
+                        error.message ||
+                        "Could not load search results."
+                    )}
                 </p>
+
+                <button
+                    onclick="showSearchResults()"
+                    style="
+                        border:0;
+                        padding:10px 18px;
+                        border-radius:10px;
+                        cursor:pointer;
+                    "
+                >
+                    Try again
+                </button>
 
             </div>
 
         `;
+
+    }finally{
+
+        searchLoading=false;
 
     }
 
@@ -3963,139 +3858,45 @@ function setSearchLoading(loading){
    RENDER SEARCH RESULTS
 ===================================================== */
 
-function renderSearchResults(
-    data,
-    query,
-    category,
-    page
-){
+function renderSearchResults(data){
 
-    const content=
+    const container=
         document.getElementById(
-            "orangeSearchContent"
+            "orangeSearchResults"
         );
 
 
-    if(!content){
-        return;
-    }
+    if(!container)return;
 
 
     const results=
-        Array.isArray(data?.results)
-        ? data.results
-        : [];
+        Array.isArray(data.results)
+        ?data.results
+        :[];
 
 
-    const imageResults=
-        Array.isArray(data?.results)
-        ? data.results
-        : [];
+    if(results.length===0){
 
+        container.innerHTML=`
 
-    /*
-       SearXNG normally returns images in
-       data.images when image search is enabled.
-    */
+            <div style="
+                padding:40px 15px;
+                text-align:center;
+            ">
 
-    const images=
-        Array.isArray(data?.images)
-        ? data.images
-        : [];
+                <i
+                    class="fa-solid fa-magnifying-glass"
+                    style="font-size:35px">
+                </i>
 
-
-    /*
-       Videos can be returned separately by
-       some SearXNG configurations.
-    */
-
-    const videos=
-        Array.isArray(data?.videos)
-        ? data.videos
-        : [];
-
-
-    if(
-        category==="images"
-    ){
-
-        renderImageResults(
-            images.length
-            ? images
-            : imageResults,
-            query,
-            page
-        );
-
-        return;
-
-    }
-
-
-    if(
-        category==="videos" ||
-        category==="short videos"
-    ){
-
-        renderVideoResults(
-            videos.length
-            ? videos
-            : results,
-            query,
-            page
-        );
-
-        return;
-
-    }
-
-
-    renderNormalResults(
-        results,
-        query,
-        category,
-        page
-    );
-
-}
-
-
-/* =====================================================
-   NORMAL WEB RESULTS
-===================================================== */
-
-function renderNormalResults(
-    results,
-    query,
-    category,
-    page
-){
-
-    const content=
-        document.getElementById(
-            "orangeSearchContent"
-        );
-
-
-    if(!content){
-        return;
-    }
-
-
-    if(!results.length){
-
-        content.innerHTML=`
-
-            <div class="orange-search-empty">
-
-                <i class="fa-solid fa-magnifying-glass"></i>
-
-                <h3>No results found</h3>
+                <h3>
+                    No results found
+                </h3>
 
                 <p>
-                    No web results were returned for
+                    No results were returned for
                     <strong>
-                        ${escapeHTML(query)}
+                        ${escapeHTML(currentSearchQuery)}
                     </strong>.
                 </p>
 
@@ -4108,22 +3909,127 @@ function renderNormalResults(
     }
 
 
+    const title=
+        currentSearchCategory==="images"
+        ? "Images"
+        : currentSearchCategory==="videos"
+        ? "Videos"
+        : currentSearchCategory==="news"
+        ? "News"
+        : currentSearchCategory==="map"
+        ? "Maps"
+        : currentSearchCategory==="books"
+        ? "Books"
+        : currentSearchCategory==="forums"
+        ? "Forums"
+        : "Web results";
+
+
     let html=`
 
+        <div style="
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:10px;
+            margin:12px 0 18px;
+        ">
 
-        <div class="orange-search-info">
+            <div>
 
-            About ${results.length} result${results.length===1?"":"s"}
+                <h2 style="
+                    margin:0 0 4px;
+                    font-size:22px;
+                ">
+                    ${title}
+                </h2>
+
+                <div style="
+                    opacity:.65;
+                    font-size:13px;
+                ">
+                    Results for
+                    "${escapeHTML(currentSearchQuery)}"
+                </div>
+
+            </div>
+
+            <div style="
+                opacity:.6;
+                font-size:13px;
+            ">
+                ${results.length} results
+            </div>
 
         </div>
-
-
-        <div class="orange-web-results">
 
     `;
 
 
-    results.forEach((result,index)=>{
+    if(currentSearchCategory==="images"){
+
+        html+=renderImageResults(results);
+
+    }else{
+
+        html+=renderNormalResults(results);
+
+    }
+
+
+    html+=`
+
+        <div style="
+            display:flex;
+            justify-content:center;
+            gap:10px;
+            margin-top:25px;
+        ">
+
+            <button
+                onclick="previousSearchPage()"
+                ${currentSearchPage<=1 ? "disabled":""}
+                style="
+                    padding:10px 16px;
+                    border:0;
+                    border-radius:9px;
+                    cursor:pointer;
+                "
+            >
+                <i class="fa-solid fa-arrow-left"></i>
+                Previous
+            </button>
+
+            <button
+                onclick="nextSearchPage()"
+                style="
+                    padding:10px 16px;
+                    border:0;
+                    border-radius:9px;
+                    cursor:pointer;
+                "
+            >
+                Next
+                <i class="fa-solid fa-arrow-right"></i>
+            </button>
+
+        </div>
+
+    `;
+
+
+    container.innerHTML=html;
+
+}
+
+
+/* =====================================================
+   NORMAL RESULTS
+===================================================== */
+
+function renderNormalResults(results){
+
+    return results.map((result,index)=>{
 
         const title=
             result.title ||
@@ -4137,134 +4043,91 @@ function renderNormalResults(
             "#";
 
 
-        const contentText=
+        const content=
             result.content ||
             result.description ||
+            result.snippet ||
             "";
 
 
         const engine=
             result.engine ||
-            result.engines?.[0] ||
             "";
 
 
-        const thumbnail=
-            getResultImage(result);
-
-
-        html+=`
+        return `
 
             <article
-                class="orange-web-result">
+                class="orange-search-result"
+                style="
+                    padding:17px 0;
+                    border-bottom:1px solid
+                    rgba(127,127,127,.18);
+                "
+            >
+
+                <div style="
+                    font-size:12px;
+                    opacity:.65;
+                    margin-bottom:5px;
+                    word-break:break-all;
+                ">
+                    ${escapeHTML(
+                        getDomain(url)
+                    )}
+                </div>
+
+
+                <a
+                    href="${escapeHTML(url)}"
+                    onclick="openSearchResult(event,this.href)"
+                    style="
+                        font-size:19px;
+                        font-weight:700;
+                        text-decoration:none;
+                        color:var(--orange,#ff6a00);
+                    "
+                >
+                    ${escapeHTML(title)}
+                </a>
+
 
                 ${
-                    thumbnail
-                    ?
+                    content
+                    ?`
+                    <div style="
+                        margin-top:7px;
+                        line-height:1.55;
+                        opacity:.82;
+                    ">
+                        ${escapeHTML(
+                            stripHTML(content)
+                        )}
+                    </div>
                     `
-                    <img
-                        class="orange-result-thumb"
-                        src="${escapeAttribute(thumbnail)}"
-                        alt=""
-                        loading="lazy"
-                        onerror="this.style.display='none'">
-                    `
-                    :
-                    ""
+                    :""
                 }
 
 
-                <div class="orange-result-main">
-
-                    <div class="orange-result-url">
-
-                        ${escapeHTML(
-                            getDomain(url)
-                        )}
-
-                        ${
-                            engine
-                            ?
-                            `<span>
-                                · ${escapeHTML(engine)}
-                             </span>`
-                            :
-                            ""
-                        }
-
+                ${
+                    engine
+                    ?`
+                    <div style="
+                        margin-top:7px;
+                        font-size:11px;
+                        opacity:.55;
+                    ">
+                        ${escapeHTML(engine)}
                     </div>
-
-
-                    <a
-                        href="${escapeAttribute(url)}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="orange-result-title">
-
-                        ${escapeHTML(title)}
-
-                    </a>
-
-
-                    ${
-                        contentText
-                        ?
-                        `
-                        <div class="orange-result-description">
-
-                            ${escapeHTML(
-                                cleanText(contentText)
-                            )}
-
-                        </div>
-                        `
-                        :
-                        ""
-                    }
-
-
-                    <a
-                        href="${escapeAttribute(url)}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="orange-result-link">
-
-                        ${escapeHTML(
-                            shortenURL(url)
-                        )}
-
-                    </a>
-
-                </div>
+                    `
+                    :""
+                }
 
             </article>
 
         `;
 
-    });
-
-
-    html+=`
-
-        </div>
-
-
-        <div class="orange-search-more">
-
-            <button
-                type="button"
-                onclick="loadMoreSearchResults()">
-
-                Load more
-
-            </button>
-
-        </div>
-
-    `;
-
-
-    content.innerHTML=html;
+    }).join("");
 
 }
 
@@ -4273,520 +4136,236 @@ function renderNormalResults(
    IMAGE RESULTS
 ===================================================== */
 
-function renderImageResults(
-    images,
-    query,
-    page
-){
+function renderImageResults(results){
 
-    const content=
-        document.getElementById(
-            "orangeSearchContent"
-        );
+    /*
+       SearXNG image results can expose:
+       img_src
+       thumbnail_src
+       image
+       thumbnail
+       url
+       source
+       title
+    */
+
+    const valid=
+        results.filter(result=>{
+
+            return (
+                result.img_src ||
+                result.thumbnail_src ||
+                result.image ||
+                result.thumbnail
+            );
+
+        });
 
 
-    if(!content){
+    if(valid.length===0){
+
+        /*
+           Some engines may return ordinary web
+           results under the images category.
+        */
+
+        return `
+
+            <div style="
+                padding:15px 0 25px;
+                opacity:.7;
+            ">
+                No direct image thumbnails were returned
+                by the configured image engines.
+            </div>
+
+            ${renderNormalResults(results)}
+
+        `;
+
+    }
+
+
+    return `
+
+        <div style="
+            display:grid;
+            grid-template-columns:
+                repeat(auto-fill,minmax(150px,1fr));
+            gap:12px;
+        ">
+
+            ${valid.map((result,index)=>{
+
+                const image=
+                    result.img_src ||
+                    result.image ||
+                    result.thumbnail_src ||
+                    result.thumbnail;
+
+
+                const thumb=
+                    result.thumbnail_src ||
+                    result.thumbnail ||
+                    image;
+
+
+                const title=
+                    result.title ||
+                    "Image result";
+
+
+                const pageUrl=
+                    result.url ||
+                    result.source ||
+                    image;
+
+
+                return `
+
+                    <article
+                        style="
+                            overflow:hidden;
+                            border-radius:12px;
+                            background:
+                                var(--card,#fff);
+                            border:1px solid
+                                rgba(127,127,127,.18);
+                        "
+                    >
+
+                        <a
+                            href="${escapeHTML(pageUrl)}"
+                            onclick="
+                                openSearchResult(
+                                    event,
+                                    this.href
+                                )
+                            "
+                            style="
+                                display:block;
+                                text-decoration:none;
+                            "
+                        >
+
+                            <div style="
+                                width:100%;
+                                aspect-ratio:4/3;
+                                background:#eee;
+                                overflow:hidden;
+                            ">
+
+                                <img
+                                    src="${escapeHTML(thumb)}"
+                                    alt="${escapeHTML(title)}"
+                                    loading="lazy"
+                                    referrerpolicy="no-referrer"
+                                    onerror="
+                                        this.onerror=null;
+                                        this.src='${escapeHTML(image)}';
+                                    "
+                                    style="
+                                        width:100%;
+                                        height:100%;
+                                        object-fit:cover;
+                                        display:block;
+                                    "
+                                >
+
+                            </div>
+
+                            <div style="
+                                padding:9px;
+                                font-size:13px;
+                                font-weight:600;
+                                line-height:1.35;
+                            ">
+                                ${escapeHTML(title)}
+                            </div>
+
+                        </a>
+
+                    </article>
+
+                `;
+
+            }).join("")}
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   OPEN RESULT
+===================================================== */
+
+function openSearchResult(event,url){
+
+    if(event){
+        event.preventDefault();
+    }
+
+
+    if(!url || url==="#"){
         return;
     }
 
 
     /*
-       Convert regular SearXNG results into
-       image-looking results when the server
-       returns image URLs in result.thumbnail.
+       Keep the result inside the existing
+       OrangeBrowse/native navigation architecture.
     */
 
-    const normalized=
-        images
-        .map(item=>{
-
-            return {
-
-                title:
-                    item.title ||
-                    item.name ||
-                    query,
-
-                image:
-                    item.img_src ||
-                    item.image ||
-                    item.thumbnail ||
-                    item.thumbnail_src ||
-                    item.url,
-
-                url:
-                    item.url ||
-                    item.link ||
-                    item.img_src ||
-                    item.image
-
-            };
-
-        })
-        .filter(item=>item.image);
-
-
-    if(!normalized.length){
-
-        content.innerHTML=`
-
-            <div class="orange-search-empty">
-
-                <i class="fa-regular fa-image"></i>
-
-                <h3>No images found</h3>
-
-                <p>
-                    SearXNG did not return image results
-                    for this search.
-                </p>
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    let html=`
-
-        <div class="orange-search-info">
-
-            Images for
-            <strong>
-                ${escapeHTML(query)}
-            </strong>
-
-        </div>
-
-
-        <div class="orange-image-grid">
-
-    `;
-
-
-    normalized.forEach(item=>{
-
-        html+=`
-
-            <a
-                class="orange-image-card"
-                href="${escapeAttribute(
-                    item.url || item.image
-                )}"
-                target="_blank"
-                rel="noopener noreferrer">
-
-                <div class="orange-image-wrapper">
-
-                    <img
-                        src="${escapeAttribute(item.image)}"
-                        alt="${escapeAttribute(item.title)}"
-                        loading="lazy"
-                        onerror="this.parentElement.parentElement.style.display='none'">
-
-                </div>
-
-
-                <div class="orange-image-title">
-
-                    ${escapeHTML(
-                        item.title
-                    )}
-
-                </div>
-
-            </a>
-
-        `;
-
-    });
-
-
-    html+=`
-
-        </div>
-
-
-        <div class="orange-search-more">
-
-            <button
-                type="button"
-                onclick="loadMoreSearchResults()">
-
-                Load more images
-
-            </button>
-
-        </div>
-
-    `;
-
-
-    content.innerHTML=html;
-
-}
-
-
-/* =====================================================
-   VIDEO RESULTS
-===================================================== */
-
-function renderVideoResults(
-    videos,
-    query,
-    page
-){
-
-    const content=
-        document.getElementById(
-            "orangeSearchContent"
-        );
-
-
-    if(!content){
-        return;
-    }
-
-
-    if(!videos.length){
-
-        content.innerHTML=`
-
-            <div class="orange-search-empty">
-
-                <i class="fa-solid fa-video"></i>
-
-                <h3>No videos found</h3>
-
-                <p>
-                    No video results were returned for
-                    ${escapeHTML(query)}.
-                </p>
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    let html=`
-
-        <div class="orange-search-info">
-
-            Videos for
-            <strong>
-                ${escapeHTML(query)}
-            </strong>
-
-        </div>
-
-
-        <div class="orange-video-results">
-
-    `;
-
-
-    videos.forEach(video=>{
-
-        const title=
-            video.title ||
-            video.name ||
-            "Video";
-
-
-        const url=
-            video.url ||
-            video.link ||
-            "#";
-
-
-        const thumbnail=
-            getResultImage(video);
-
-
-        html+=`
-
-            <article class="orange-video-card">
-
-                ${
-                    thumbnail
-                    ?
-                    `
-                    <a
-                        href="${escapeAttribute(url)}"
-                        target="_blank"
-                        rel="noopener noreferrer">
-
-                        <img
-                            src="${escapeAttribute(thumbnail)}"
-                            alt=""
-                            loading="lazy"
-                            class="orange-video-thumb">
-
-                    </a>
-                    `
-                    :
-                    `
-                    <a
-                        href="${escapeAttribute(url)}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="orange-video-placeholder">
-
-                        <i class="fa-solid fa-play"></i>
-
-                    </a>
-                    `
-                }
-
-
-                <div class="orange-video-body">
-
-                    <a
-                        href="${escapeAttribute(url)}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        class="orange-video-title">
-
-                        ${escapeHTML(title)}
-
-                    </a>
-
-
-                    ${
-                        video.content
-                        ?
-                        `
-                        <p>
-                            ${escapeHTML(
-                                cleanText(video.content)
-                            )}
-                        </p>
-                        `
-                        :
-                        ""
-                    }
-
-                </div>
-
-            </article>
-
-        `;
-
-    });
-
-
-    html+=`
-
-        </div>
-
-
-        <div class="orange-search-more">
-
-            <button
-                type="button"
-                onclick="loadMoreSearchResults()">
-
-                Load more videos
-
-            </button>
-
-        </div>
-
-    `;
-
-
-    content.innerHTML=html;
-
-}
-
-
-/* =====================================================
-   LOAD MORE
-===================================================== */
-
-function loadMoreSearchResults(){
-
-    if(!currentSearch){
-        return;
-    }
-
-
-    performOrangeSearch(
-        currentSearch,
-        currentSearchCategory,
-        currentSearchPage + 1
+    navigateTo(
+        url,
+        {
+            title:url
+        }
     );
 
 }
 
 
 /* =====================================================
-   SEARCH ERROR
+   SEARCH PAGINATION
 ===================================================== */
 
-function renderSearchError(message){
+function nextSearchPage(){
 
-    const content=
-        document.getElementById(
-            "orangeSearchContent"
-        );
+    if(searchLoading)return;
 
+    currentSearchPage++;
 
-    if(!content){
-        return;
-    }
+    showSearchResults();
+
+}
 
 
-    content.innerHTML=`
+function previousSearchPage(){
 
-        <div class="orange-search-error">
+    if(searchLoading)return;
 
-            <i class="fa-solid fa-triangle-exclamation"></i>
+    if(currentSearchPage<=1)return;
 
-            <h3>
-                Search failed
-            </h3>
+    currentSearchPage--;
 
-            <p>
-                ${escapeHTML(message)}
-            </p>
-
-
-            <button
-                type="button"
-                onclick="performOrangeSearch(
-                    currentSearch,
-                    currentSearchCategory,
-                    currentSearchPage
-                )">
-
-                Try again
-
-            </button>
-
-        </div>
-
-    `;
+    showSearchResults();
 
 }
 
 
 /* =====================================================
-   RESULT IMAGE DETECTION
-===================================================== */
-
-function getResultImage(result){
-
-    if(!result){
-        return "";
-    }
-
-
-    const candidates=[
-
-        result.thumbnail,
-
-        result.thumbnail_src,
-
-        result.img_src,
-
-        result.image,
-
-        result.image_url,
-
-        result.imageUrl,
-
-        result.thumbnail_url,
-
-        result.thumb,
-
-        result.media?.thumbnail,
-
-        result.metadata?.thumbnail,
-
-        result.properties?.thumbnail
-
-    ];
-
-
-    for(const value of candidates){
-
-        if(
-            typeof value==="string" &&
-            /^https?:\/\//i.test(value)
-        ){
-
-            return value;
-
-        }
-
-    }
-
-
-    return "";
-
-}
-
-
-/* =====================================================
-   URL HELPERS
+   SEARCH HELPERS
 ===================================================== */
 
 function getDomain(url){
 
     try{
 
-        return new URL(url).hostname.replace(
-            /^www\./,
-            ""
-        );
-
-    }catch(error){
-
-        return "";
-
-    }
-
-}
-
-
-function shortenURL(url){
-
-    try{
-
-        const parsed=
-            new URL(url);
-
-        let result=
-            parsed.hostname.replace(
-                /^www\./,
-                ""
-            );
-
-
-        if(parsed.pathname && parsed.pathname!=="/"){
-
-            result+=parsed.pathname;
-
-        }
-
-
-        if(result.length>90){
-
-            result=
-                result.substring(0,87)+"...";
-
-        }
-
-
-        return result;
+        return new URL(url).hostname;
 
     }catch(error){
 
@@ -4797,67 +4376,35 @@ function shortenURL(url){
 }
 
 
-/* =====================================================
-   TEXT HELPERS
-===================================================== */
+function stripHTML(value){
 
-function cleanText(text){
+    const div=
+        document.createElement("div");
 
-    return String(text || "")
-        .replace(/\s+/g," ")
-        .trim();
+    div.innerHTML=
+        String(value || "");
 
-}
-
-
-function escapeAttribute(value){
-
-    return escapeHTML(value);
+    return div.textContent ||
+        div.innerText ||
+        "";
 
 }
 
 
-function escapeHTML(value){
+function hideSearchResults(){
 
-    return String(value ?? "")
+    const container=
+        document.getElementById(
+            "orangeSearchResults"
+        );
 
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
+    if(container){
 
-}
+        container.style.display="none";
 
-
-/* =====================================================
-   ADDRESS
-===================================================== */
-
-function setAddress(value){
-
-    const input=
-        document.getElementById("addressInput");
-
-    if(input){
-
-        input.value=value || "";
+        container.innerHTML="";
 
     }
-
-}
-
-
-function clearAddress(){
-
-    const input=
-        document.getElementById("addressInput");
-
-    if(!input)return;
-
-    input.value="";
-
-    input.focus();
 
 }
 
@@ -4870,9 +4417,7 @@ function goBack(){
 
     const tab=getActiveTab();
 
-    if(!tab){
-        return;
-    }
+    if(!tab)return;
 
 
     if(
@@ -4932,9 +4477,7 @@ function goForward(){
 
     const tab=getActiveTab();
 
-    if(!tab){
-        return;
-    }
+    if(!tab)return;
 
 
     if(
@@ -4995,10 +4538,20 @@ function reloadPage(){
 
     const tab=getActiveTab();
 
-    if(
-        tab &&
-        tab.url
-    ){
+    if(tab && tab.url){
+
+        if(
+            tab.url.startsWith(
+                "orangebrowse-search://"
+            )
+        ){
+
+            showSearchResults();
+
+            return;
+
+        }
+
 
         openNativeDestination(tab.url);
 
@@ -5020,14 +4573,42 @@ function reloadPage(){
 
 
 /* =====================================================
+   ADDRESS
+===================================================== */
+
+function setAddress(value){
+
+    const input=
+        document.getElementById("addressInput");
+
+    if(input){
+        input.value=value || "";
+    }
+
+}
+
+
+function clearAddress(){
+
+    const input=
+        document.getElementById("addressInput");
+
+    if(!input)return;
+
+    input.value="";
+
+    input.focus();
+
+}
+
+
+/* =====================================================
    HISTORY
 ===================================================== */
 
 function addHistory(title,url){
 
-    if(settings.incognito){
-        return;
-    }
+    if(settings.incognito)return;
 
 
     historyItems.unshift({
@@ -5055,143 +4636,6 @@ function addHistory(title,url){
 }
 
 
-function openHistory(){
-
-    closeMenu();
-
-    let html="";
-
-
-    if(historyItems.length===0){
-
-        html=`
-
-        <div class="empty">
-
-            <i class="fa-solid fa-clock-rotate-left"></i>
-
-            <p>No browsing history yet.</p>
-
-        </div>
-
-        `;
-
-    }else{
-
-        html=`
-
-        <div class="data-list">
-
-        ${historyItems.map((item,index)=>`
-
-            <div class="data-item">
-
-                <div class="data-icon">
-                    <i class="fa-solid fa-globe"></i>
-                </div>
-
-                <div
-                    class="data-content"
-                    onclick="openHistoryItem(${index})"
-                    style="cursor:pointer">
-
-                    <div class="data-title">
-                        ${escapeHTML(item.title)}
-                    </div>
-
-                    <div class="data-url">
-                        ${escapeHTML(item.url)}
-                    </div>
-
-                </div>
-
-                <button
-                    class="data-delete"
-                    onclick="deleteHistory(${item.id})">
-
-                    <i class="fa-solid fa-trash"></i>
-
-                </button>
-
-            </div>
-
-        `).join("")}
-
-        </div>
-
-        <button
-            class="danger-button"
-            onclick="clearHistory()">
-
-            Clear history
-
-        </button>
-
-        `;
-
-    }
-
-
-    openModal(
-        "Browsing History",
-        html
-    );
-
-}
-
-
-function openHistoryItem(index){
-
-    const item=historyItems[index];
-
-    if(!item)return;
-
-    closeModal();
-
-    navigateTo(
-        item.url,
-        {
-            title:item.title,
-            fromHistoryURL:true
-        }
-    );
-
-}
-
-
-function deleteHistory(id){
-
-    historyItems=
-        historyItems.filter(
-            item=>item.id!==id
-        );
-
-    save(
-        STORAGE.history,
-        historyItems
-    );
-
-    openHistory();
-
-}
-
-
-function clearHistory(){
-
-    historyItems=[];
-
-    save(
-        STORAGE.history,
-        historyItems
-    );
-
-    openHistory();
-
-    showToast("History cleared");
-
-}
-
-
 /* =====================================================
    BOOKMARKS
 ===================================================== */
@@ -5200,10 +4644,7 @@ function bookmarkCurrent(){
 
     const tab=getActiveTab();
 
-    if(
-        !tab ||
-        !tab.url
-    ){
+    if(!tab || !tab.url){
 
         showToast(
             "There is no page to bookmark"
@@ -5214,17 +4655,13 @@ function bookmarkCurrent(){
     }
 
 
-    const exists=
+    if(
         bookmarks.some(
             item=>item.url===tab.url
-        );
+        )
+    ){
 
-
-    if(exists){
-
-        showToast(
-            "Already bookmarked"
-        );
+        showToast("Already bookmarked");
 
         return;
 
@@ -5248,539 +4685,13 @@ function bookmarkCurrent(){
     );
 
 
-    showToast(
-        "Page bookmarked"
-    );
-
-}
-
-
-function openBookmarks(){
-
-    closeMenu();
-
-    let html="";
-
-
-    if(bookmarks.length===0){
-
-        html=`
-
-        <div class="empty">
-
-            <i class="fa-regular fa-star"></i>
-
-            <p>No bookmarks yet.</p>
-
-        </div>
-
-        `;
-
-    }else{
-
-        html=`
-
-        <div class="data-list">
-
-        ${bookmarks.map((item,index)=>`
-
-            <div class="data-item">
-
-                <div class="data-icon">
-
-                    <i class="fa-regular fa-star"></i>
-
-                </div>
-
-                <div
-                    class="data-content"
-                    onclick="openBookmark(${index})"
-                    style="cursor:pointer">
-
-                    <div class="data-title">
-                        ${escapeHTML(item.title)}
-                    </div>
-
-                    <div class="data-url">
-                        ${escapeHTML(item.url)}
-                    </div>
-
-                </div>
-
-                <button
-                    class="data-delete"
-                    onclick="deleteBookmark(${item.id})">
-
-                    <i class="fa-solid fa-trash"></i>
-
-                </button>
-
-            </div>
-
-        `).join("")}
-
-        </div>
-
-        `;
-
-    }
-
-
-    openModal(
-        "Bookmarks",
-        html
-    );
-
-}
-
-
-function openBookmark(index){
-
-    const item=bookmarks[index];
-
-    if(!item)return;
-
-    closeModal();
-
-    navigateTo(
-        item.url,
-        {
-            title:item.title,
-            fromHistoryURL:true
-        }
-    );
-
-}
-
-
-function deleteBookmark(id){
-
-    bookmarks=
-        bookmarks.filter(
-            item=>item.id!==id
-        );
-
-    save(
-        STORAGE.bookmarks,
-        bookmarks
-    );
-
-    openBookmarks();
-
-    showToast(
-        "Bookmark removed"
-    );
+    showToast("Page bookmarked");
 
 }
 
 
 /* =====================================================
-   RECENTLY CLOSED
-===================================================== */
-
-function openRecentlyClosed(){
-
-    closeMenu();
-
-    let html="";
-
-
-    if(closedTabs.length===0){
-
-        html=`
-
-        <div class="empty">
-
-            <i class="fa-solid fa-window-restore"></i>
-
-            <p>No recently closed tabs.</p>
-
-        </div>
-
-        `;
-
-    }else{
-
-        html=`
-
-        <div class="data-list">
-
-        ${closedTabs.map((item,index)=>`
-
-            <div class="data-item">
-
-                <div class="data-icon">
-
-                    <i class="fa-solid fa-window-restore"></i>
-
-                </div>
-
-                <div
-                    class="data-content"
-                    onclick="restoreClosedTab(${index})"
-                    style="cursor:pointer">
-
-                    <div class="data-title">
-
-                        ${escapeHTML(
-                            item.title || "New Tab"
-                        )}
-
-                    </div>
-
-                    <div class="data-url">
-
-                        ${escapeHTML(
-                            item.url || "New Tab"
-                        )}
-
-                    </div>
-
-                </div>
-
-                <button
-                    class="data-delete"
-                    onclick="removeClosedTab(${index})">
-
-                    <i class="fa-solid fa-xmark"></i>
-
-                </button>
-
-            </div>
-
-        `).join("")}
-
-        </div>
-
-        `;
-
-    }
-
-
-    openModal(
-        "Recently Closed Tabs",
-        html
-    );
-
-}
-
-
-function restoreClosedTab(index){
-
-    const oldTab=
-        closedTabs[index];
-
-    if(!oldTab)return;
-
-
-    const restored={
-        ...oldTab,
-
-        id:generateTabId(),
-
-        created:Date.now(),
-
-        closedAt:undefined
-    };
-
-
-    delete restored.closedAt;
-
-
-    if(
-        !Array.isArray(restored.history)
-    ){
-
-        restored.history=
-            restored.url
-            ?[restored.url]
-            :[];
-
-    }
-
-
-    if(
-        typeof restored.historyIndex!=="number"
-    ){
-
-        restored.historyIndex=
-            restored.history.length-1;
-
-    }
-
-
-    restored.isNewTab=
-        !restored.url;
-
-
-    tabs.push(restored);
-
-    activeTabId=restored.id;
-
-
-    closedTabs.splice(index,1);
-
-
-    persistTabs();
-
-    save(
-        STORAGE.closedTabs,
-        closedTabs
-    );
-
-
-    closeModal();
-
-    renderTabs();
-
-    loadActiveTab();
-
-    showToast("Tab restored");
-
-}
-
-
-function removeClosedTab(index){
-
-    closedTabs.splice(index,1);
-
-    save(
-        STORAGE.closedTabs,
-        closedTabs
-    );
-
-    openRecentlyClosed();
-
-}
-
-
-/* =====================================================
-   OFFLINE PAGES
-===================================================== */
-
-function saveCurrentOffline(){
-
-    const tab=getActiveTab();
-
-    if(
-        !tab ||
-        !tab.url
-    ){
-
-        showToast(
-            "No webpage available to save"
-        );
-
-        return;
-
-    }
-
-
-    const exists=
-        offlinePages.some(
-            page=>page.url===tab.url
-        );
-
-
-    if(exists){
-
-        showToast(
-            "Page already saved offline"
-        );
-
-        return;
-
-    }
-
-
-    offlinePages.unshift({
-
-        id:Date.now(),
-
-        title:tab.title || tab.url,
-
-        url:tab.url,
-
-        savedAt:new Date().toISOString(),
-
-        content:
-            "Offline page reference saved by OrangeBrowse."
-
-    });
-
-
-    offlinePages=
-        offlinePages.slice(0,50);
-
-
-    save(
-        STORAGE.offlinePages,
-        offlinePages
-    );
-
-
-    showToast(
-        "Offline page saved"
-    );
-
-}
-
-
-function openOfflinePages(){
-
-    closeMenu();
-
-    let html="";
-
-
-    if(offlinePages.length===0){
-
-        html=`
-
-        <div class="empty">
-
-            <i class="fa-solid fa-cloud-arrow-down"></i>
-
-            <p>No offline pages saved yet.</p>
-
-            <br>
-
-            <button
-                class="jama-button"
-                onclick="saveCurrentOffline();closeModal()">
-
-                Save current page
-
-            </button>
-
-        </div>
-
-        `;
-
-    }else{
-
-        html=`
-
-        <div class="data-list">
-
-        ${offlinePages.map((page,index)=>`
-
-            <div class="data-item">
-
-                <div class="data-icon">
-
-                    <i class="fa-solid fa-cloud-arrow-down"></i>
-
-                </div>
-
-                <div
-                    class="data-content"
-                    onclick="openOfflinePage(${index})"
-                    style="cursor:pointer">
-
-                    <div class="data-title">
-                        ${escapeHTML(page.title)}
-                    </div>
-
-                    <div class="data-url">
-                        ${escapeHTML(page.url)}
-                    </div>
-
-                </div>
-
-                <button
-                    class="data-delete"
-                    onclick="deleteOfflinePage(${index})">
-
-                    <i class="fa-solid fa-trash"></i>
-
-                </button>
-
-            </div>
-
-        `).join("")}
-
-        </div>
-
-        <button
-            class="danger-button"
-            onclick="clearOfflinePages()">
-
-            Clear offline pages
-
-        </button>
-
-        `;
-
-    }
-
-
-    openModal(
-        "Offline Pages",
-        html
-    );
-
-}
-
-
-function openOfflinePage(index){
-
-    const page=
-        offlinePages[index];
-
-    if(!page)return;
-
-    closeModal();
-
-    navigateTo(
-        page.url,
-        {
-            title:page.title,
-            fromHistoryURL:true
-        }
-    );
-
-}
-
-
-function deleteOfflinePage(index){
-
-    offlinePages.splice(index,1);
-
-    save(
-        STORAGE.offlinePages,
-        offlinePages
-    );
-
-    openOfflinePages();
-
-    showToast(
-        "Offline page removed"
-    );
-
-}
-
-
-function clearOfflinePages(){
-
-    offlinePages=[];
-
-    save(
-        STORAGE.offlinePages,
-        offlinePages
-    );
-
-    openOfflinePages();
-
-    showToast(
-        "Offline pages cleared"
-    );
-
-}
-
-
-/* =====================================================
-   INCOGNITO
+   PRIVACY
 ===================================================== */
 
 function toggleIncognito(){
@@ -5886,7 +4797,7 @@ function toggleAdBlock(){
 
 
 /* =====================================================
-   FEATURE TOGGLES
+   FEATURES
 ===================================================== */
 
 function toggleFeature(event,type){
@@ -5921,39 +4832,6 @@ function toggleFeature(event,type){
     updateFeatureUI(type);
 
     updatePrivacyUI();
-
-
-    if(type==="dataSaver"){
-
-        showToast(
-            settings.dataSaver
-            ? "Data Saver enabled"
-            : "Data Saver disabled"
-        );
-
-    }
-
-
-    if(type==="adBlock"){
-
-        showToast(
-            settings.adBlock
-            ? "Ad Blocker enabled"
-            : "Ad Blocker disabled"
-        );
-
-    }
-
-
-    if(type==="incognito"){
-
-        showToast(
-            settings.incognito
-            ? "Incognito mode enabled"
-            : "Incognito mode disabled"
-        );
-
-    }
 
 }
 
@@ -5995,19 +4873,15 @@ function updateFeatureUI(type){
     if(!toggle || !status)return;
 
 
-    if(settings[type]){
+    toggle.classList.toggle(
+        "active",
+        !!settings[type]
+    );
 
-        toggle.classList.add("active");
-
-        status.textContent="On";
-
-    }else{
-
-        toggle.classList.remove("active");
-
-        status.textContent="Off";
-
-    }
+    status.textContent=
+        settings[type]
+        ? "On"
+        : "Off";
 
 }
 
@@ -6015,10 +4889,99 @@ function updateFeatureUI(type){
 function updateAllFeatureUI(){
 
     updateFeatureUI("dataSaver");
-
     updateFeatureUI("adBlock");
-
     updateFeatureUI("incognito");
+
+}
+
+
+/* =====================================================
+   DARK MODE
+===================================================== */
+
+function toggleDarkMode(){
+
+    settings.dark=
+        !settings.dark;
+
+    applyTheme();
+
+    save(
+        STORAGE.settings,
+        settings
+    );
+
+    updatePrivacyUI();
+
+}
+
+
+function applyTheme(){
+
+    document.body.classList.toggle(
+        "dark",
+        !!settings.dark
+    );
+
+}
+
+
+function applySettings(){
+
+    applyTheme();
+
+
+    const engine=
+        document.getElementById(
+            "searchEngine"
+        );
+
+
+    if(engine){
+
+        engine.value=
+            settings.engine || "google";
+
+    }
+
+}
+
+
+/* =====================================================
+   SEARCH ENGINE SETTING
+===================================================== */
+
+function changeSearchEngine(value){
+
+    if(
+        !["google","bing","duckduckgo"]
+        .includes(value)
+    ){
+
+        value="google";
+
+    }
+
+
+    settings.engine=value;
+
+    save(
+        STORAGE.settings,
+        settings
+    );
+
+
+    const engine=
+        document.getElementById(
+            "searchEngine"
+        );
+
+    if(engine){
+        engine.value=value;
+    }
+
+
+    showToast("Search engine updated");
 
 }
 
@@ -6032,15 +4995,26 @@ function openAIAssistant(){
     const input=
         document.getElementById("aiInput");
 
+    const card=
+        document.querySelector(".ai-card");
+
+
     window.scrollTo({
-        top:document.querySelector(".ai-card")
-            ?document.querySelector(".ai-card").offsetTop-80
+
+        top:
+            card
+            ?card.offsetTop-80
             :0,
+
         behavior:"smooth"
+
     });
 
+
     setTimeout(()=>{
+
         if(input)input.focus();
+
     },350);
 
 }
@@ -6154,12 +5128,10 @@ async function askAI(){
                 "/api/ai",
                 {
                     method:"POST",
-
                     headers:{
                         "Content-Type":
                             "application/json"
                     },
-
                     body:JSON.stringify({
                         message:question
                     })
@@ -6190,11 +5162,8 @@ async function askAI(){
 
 
     addAIMessage(
-
-        "OrangeBrowse AI is ready, but the GPT connection has not been connected yet. Connect it through the Android/native bridge or a secure backend without exposing a private API key.",
-
+        "OrangeBrowse AI is ready, but the GPT connection has not been connected yet.",
         "bot"
-
     );
 
 }
@@ -6207,486 +5176,28 @@ async function askAI(){
 function jamaLaunchInfo(){
 
     openModal(
-
         "JAMA Coin",
-
         `
-
         <div class="empty">
 
             <i class="fa-solid fa-rocket"></i>
 
             <h3
-                style="margin-bottom:10px;color:var(--text);">
-
+                style="
+                    margin-bottom:10px;
+                    color:var(--text);
+                "
+            >
                 JAMA Coin — Launching Soon
-
             </h3>
 
             <p>
-
                 The JAMA Coin promotional area is ready.
-                Official launch information can be added
-                here when the project is ready.
-
             </p>
 
         </div>
-
         `
-
     );
-
-}
-
-
-/* =====================================================
-   DOWNLOADS
-===================================================== */
-
-function openDownloads(){
-
-    closeMenu();
-
-    openModal(
-
-        "Downloads",
-
-        `
-
-        <div class="empty">
-
-            <i class="fa-solid fa-download"></i>
-
-            <p>
-
-                Downloads will be connected to the
-                native browser download manager when
-                OrangeBrowse becomes an Android/iOS
-                application.
-
-            </p>
-
-        </div>
-
-        `
-
-    );
-
-}
-
-
-/* =====================================================
-   SETTINGS
-===================================================== */
-
-function openSettings(){
-
-    closeMenu();
-
-
-    openModal(
-
-        "Settings",
-
-        `
-
-        <div class="setting">
-
-            <div class="setting-row">
-
-                <div>
-
-                    <div class="setting-title">
-                        Search engine
-                    </div>
-
-                    <div class="setting-description">
-                        OrangeBrowse Web Search
-                    </div>
-
-                </div>
-
-                <select
-                    id="settingsEngine"
-                    onchange="changeSearchEngine(this.value)">
-
-                    <option value="searxng">
-                        OrangeBrowse Search
-                    </option>
-
-                </select>
-
-            </div>
-
-        </div>
-
-
-        <div class="setting">
-
-            <div class="setting-row">
-
-                <div>
-
-                    <div class="setting-title">
-                        Ad blocker
-                    </div>
-
-                    <div class="setting-description">
-                        Control the browser ad-blocking preference.
-                    </div>
-
-                </div>
-
-                <button
-                    class="icon-button"
-                    style="background:var(--bg);color:var(--text)"
-                    onclick="toggleAdBlock();openSettings()">
-
-                    <i class="fa-solid fa-shield-halved"></i>
-
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="setting">
-
-            <div class="setting-row">
-
-                <div>
-
-                    <div class="setting-title">
-                        Incognito mode
-                    </div>
-
-                    <div class="setting-description">
-                        Do not add browsing activity to normal history.
-                    </div>
-
-                </div>
-
-                <button
-                    class="icon-button"
-                    style="background:var(--bg);color:var(--text)"
-                    onclick="toggleIncognito();openSettings()">
-
-                    <i class="fa-solid fa-user-secret"></i>
-
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="setting">
-
-            <div class="setting-row">
-
-                <div>
-
-                    <div class="setting-title">
-                        Data Saver
-                    </div>
-
-                    <div class="setting-description">
-                        Reduce optional OrangeBrowse interface resources.
-                    </div>
-
-                </div>
-
-                <button
-                    class="icon-button"
-                    style="background:var(--bg);color:var(--text)"
-                    onclick="toggleFeature(null,'dataSaver');openSettings()">
-
-                    <i class="fa-solid fa-gauge-high"></i>
-
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="setting">
-
-            <div class="setting">
-
-                <div class="setting-title">
-                    Offline pages
-                </div>
-
-                <div class="setting-description">
-                    Save the current page reference locally.
-                </div>
-
-                <button
-                    class="jama-button"
-                    style="margin-top:10px"
-                    onclick="saveCurrentOffline()">
-
-                    Save current page
-
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="setting">
-
-            <div class="setting-row">
-
-                <div>
-
-                    <div class="setting-title">
-                        Appearance
-                    </div>
-
-                    <div class="setting-description">
-                        Switch between dark and light mode.
-                    </div>
-
-                </div>
-
-                <button
-                    class="icon-button"
-                    style="background:var(--bg);color:var(--text)"
-                    onclick="toggleDarkMode();openSettings()">
-
-                    <i class="fa-solid fa-moon"></i>
-
-                </button>
-
-            </div>
-
-        </div>
-
-
-        <div class="setting">
-
-            <div class="setting-title">
-                Clear browsing data
-            </div>
-
-            <div class="setting-description">
-                Remove locally stored history, bookmarks,
-                closed tabs, offline pages and saved tabs.
-            </div>
-
-            <button
-                class="danger-button"
-                onclick="clearAllData()">
-
-                Clear all local browser data
-
-            </button>
-
-        </div>
-
-        `
-
-    );
-
-
-    const engine=
-        document.getElementById(
-            "settingsEngine"
-        );
-
-    if(engine){
-
-        engine.value="searxng";
-
-    }
-
-}
-
-
-/* =====================================================
-   SEARCH ENGINE
-===================================================== */
-
-function changeSearchEngine(value){
-
-    settings.engine="searxng";
-
-    save(
-        STORAGE.settings,
-        settings
-    );
-
-
-    const engine=
-        document.getElementById("searchEngine");
-
-    if(engine){
-        engine.value="searxng";
-    }
-
-
-    showToast(
-        "OrangeBrowse Search enabled"
-    );
-
-}
-
-
-/* =====================================================
-   DARK MODE
-===================================================== */
-
-function toggleDarkMode(){
-
-    settings.dark=
-        !settings.dark;
-
-    applyTheme();
-
-    save(
-        STORAGE.settings,
-        settings
-    );
-
-    updatePrivacyUI();
-
-
-    showToast(
-        settings.dark
-        ? "Dark mode enabled"
-        : "Dark mode disabled"
-    );
-
-}
-
-
-function applyTheme(){
-
-    document.body.classList.toggle(
-        "dark",
-        !!settings.dark
-    );
-
-}
-
-
-/* =====================================================
-   SETTINGS APPLY
-===================================================== */
-
-function applySettings(){
-
-    applyTheme();
-
-
-    const engine=
-        document.getElementById("searchEngine");
-
-    if(engine){
-
-        engine.value="searxng";
-
-    }
-
-}
-
-
-/* =====================================================
-   CLEAR ALL
-===================================================== */
-
-function clearAllData(){
-
-    const confirmed=
-        confirm(
-            "Clear all locally saved OrangeBrowse data?"
-        );
-
-    if(!confirmed)return;
-
-
-    Object.values(STORAGE).forEach(key=>{
-        localStorage.removeItem(key);
-    });
-
-
-    tabs=[];
-
-    bookmarks=[];
-
-    historyItems=[];
-
-    closedTabs=[];
-
-    offlinePages=[];
-
-
-    activeTabId=null;
-
-
-    settings={
-        ...DEFAULT_SETTINGS
-    };
-
-
-    createTab(false);
-
-    closeModal();
-
-    showToast(
-        "Browser data cleared"
-    );
-
-}
-
-
-/* =====================================================
-   MENU
-===================================================== */
-
-function openMenu(){
-
-    const overlay=
-        document.getElementById(
-            "menuOverlay"
-        );
-
-    if(overlay){
-        overlay.classList.add("open");
-    }
-
-}
-
-
-function closeMenu(){
-
-    const overlay=
-        document.getElementById(
-            "menuOverlay"
-        );
-
-    if(overlay){
-        overlay.classList.remove("open");
-    }
-
-}
-
-
-function closeMenuOutside(event){
-
-    if(
-        event.target &&
-        event.target.id==="menuOverlay"
-    ){
-
-        closeMenu();
-
-    }
 
 }
 
@@ -6733,6 +5244,52 @@ function closeModal(){
 
     if(modal){
         modal.classList.remove("show");
+    }
+
+}
+
+
+/* =====================================================
+   MENU
+===================================================== */
+
+function openMenu(){
+
+    const overlay=
+        document.getElementById(
+            "menuOverlay"
+        );
+
+    if(overlay){
+        overlay.classList.add("open");
+    }
+
+}
+
+
+function closeMenu(){
+
+    const overlay=
+        document.getElementById(
+            "menuOverlay"
+        );
+
+    if(overlay){
+        overlay.classList.remove("open");
+    }
+
+}
+
+
+function closeMenuOutside(event){
+
+    if(
+        event.target &&
+        event.target.id==="menuOverlay"
+    ){
+
+        closeMenu();
+
     }
 
 }
@@ -6819,7 +5376,23 @@ function showToast(message){
 
 
 /* =====================================================
-   KEYBOARD SHORTCUTS
+   ESCAPE
+===================================================== */
+
+function escapeHTML(value){
+
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+
+/* =====================================================
+   KEYBOARD
 ===================================================== */
 
 document.addEventListener(
@@ -6841,7 +5414,6 @@ document.addEventListener(
             if(input){
 
                 input.focus();
-
                 input.select();
 
             }
@@ -6869,9 +5441,7 @@ document.addEventListener(
             event.preventDefault();
 
             if(activeTabId){
-
                 closeTab(activeTabId);
-
             }
 
         }
@@ -6892,7 +5462,6 @@ document.addEventListener(
         if(event.key==="Escape"){
 
             closeModal();
-
             closeMenu();
 
         }
@@ -6902,46 +5471,8 @@ document.addEventListener(
 
 
 /* =====================================================
-   DOM EVENTS
+   MODAL EVENTS
 ===================================================== */
-
-document.addEventListener(
-    "click",
-    function(event){
-
-        /*
-           Support existing category buttons even
-           if they were already present in your HTML.
-        */
-
-        const categoryButton=
-            event.target.closest(
-                "[data-search-category]"
-            );
-
-
-        if(categoryButton){
-
-            const category=
-                categoryButton.dataset.searchCategory ||
-                "general";
-
-
-            if(currentSearch){
-
-                performOrangeSearch(
-                    currentSearch,
-                    category,
-                    1
-                );
-
-            }
-
-        }
-
-    }
-);
-
 
 const modalElement=
     document.getElementById("modal");
@@ -6953,9 +5484,7 @@ if(modalElement){
         function(event){
 
             if(event.target===this){
-
                 closeModal();
-
             }
 
         }
@@ -6964,8 +5493,14 @@ if(modalElement){
 }
 
 
+/* =====================================================
+   SEARCH ENGINE SELECT
+===================================================== */
+
 const searchEngineElement=
-    document.getElementById("searchEngine");
+    document.getElementById(
+        "searchEngine"
+    );
 
 if(searchEngineElement){
 
@@ -7020,365 +5555,6 @@ window.addEventListener(
 
     }
 );
-
-
-/* =====================================================
-   SEARCH UI CSS
-   Added automatically so you don't need to
-   immediately modify your existing CSS.
-===================================================== */
-
-(function injectSearchStyles(){
-
-    if(
-        document.getElementById(
-            "orangeBrowseSearchStyles"
-        )
-    ){
-
-        return;
-
-    }
-
-
-    const style=
-        document.createElement("style");
-
-
-    style.id=
-        "orangeBrowseSearchStyles";
-
-
-    style.textContent=`
-
-        #orangeSearchResults{
-            display:none;
-            width:100%;
-            margin:0 auto;
-            padding:0 14px 40px;
-            color:var(--text,#111);
-        }
-
-        #orangeSearchResults.visible{
-            display:block;
-        }
-
-        .orange-search-shell{
-            width:100%;
-            max-width:1100px;
-            margin:0 auto;
-        }
-
-        .orange-search-tabs{
-            display:flex;
-            gap:6px;
-            overflow-x:auto;
-            padding:12px 0;
-            border-bottom:1px solid
-                rgba(127,127,127,.18);
-            scrollbar-width:none;
-        }
-
-        .orange-search-tabs::-webkit-scrollbar{
-            display:none;
-        }
-
-        .orange-search-tab{
-            border:0;
-            background:transparent;
-            color:inherit;
-            padding:9px 14px;
-            border-radius:20px;
-            white-space:nowrap;
-            cursor:pointer;
-            font:inherit;
-        }
-
-        .orange-search-tab:hover{
-            background:rgba(255,106,0,.08);
-        }
-
-        .orange-search-tab.active{
-            color:#ff6a00;
-            background:#fff1e8;
-            font-weight:600;
-        }
-
-        body.dark .orange-search-tab.active{
-            background:rgba(255,106,0,.14);
-        }
-
-        .orange-search-content{
-            min-height:150px;
-            padding-top:12px;
-        }
-
-        .orange-search-info{
-            font-size:13px;
-            opacity:.65;
-            margin:8px 0 18px;
-        }
-
-        .orange-web-results{
-            display:flex;
-            flex-direction:column;
-            gap:2px;
-        }
-
-        .orange-web-result{
-            display:flex;
-            gap:14px;
-            padding:15px 4px;
-            border-bottom:1px solid
-                rgba(127,127,127,.13);
-        }
-
-        .orange-result-main{
-            min-width:0;
-            flex:1;
-        }
-
-        .orange-result-thumb{
-            width:90px;
-            height:70px;
-            object-fit:cover;
-            border-radius:9px;
-            flex:none;
-        }
-
-        .orange-result-url{
-            font-size:12px;
-            opacity:.62;
-            margin-bottom:4px;
-            overflow:hidden;
-            text-overflow:ellipsis;
-            white-space:nowrap;
-        }
-
-        .orange-result-title{
-            display:block;
-            color:#ff6a00;
-            font-size:18px;
-            line-height:1.3;
-            text-decoration:none;
-            font-weight:600;
-            margin-bottom:5px;
-        }
-
-        .orange-result-title:hover{
-            text-decoration:underline;
-        }
-
-        .orange-result-description{
-            font-size:14px;
-            line-height:1.55;
-            opacity:.78;
-            margin-bottom:5px;
-        }
-
-        .orange-result-link{
-            font-size:12px;
-            opacity:.55;
-            text-decoration:none;
-            word-break:break-all;
-        }
-
-        .orange-image-grid{
-            display:grid;
-            grid-template-columns:
-                repeat(auto-fill,minmax(150px,1fr));
-            gap:10px;
-        }
-
-        .orange-image-card{
-            display:block;
-            color:inherit;
-            text-decoration:none;
-            overflow:hidden;
-        }
-
-        .orange-image-wrapper{
-            width:100%;
-            aspect-ratio:1/1;
-            background:#eee;
-            border-radius:10px;
-            overflow:hidden;
-        }
-
-        body.dark .orange-image-wrapper{
-            background:#222;
-        }
-
-        .orange-image-wrapper img{
-            width:100%;
-            height:100%;
-            display:block;
-            object-fit:cover;
-            transition:transform .2s ease;
-        }
-
-        .orange-image-card:hover img{
-            transform:scale(1.04);
-        }
-
-        .orange-image-title{
-            padding:7px 2px;
-            font-size:12px;
-            line-height:1.35;
-            display:-webkit-box;
-            -webkit-line-clamp:2;
-            -webkit-box-orient:vertical;
-            overflow:hidden;
-        }
-
-        .orange-video-results{
-            display:flex;
-            flex-direction:column;
-            gap:12px;
-        }
-
-        .orange-video-card{
-            display:flex;
-            gap:12px;
-            padding:10px 0;
-            border-bottom:1px solid
-                rgba(127,127,127,.13);
-        }
-
-        .orange-video-thumb,
-        .orange-video-placeholder{
-            width:150px;
-            height:85px;
-            flex:none;
-            object-fit:cover;
-            border-radius:9px;
-            background:#222;
-        }
-
-        .orange-video-placeholder{
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            color:#fff;
-            text-decoration:none;
-        }
-
-        .orange-video-title{
-            color:#ff6a00;
-            text-decoration:none;
-            font-size:16px;
-            font-weight:600;
-        }
-
-        .orange-video-body p{
-            font-size:13px;
-            opacity:.7;
-            line-height:1.45;
-            margin-top:5px;
-        }
-
-        .orange-search-loading{
-            min-height:220px;
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            justify-content:center;
-            gap:12px;
-            opacity:.7;
-        }
-
-        .orange-search-spinner{
-            width:30px;
-            height:30px;
-            border:3px solid
-                rgba(255,106,0,.2);
-            border-top-color:#ff6a00;
-            border-radius:50%;
-            animation:
-                orangeSearchSpin .7s linear infinite;
-        }
-
-        @keyframes orangeSearchSpin{
-            to{
-                transform:rotate(360deg);
-            }
-        }
-
-        .orange-search-empty,
-        .orange-search-error{
-            text-align:center;
-            padding:55px 20px;
-            opacity:.75;
-        }
-
-        .orange-search-empty i,
-        .orange-search-error i{
-            font-size:34px;
-            color:#ff6a00;
-            margin-bottom:15px;
-        }
-
-        .orange-search-empty h3,
-        .orange-search-error h3{
-            margin-bottom:8px;
-        }
-
-        .orange-search-error button,
-        .orange-search-more button{
-            border:0;
-            background:#ff6a00;
-            color:#fff;
-            padding:11px 18px;
-            border-radius:8px;
-            cursor:pointer;
-            margin-top:15px;
-            font:inherit;
-        }
-
-        .orange-search-more{
-            text-align:center;
-            padding:20px 0;
-        }
-
-        @media(max-width:600px){
-
-            #orangeSearchResults{
-                padding-left:10px;
-                padding-right:10px;
-            }
-
-            .orange-result-title{
-                font-size:16px;
-            }
-
-            .orange-result-description{
-                font-size:13px;
-            }
-
-            .orange-result-thumb{
-                width:76px;
-                height:60px;
-            }
-
-            .orange-image-grid{
-                grid-template-columns:
-                    repeat(2,minmax(0,1fr));
-            }
-
-            .orange-video-thumb,
-            .orange-video-placeholder{
-                width:115px;
-                height:70px;
-            }
-
-        }
-
-    `;
-
-
-    document.head.appendChild(style);
-
-})();
 
 
 /* =====================================================
@@ -7479,9 +5655,7 @@ function initializeLoader(){
 
 
                     if(loader.parentNode){
-
                         loader.remove();
-
                     }
 
                 },
@@ -7496,12 +5670,46 @@ function initializeLoader(){
 
 
 /* =====================================================
-   START APPLICATION
+   START
 ===================================================== */
 
 initialize();
 
 initializeLoader();
+
+
+/* =====================================================
+   SUPPORT EXISTING CATEGORY BUTTONS
+===================================================== */
+
+document.addEventListener(
+    "click",
+    function(event){
+
+        const button=
+            event.target.closest(
+                "[data-search-category]"
+            );
+
+
+        if(!button)return;
+
+
+        const category=
+            button.dataset.searchCategory ||
+            button.dataset.category;
+
+
+        if(category){
+
+            event.preventDefault();
+
+            setSearchCategory(category);
+
+        }
+
+    }
+);
 
 </script>
 
