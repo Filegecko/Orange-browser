@@ -3260,11 +3260,27 @@ body.dark .mobile-nav{
 
 
 /* =====================================================
-   SEARCH SERVICES
+   NETLIFY SEARCH SERVICE
 ===================================================== */
 
-const SEARXNG_URL =
-    "https://orangebrowse-searxng.onrender.com";
+/*
+   OrangeBrowse search backend.
+
+   IMPORTANT:
+   This is intentionally a relative Netlify Function URL.
+
+   Local:
+   /.netlify/functions/search
+
+   Netlify:
+   /.netlify/functions/search
+
+   The browser therefore uses the same search endpoint
+   after deployment.
+*/
+
+const NETLIFY_SEARCH_ENDPOINT =
+    "/.netlify/functions/search";
 
 
 const SEARCH_URLS = {
@@ -3987,31 +4003,18 @@ function buildEngineSearchURL(
 
 
 /* =====================================================
-   SEARXNG URL
+   NETLIFY SEARCH URL
 ===================================================== */
 
 function buildSearchURL(
+
     query,
+
+    category="general",
+
     page=1
+
 ){
-
-    const base =
-        String(
-            SEARXNG_URL || ""
-        )
-        .trim()
-        .replace(
-            /\/+$/,
-            ""
-        );
-
-
-    if(!base){
-
-        return "";
-
-    }
-
 
     const params =
         new URLSearchParams();
@@ -4024,8 +4027,8 @@ function buildSearchURL(
 
 
     params.set(
-        "format",
-        "json"
+        "category",
+        String(category || "general")
     );
 
 
@@ -4040,21 +4043,9 @@ function buildSearchURL(
     );
 
 
-    params.set(
-        "language",
-        "all"
-    );
-
-
-    params.set(
-        "safesearch",
-        "0"
-    );
-
-
     return (
-        base +
-        "/search?" +
+        NETLIFY_SEARCH_ENDPOINT +
+        "?" +
         params.toString()
     );
 
@@ -4717,7 +4708,7 @@ function stopSearchLoader(){
 
 
 /* =====================================================
-   REMOTE SEARXNG SEARCH
+   REMOTE NETLIFY SEARCH
 ===================================================== */
 
 async function performRemoteSearch(
@@ -4769,48 +4760,21 @@ async function performRemoteSearch(
     }
 
 
-    /* -------------------------------------------------
-       SERVER CHECK
-    ------------------------------------------------- */
-
-    if(!SEARXNG_URL){
-
-        stopSearchLoader();
-
-        renderSearchFallback(
-            query,
-            false,
-            new Error(
-                "SearXNG URL is empty"
-            )
-        );
-
-        return;
-
-    }
-
-
     try{
 
         const url =
             buildSearchURL(
                 query,
+                state.currentCategory || "general",
                 page
             );
 
 
         console.log(
-            "[OrangeBrowse] Searching:",
+            "[OrangeBrowse] Netlify search:",
             url
         );
 
-
-        /*
-         * Important:
-         * Keep this as a normal CORS GET request.
-         * Do not use no-cors because that makes
-         * the response unreadable.
-         */
 
         const controller =
             new AbortController();
@@ -4846,11 +4810,9 @@ async function performRemoteSearch(
 
                         },
 
-                        mode:"cors",
-
                         cache:"no-store",
 
-                        credentials:"omit",
+                        credentials:"same-origin",
 
                         signal:
                             controller.signal
@@ -4887,12 +4849,13 @@ async function performRemoteSearch(
 
             throw new Error(
 
-                "SearXNG HTTP " +
+                "Netlify search HTTP " +
                 response.status +
                 (
                     serverMessage
                     ?
-                    ": " + serverMessage.slice(0,300)
+                    ": " +
+                    serverMessage.slice(0,300)
                     :
                     ""
                 )
@@ -4901,14 +4864,6 @@ async function performRemoteSearch(
 
         }
 
-
-        /*
-         * Read text first instead of calling
-         * response.json() directly.
-         *
-         * This makes the parser safer when
-         * the server sends unexpected content.
-         */
 
         const raw =
             await response.text();
@@ -4927,7 +4882,7 @@ async function performRemoteSearch(
         if(!raw.trim()){
 
             throw new Error(
-                "SearXNG returned an empty response"
+                "Netlify search returned an empty response"
             );
 
         }
@@ -4944,20 +4899,20 @@ async function performRemoteSearch(
         }catch(parseError){
 
             console.error(
-                "[OrangeBrowse] Invalid JSON:",
+                "[OrangeBrowse] Invalid search JSON:",
                 raw.slice(0,1000)
             );
 
 
             throw new Error(
-                "SearXNG returned invalid JSON"
+                "Netlify search returned invalid JSON"
             );
 
         }
 
 
         console.log(
-            "[OrangeBrowse] Response:",
+            "[OrangeBrowse] Search response:",
             data
         );
 
@@ -4973,7 +4928,7 @@ async function performRemoteSearch(
 
 
         const results =
-            normalizeSearXResults(data);
+            normalizeSearchResults(data);
 
 
         state.results =
@@ -4982,10 +4937,6 @@ async function performRemoteSearch(
 
         stopSearchLoader();
 
-
-        /*
-         * SearXNG successfully responded.
-         */
 
         if(results.length){
 
@@ -5012,10 +4963,6 @@ async function performRemoteSearch(
         }
 
 
-        /*
-         * No result from SearXNG.
-         */
-
         renderSearchFallback(
             query,
             true,
@@ -5026,7 +4973,7 @@ async function performRemoteSearch(
     }catch(error){
 
         console.error(
-            "[OrangeBrowse] SearXNG search error:",
+            "[OrangeBrowse] Netlify search error:",
             error
         );
 
@@ -5056,23 +5003,19 @@ async function performRemoteSearch(
 
 
 /* =====================================================
-   NORMALIZE SEARXNG RESULTS
+   NORMALIZE NETLIFY SEARCH RESULTS
 ===================================================== */
 
-function normalizeSearXResults(
+function normalizeSearchResults(
     data
 ){
 
-    /*
-     * Standard SearXNG JSON:
-     *
-     * {
-     *   results: [...]
-     * }
-     */
-
     let rawResults = [];
 
+
+    /*
+     * Primary saved-search structure.
+     */
 
     if(
         data &&
@@ -5088,9 +5031,9 @@ function normalizeSearXResults(
 
 
     /*
-     * Some installations may return
-     * results in a slightly different
-     * structure.
+     * Additional common response
+     * structures are accepted without
+     * changing the UI.
      */
 
     if(
@@ -5103,6 +5046,36 @@ function normalizeSearXResults(
 
         rawResults =
             data.items;
+
+    }
+
+
+    if(
+        !rawResults.length &&
+        data &&
+        data.data &&
+        Array.isArray(
+            data.data.results
+        )
+    ){
+
+        rawResults =
+            data.data.results;
+
+    }
+
+
+    if(
+        !rawResults.length &&
+        data &&
+        data.data &&
+        Array.isArray(
+            data.data.items
+        )
+    ){
+
+        rawResults =
+            data.data.items;
 
     }
 
@@ -5186,6 +5159,7 @@ function normalizeSearXResults(
                     item.img_src ||
                     item.image ||
                     item.thumbnail_src ||
+                    item.image_url ||
                     "";
 
 
@@ -6235,7 +6209,7 @@ function renderSearchFallback(
 
                         ?
 
-                        "SearXNG returned no usable results for this search."
+                        "Netlify search returned no usable results for this search."
 
                         :
 
@@ -7240,6 +7214,7 @@ function createTab(){
     renderTabs();
 
     closeMenu();
+
 
 }
 
@@ -9186,7 +9161,7 @@ setInterval(
 
 
 /* =====================================================
-   SEARXNG TEST
+   NETLIFY SEARCH TEST
 ===================================================== */
 
 async function testSearXNG(){
@@ -9194,12 +9169,13 @@ async function testSearXNG(){
     const url =
         buildSearchURL(
             "dog",
+            "general",
             1
         );
 
 
     console.log(
-        "[OrangeBrowse] Testing SearXNG:",
+        "[OrangeBrowse] Testing Netlify search:",
         url
     );
 
@@ -9238,11 +9214,9 @@ async function testSearXNG(){
                                 "application/json"
                         },
 
-                        mode:"cors",
-
                         cache:"no-store",
 
-                        credentials:"omit",
+                        credentials:"same-origin",
 
                         signal:
                             controller.signal
@@ -9263,13 +9237,13 @@ async function testSearXNG(){
 
 
         console.log(
-            "SearXNG status:",
+            "Netlify search status:",
             response.status
         );
 
 
         console.log(
-            "SearXNG response:",
+            "Netlify search response:",
             text
         );
 
@@ -9278,7 +9252,14 @@ async function testSearXNG(){
 
             throw new Error(
                 "HTTP " +
-                response.status
+                response.status +
+                (
+                    text
+                    ?
+                    ": " + text.slice(0,300)
+                    :
+                    ""
+                )
             );
 
         }
@@ -9302,7 +9283,7 @@ async function testSearXNG(){
 
 
         const results =
-            normalizeSearXResults(json);
+            normalizeSearchResults(json);
 
 
         console.log(
@@ -9315,9 +9296,9 @@ async function testSearXNG(){
 
             results.length
             ?
-            "SearXNG connection works"
+            "Netlify search connection works"
             :
-            "SearXNG responded but returned no results"
+            "Netlify search responded but returned no results"
 
         );
 
@@ -9325,13 +9306,13 @@ async function testSearXNG(){
     }catch(error){
 
         console.error(
-            "SearXNG test failed:",
+            "Netlify search test failed:",
             error
         );
 
 
         showToast(
-            "SearXNG unavailable"
+            "Netlify search unavailable"
         );
 
     }
