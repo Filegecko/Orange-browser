@@ -2623,7 +2623,7 @@ Information
 <script>
 
 /* =====================================================
-   ORANGEBROWSE CORE
+   ORANGEBROWSE CORE + SEARXNG SEARCH
 ===================================================== */
 
 const STORAGE = {
@@ -2638,11 +2638,26 @@ const STORAGE = {
 
 const DEFAULT_SETTINGS = {
     dark:false,
-    engine:"google",
+    engine:"searxng",
     adBlock:true,
     incognito:false,
     dataSaver:false
 };
+
+/*
+   IMPORTANT
+
+   Browser -> Netlify Function -> Render SearXNG
+
+   The browser NEVER contacts Render directly.
+
+   Your Netlify function must be available at:
+
+   /api/search?q=dog&category=general
+*/
+
+const SEARCH_ENDPOINT = "/api/search";
+
 
 let tabs = load(STORAGE.tabs,[]);
 let activeTabId = localStorage.getItem(STORAGE.activeTab) || null;
@@ -2657,6 +2672,11 @@ let settings = {
 };
 
 let toastTimer = null;
+
+let currentSearch = "";
+let currentSearchCategory = "general";
+let currentSearchPage = 1;
+let searchLoading = false;
 
 
 /* =====================================================
@@ -2682,6 +2702,7 @@ function load(key,fallback){
         return fallback;
 
     }
+
 }
 
 
@@ -2778,6 +2799,10 @@ function initialize(){
 
     updateNetworkStatus();
 
+    createSearchResultsContainer();
+
+    connectSearchCategoryButtons();
+
 }
 
 
@@ -2795,11 +2820,6 @@ function createTab(saveData=true){
         url:"",
         isNewTab:true,
         created:Date.now(),
-
-        /*
-         Each OrangeBrowse tab has its own
-         navigation history.
-        */
         history:[],
         historyIndex:-1
     };
@@ -3122,6 +3142,8 @@ function showNewTab(saveTab=true){
 
     renderTabs();
 
+    hideSearchResults();
+
     window.scrollTo({
         top:0,
         behavior:"smooth"
@@ -3143,10 +3165,6 @@ function buildDestination(value){
     }
 
 
-    /*
-       Already a valid web URL.
-    */
-
     if(
         /^https?:\/\//i.test(value)
     ){
@@ -3155,10 +3173,6 @@ function buildDestination(value){
 
     }
 
-
-    /*
-       localhost / IP.
-    */
 
     if(
         /^localhost(?::\d+)?(?:\/.*)?$/i.test(value) ||
@@ -3170,10 +3184,6 @@ function buildDestination(value){
     }
 
 
-    /*
-       Domain-like input.
-    */
-
     if(
         /^[^\s]+\.[^\s]+$/i.test(value)
     ){
@@ -3184,27 +3194,12 @@ function buildDestination(value){
 
 
     /*
-       Otherwise search.
+       Search queries are handled by
+       OrangeBrowse SearXNG instead of
+       navigating directly to Google.
     */
 
-    const engine=settings.engine || "google";
-
-    if(engine==="bing"){
-
-        return "https://www.bing.com/search?q=" +
-            encodeURIComponent(value);
-
-    }
-
-    if(engine==="duckduckgo"){
-
-        return "https://duckduckgo.com/?q=" +
-            encodeURIComponent(value);
-
-    }
-
-    return "https://www.google.com/search?q=" +
-        encodeURIComponent(value);
+    return value;
 
 }
 
@@ -3219,6 +3214,27 @@ function navigateTo(value,options={}){
 
     if(!value){
         return;
+    }
+
+
+    /*
+       If this is a normal search phrase,
+       use OrangeBrowse search UI.
+    */
+
+    const looksLikeURL =
+        /^https?:\/\//i.test(value) ||
+        /^localhost(?::\d+)?(?:\/.*)?$/i.test(value) ||
+        /^(?:\d{1,3}\.){3}\d{1,3}(?::\d+)?(?:\/.*)?$/i.test(value) ||
+        /^[^\s]+\.[^\s]+$/i.test(value);
+
+
+    if(!looksLikeURL && !options.fromHistoryURL){
+
+        performOrangeSearch(value);
+
+        return;
+
     }
 
 
@@ -3237,11 +3253,6 @@ function navigateTo(value,options={}){
     }
 
 
-    /*
-       Remove forward history when navigating
-       to a new destination.
-    */
-
     if(!options.fromHistory){
 
         if(!Array.isArray(tab.history)){
@@ -3252,8 +3263,6 @@ function navigateTo(value,options={}){
             tab.historyIndex >= 0 &&
             tab.history[tab.historyIndex]===destination
         ){
-
-            /* Same page. */
 
         }else{
 
@@ -3289,11 +3298,6 @@ function navigateTo(value,options={}){
     setAddress(destination);
 
 
-    /*
-       Only normal navigation is written
-       to browser history.
-    */
-
     if(
         !settings.incognito &&
         !options.fromHistory
@@ -3306,13 +3310,6 @@ function navigateTo(value,options={}){
 
     }
 
-
-    /*
-       The Median native bridge remains supported.
-
-       "internal" is passed exactly as requested
-       by your existing architecture.
-    */
 
     openNativeDestination(destination);
 
@@ -3345,16 +3342,6 @@ function getDisplayTitle(input,url){
 
 function openNativeDestination(url){
 
-    /*
-       Median bridge.
-
-       This does NOT pretend that HTML itself is
-       a browser engine.
-
-       If the native app exposes the Median window
-       bridge, the destination is handed to it.
-    */
-
     try{
 
         if(
@@ -3382,13 +3369,6 @@ function openNativeDestination(url){
     }
 
 
-    /*
-       Website fallback.
-
-       This opens normally only when the native
-       bridge does not exist.
-    */
-
     try{
 
         window.open(
@@ -3411,7 +3391,7 @@ function openNativeDestination(url){
 
 
 /* =====================================================
-   SEARCH
+   SEARCH INPUT
 ===================================================== */
 
 function performSearch(){
@@ -3433,7 +3413,7 @@ function performSearch(){
     }
 
 
-    navigateTo(value);
+    performOrangeSearch(value);
 
 }
 
@@ -3470,6 +3450,1382 @@ function addressKey(event){
         }
 
     }
+
+}
+
+
+/* =====================================================
+   ORANGEBROWSE SEARCH
+===================================================== */
+
+async function performOrangeSearch(
+    query,
+    category="general",
+    page=1
+){
+
+    query=String(query || "").trim();
+
+    if(!query){
+        return;
+    }
+
+
+    if(searchLoading){
+        return;
+    }
+
+
+    currentSearch=query;
+
+    currentSearchCategory=category;
+
+    currentSearchPage=page;
+
+
+    const mainSearch=
+        document.getElementById("mainSearch");
+
+    if(mainSearch){
+        mainSearch.value=query;
+    }
+
+
+    const address=
+        document.getElementById("addressInput");
+
+    if(address){
+        address.value=query;
+    }
+
+
+    const tab=getActiveTab();
+
+    if(tab){
+
+        tab.title=query;
+
+        tab.url=
+            "/search?q=" +
+            encodeURIComponent(query);
+
+        tab.isNewTab=false;
+
+        persistTabs();
+
+        renderTabs();
+
+    }
+
+
+    if(
+        !settings.incognito &&
+        page===1
+    ){
+
+        addHistory(
+            query,
+            "/search?q="+encodeURIComponent(query)
+        );
+
+    }
+
+
+    showSearchResults();
+
+    setSearchLoading(true);
+
+
+    try{
+
+        const endpoint=
+            SEARCH_ENDPOINT +
+            "?q=" +
+            encodeURIComponent(query) +
+            "&category=" +
+            encodeURIComponent(
+                normalizeSearchCategory(category)
+            ) +
+            "&page=" +
+            encodeURIComponent(page);
+
+
+        const response=
+            await fetch(
+                endpoint,
+                {
+                    method:"GET",
+                    headers:{
+                        "Accept":
+                            "application/json"
+                    },
+                    cache:"no-store"
+                }
+            );
+
+
+        const raw=
+            await response.text();
+
+
+        let data=null;
+
+
+        try{
+
+            data=JSON.parse(raw);
+
+        }catch(error){
+
+            throw new Error(
+                "Netlify search function did not return valid JSON."
+            );
+
+        }
+
+
+        if(!response.ok){
+
+            throw new Error(
+                data.error ||
+                "Search request failed (" +
+                response.status +
+                ")"
+            );
+
+        }
+
+
+        /*
+           Some proxies return the actual SearXNG
+           object directly. Others may wrap it.
+        */
+
+        if(
+            data &&
+            data.data &&
+            typeof data.data==="object"
+        ){
+
+            data=data.data;
+
+        }
+
+
+        renderSearchResults(
+            data,
+            query,
+            category,
+            page
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "OrangeBrowse search error:",
+            error
+        );
+
+
+        renderSearchError(
+            error.message ||
+            "Failed to fetch search results."
+        );
+
+
+    }finally{
+
+        setSearchLoading(false);
+
+    }
+
+}
+
+
+/* =====================================================
+   CATEGORY NORMALIZER
+===================================================== */
+
+function normalizeSearchCategory(category){
+
+    category=String(
+        category || "general"
+    ).toLowerCase();
+
+
+    const map={
+
+        all:"general",
+
+        general:"general",
+
+        images:"images",
+
+        image:"images",
+
+        videos:"videos",
+
+        video:"videos",
+
+        "short videos":"videos",
+
+        news:"news",
+
+        maps:"map",
+
+        map:"map",
+
+        books:"books",
+
+        book:"books",
+
+        forums:"social media",
+
+        forum:"social media",
+
+        files:"files",
+
+        "social media":"social media"
+
+    };
+
+
+    return map[category] || "general";
+
+}
+
+
+/* =====================================================
+   SEARCH CONTAINER
+===================================================== */
+
+function createSearchResultsContainer(){
+
+    if(
+        document.getElementById(
+            "orangeSearchResults"
+        )
+    ){
+
+        return;
+
+    }
+
+
+    const container=
+        document.createElement("section");
+
+    container.id=
+        "orangeSearchResults";
+
+
+    container.innerHTML=`
+
+        <div class="orange-search-shell">
+
+            <div class="orange-search-tabs">
+
+                <button
+                    type="button"
+                    class="orange-search-tab active"
+                    data-search-category="general">
+                    All
+                </button>
+
+                <button
+                    type="button"
+                    class="orange-search-tab"
+                    data-search-category="images">
+                    Images
+                </button>
+
+                <button
+                    type="button"
+                    class="orange-search-tab"
+                    data-search-category="videos">
+                    Videos
+                </button>
+
+                <button
+                    type="button"
+                    class="orange-search-tab"
+                    data-search-category="news">
+                    News
+                </button>
+
+                <button
+                    type="button"
+                    class="orange-search-tab"
+                    data-search-category="map">
+                    Maps
+                </button>
+
+                <button
+                    type="button"
+                    class="orange-search-tab"
+                    data-search-category="books">
+                    Books
+                </button>
+
+                <button
+                    type="button"
+                    class="orange-search-tab"
+                    data-search-category="social media">
+                    Forums
+                </button>
+
+            </div>
+
+
+            <div
+                id="orangeSearchContent"
+                class="orange-search-content">
+            </div>
+
+        </div>
+
+    `;
+
+
+    /*
+       Put results after the browser's main content.
+       If a known content wrapper exists, use it.
+    */
+
+    const candidates=[
+        document.querySelector("main"),
+        document.querySelector(".main-content"),
+        document.querySelector(".content"),
+        document.querySelector(".browser-content"),
+        document.body
+    ];
+
+
+    const parent=
+        candidates.find(Boolean);
+
+
+    if(parent){
+
+        parent.appendChild(container);
+
+    }
+
+}
+
+
+/* =====================================================
+   CONNECT CATEGORY BUTTONS
+===================================================== */
+
+function connectSearchCategoryButtons(){
+
+    const buttons=
+        document.querySelectorAll(
+            "[data-search-category]"
+        );
+
+
+    buttons.forEach(button=>{
+
+        if(button.dataset.orangeSearchConnected){
+            return;
+        }
+
+
+        button.dataset.orangeSearchConnected="1";
+
+
+        button.addEventListener(
+            "click",
+            function(){
+
+                const category=
+                    this.dataset.searchCategory ||
+                    "general";
+
+
+                if(!currentSearch){
+
+                    return;
+
+                }
+
+
+                performOrangeSearch(
+                    currentSearch,
+                    category,
+                    1
+                );
+
+
+                document
+                    .querySelectorAll(
+                        "[data-search-category]"
+                    )
+                    .forEach(item=>{
+                        item.classList.remove("active");
+                    });
+
+
+                this.classList.add("active");
+
+            }
+        );
+
+    });
+
+}
+
+
+/* =====================================================
+   SHOW / HIDE SEARCH RESULTS
+===================================================== */
+
+function showSearchResults(){
+
+    createSearchResultsContainer();
+
+    const container=
+        document.getElementById(
+            "orangeSearchResults"
+        );
+
+    if(container){
+
+        container.classList.add("visible");
+
+    }
+
+
+    connectSearchCategoryButtons();
+
+}
+
+
+function hideSearchResults(){
+
+    const container=
+        document.getElementById(
+            "orangeSearchResults"
+        );
+
+    if(container){
+
+        container.classList.remove("visible");
+
+    }
+
+}
+
+
+/* =====================================================
+   SEARCH LOADING
+===================================================== */
+
+function setSearchLoading(loading){
+
+    searchLoading=loading;
+
+
+    const content=
+        document.getElementById(
+            "orangeSearchContent"
+        );
+
+
+    if(
+        loading &&
+        content
+    ){
+
+        content.innerHTML=`
+
+            <div class="orange-search-loading">
+
+                <div class="orange-search-spinner"></div>
+
+                <p>
+                    Searching the web...
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* =====================================================
+   RENDER SEARCH RESULTS
+===================================================== */
+
+function renderSearchResults(
+    data,
+    query,
+    category,
+    page
+){
+
+    const content=
+        document.getElementById(
+            "orangeSearchContent"
+        );
+
+
+    if(!content){
+        return;
+    }
+
+
+    const results=
+        Array.isArray(data?.results)
+        ? data.results
+        : [];
+
+
+    const imageResults=
+        Array.isArray(data?.results)
+        ? data.results
+        : [];
+
+
+    /*
+       SearXNG normally returns images in
+       data.images when image search is enabled.
+    */
+
+    const images=
+        Array.isArray(data?.images)
+        ? data.images
+        : [];
+
+
+    /*
+       Videos can be returned separately by
+       some SearXNG configurations.
+    */
+
+    const videos=
+        Array.isArray(data?.videos)
+        ? data.videos
+        : [];
+
+
+    if(
+        category==="images"
+    ){
+
+        renderImageResults(
+            images.length
+            ? images
+            : imageResults,
+            query,
+            page
+        );
+
+        return;
+
+    }
+
+
+    if(
+        category==="videos" ||
+        category==="short videos"
+    ){
+
+        renderVideoResults(
+            videos.length
+            ? videos
+            : results,
+            query,
+            page
+        );
+
+        return;
+
+    }
+
+
+    renderNormalResults(
+        results,
+        query,
+        category,
+        page
+    );
+
+}
+
+
+/* =====================================================
+   NORMAL WEB RESULTS
+===================================================== */
+
+function renderNormalResults(
+    results,
+    query,
+    category,
+    page
+){
+
+    const content=
+        document.getElementById(
+            "orangeSearchContent"
+        );
+
+
+    if(!content){
+        return;
+    }
+
+
+    if(!results.length){
+
+        content.innerHTML=`
+
+            <div class="orange-search-empty">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <h3>No results found</h3>
+
+                <p>
+                    No web results were returned for
+                    <strong>
+                        ${escapeHTML(query)}
+                    </strong>.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    let html=`
+
+
+        <div class="orange-search-info">
+
+            About ${results.length} result${results.length===1?"":"s"}
+
+        </div>
+
+
+        <div class="orange-web-results">
+
+    `;
+
+
+    results.forEach((result,index)=>{
+
+        const title=
+            result.title ||
+            result.name ||
+            "Untitled result";
+
+
+        const url=
+            result.url ||
+            result.link ||
+            "#";
+
+
+        const contentText=
+            result.content ||
+            result.description ||
+            "";
+
+
+        const engine=
+            result.engine ||
+            result.engines?.[0] ||
+            "";
+
+
+        const thumbnail=
+            getResultImage(result);
+
+
+        html+=`
+
+            <article
+                class="orange-web-result">
+
+                ${
+                    thumbnail
+                    ?
+                    `
+                    <img
+                        class="orange-result-thumb"
+                        src="${escapeAttribute(thumbnail)}"
+                        alt=""
+                        loading="lazy"
+                        onerror="this.style.display='none'">
+                    `
+                    :
+                    ""
+                }
+
+
+                <div class="orange-result-main">
+
+                    <div class="orange-result-url">
+
+                        ${escapeHTML(
+                            getDomain(url)
+                        )}
+
+                        ${
+                            engine
+                            ?
+                            `<span>
+                                · ${escapeHTML(engine)}
+                             </span>`
+                            :
+                            ""
+                        }
+
+                    </div>
+
+
+                    <a
+                        href="${escapeAttribute(url)}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="orange-result-title">
+
+                        ${escapeHTML(title)}
+
+                    </a>
+
+
+                    ${
+                        contentText
+                        ?
+                        `
+                        <div class="orange-result-description">
+
+                            ${escapeHTML(
+                                cleanText(contentText)
+                            )}
+
+                        </div>
+                        `
+                        :
+                        ""
+                    }
+
+
+                    <a
+                        href="${escapeAttribute(url)}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="orange-result-link">
+
+                        ${escapeHTML(
+                            shortenURL(url)
+                        )}
+
+                    </a>
+
+                </div>
+
+            </article>
+
+        `;
+
+    });
+
+
+    html+=`
+
+        </div>
+
+
+        <div class="orange-search-more">
+
+            <button
+                type="button"
+                onclick="loadMoreSearchResults()">
+
+                Load more
+
+            </button>
+
+        </div>
+
+    `;
+
+
+    content.innerHTML=html;
+
+}
+
+
+/* =====================================================
+   IMAGE RESULTS
+===================================================== */
+
+function renderImageResults(
+    images,
+    query,
+    page
+){
+
+    const content=
+        document.getElementById(
+            "orangeSearchContent"
+        );
+
+
+    if(!content){
+        return;
+    }
+
+
+    /*
+       Convert regular SearXNG results into
+       image-looking results when the server
+       returns image URLs in result.thumbnail.
+    */
+
+    const normalized=
+        images
+        .map(item=>{
+
+            return {
+
+                title:
+                    item.title ||
+                    item.name ||
+                    query,
+
+                image:
+                    item.img_src ||
+                    item.image ||
+                    item.thumbnail ||
+                    item.thumbnail_src ||
+                    item.url,
+
+                url:
+                    item.url ||
+                    item.link ||
+                    item.img_src ||
+                    item.image
+
+            };
+
+        })
+        .filter(item=>item.image);
+
+
+    if(!normalized.length){
+
+        content.innerHTML=`
+
+            <div class="orange-search-empty">
+
+                <i class="fa-regular fa-image"></i>
+
+                <h3>No images found</h3>
+
+                <p>
+                    SearXNG did not return image results
+                    for this search.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    let html=`
+
+        <div class="orange-search-info">
+
+            Images for
+            <strong>
+                ${escapeHTML(query)}
+            </strong>
+
+        </div>
+
+
+        <div class="orange-image-grid">
+
+    `;
+
+
+    normalized.forEach(item=>{
+
+        html+=`
+
+            <a
+                class="orange-image-card"
+                href="${escapeAttribute(
+                    item.url || item.image
+                )}"
+                target="_blank"
+                rel="noopener noreferrer">
+
+                <div class="orange-image-wrapper">
+
+                    <img
+                        src="${escapeAttribute(item.image)}"
+                        alt="${escapeAttribute(item.title)}"
+                        loading="lazy"
+                        onerror="this.parentElement.parentElement.style.display='none'">
+
+                </div>
+
+
+                <div class="orange-image-title">
+
+                    ${escapeHTML(
+                        item.title
+                    )}
+
+                </div>
+
+            </a>
+
+        `;
+
+    });
+
+
+    html+=`
+
+        </div>
+
+
+        <div class="orange-search-more">
+
+            <button
+                type="button"
+                onclick="loadMoreSearchResults()">
+
+                Load more images
+
+            </button>
+
+        </div>
+
+    `;
+
+
+    content.innerHTML=html;
+
+}
+
+
+/* =====================================================
+   VIDEO RESULTS
+===================================================== */
+
+function renderVideoResults(
+    videos,
+    query,
+    page
+){
+
+    const content=
+        document.getElementById(
+            "orangeSearchContent"
+        );
+
+
+    if(!content){
+        return;
+    }
+
+
+    if(!videos.length){
+
+        content.innerHTML=`
+
+            <div class="orange-search-empty">
+
+                <i class="fa-solid fa-video"></i>
+
+                <h3>No videos found</h3>
+
+                <p>
+                    No video results were returned for
+                    ${escapeHTML(query)}.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    let html=`
+
+        <div class="orange-search-info">
+
+            Videos for
+            <strong>
+                ${escapeHTML(query)}
+            </strong>
+
+        </div>
+
+
+        <div class="orange-video-results">
+
+    `;
+
+
+    videos.forEach(video=>{
+
+        const title=
+            video.title ||
+            video.name ||
+            "Video";
+
+
+        const url=
+            video.url ||
+            video.link ||
+            "#";
+
+
+        const thumbnail=
+            getResultImage(video);
+
+
+        html+=`
+
+            <article class="orange-video-card">
+
+                ${
+                    thumbnail
+                    ?
+                    `
+                    <a
+                        href="${escapeAttribute(url)}"
+                        target="_blank"
+                        rel="noopener noreferrer">
+
+                        <img
+                            src="${escapeAttribute(thumbnail)}"
+                            alt=""
+                            loading="lazy"
+                            class="orange-video-thumb">
+
+                    </a>
+                    `
+                    :
+                    `
+                    <a
+                        href="${escapeAttribute(url)}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="orange-video-placeholder">
+
+                        <i class="fa-solid fa-play"></i>
+
+                    </a>
+                    `
+                }
+
+
+                <div class="orange-video-body">
+
+                    <a
+                        href="${escapeAttribute(url)}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="orange-video-title">
+
+                        ${escapeHTML(title)}
+
+                    </a>
+
+
+                    ${
+                        video.content
+                        ?
+                        `
+                        <p>
+                            ${escapeHTML(
+                                cleanText(video.content)
+                            )}
+                        </p>
+                        `
+                        :
+                        ""
+                    }
+
+                </div>
+
+            </article>
+
+        `;
+
+    });
+
+
+    html+=`
+
+        </div>
+
+
+        <div class="orange-search-more">
+
+            <button
+                type="button"
+                onclick="loadMoreSearchResults()">
+
+                Load more videos
+
+            </button>
+
+        </div>
+
+    `;
+
+
+    content.innerHTML=html;
+
+}
+
+
+/* =====================================================
+   LOAD MORE
+===================================================== */
+
+function loadMoreSearchResults(){
+
+    if(!currentSearch){
+        return;
+    }
+
+
+    performOrangeSearch(
+        currentSearch,
+        currentSearchCategory,
+        currentSearchPage + 1
+    );
+
+}
+
+
+/* =====================================================
+   SEARCH ERROR
+===================================================== */
+
+function renderSearchError(message){
+
+    const content=
+        document.getElementById(
+            "orangeSearchContent"
+        );
+
+
+    if(!content){
+        return;
+    }
+
+
+    content.innerHTML=`
+
+        <div class="orange-search-error">
+
+            <i class="fa-solid fa-triangle-exclamation"></i>
+
+            <h3>
+                Search failed
+            </h3>
+
+            <p>
+                ${escapeHTML(message)}
+            </p>
+
+
+            <button
+                type="button"
+                onclick="performOrangeSearch(
+                    currentSearch,
+                    currentSearchCategory,
+                    currentSearchPage
+                )">
+
+                Try again
+
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+
+/* =====================================================
+   RESULT IMAGE DETECTION
+===================================================== */
+
+function getResultImage(result){
+
+    if(!result){
+        return "";
+    }
+
+
+    const candidates=[
+
+        result.thumbnail,
+
+        result.thumbnail_src,
+
+        result.img_src,
+
+        result.image,
+
+        result.image_url,
+
+        result.imageUrl,
+
+        result.thumbnail_url,
+
+        result.thumb,
+
+        result.media?.thumbnail,
+
+        result.metadata?.thumbnail,
+
+        result.properties?.thumbnail
+
+    ];
+
+
+    for(const value of candidates){
+
+        if(
+            typeof value==="string" &&
+            /^https?:\/\//i.test(value)
+        ){
+
+            return value;
+
+        }
+
+    }
+
+
+    return "";
+
+}
+
+
+/* =====================================================
+   URL HELPERS
+===================================================== */
+
+function getDomain(url){
+
+    try{
+
+        return new URL(url).hostname.replace(
+            /^www\./,
+            ""
+        );
+
+    }catch(error){
+
+        return "";
+
+    }
+
+}
+
+
+function shortenURL(url){
+
+    try{
+
+        const parsed=
+            new URL(url);
+
+        let result=
+            parsed.hostname.replace(
+                /^www\./,
+                ""
+            );
+
+
+        if(parsed.pathname && parsed.pathname!=="/"){
+
+            result+=parsed.pathname;
+
+        }
+
+
+        if(result.length>90){
+
+            result=
+                result.substring(0,87)+"...";
+
+        }
+
+
+        return result;
+
+    }catch(error){
+
+        return String(url || "");
+
+    }
+
+}
+
+
+/* =====================================================
+   TEXT HELPERS
+===================================================== */
+
+function cleanText(text){
+
+    return String(text || "")
+        .replace(/\s+/g," ")
+        .trim();
+
+}
+
+
+function escapeAttribute(value){
+
+    return escapeHTML(value);
+
+}
+
+
+function escapeHTML(value){
+
+    return String(value ?? "")
+
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
 
 }
 
@@ -3520,15 +4876,7 @@ function goBack(){
 
 
     if(
-        !Array.isArray(tab.history)
-    ){
-
-        tab.history=[];
-
-    }
-
-
-    if(
+        Array.isArray(tab.history) &&
         tab.historyIndex > 0
     ){
 
@@ -3554,12 +4902,6 @@ function goBack(){
     }
 
 
-    /*
-       No OrangeBrowse page history remains.
-       We can safely ask the native/browser history
-       to go back if it exists.
-    */
-
     try{
 
         if(
@@ -3576,12 +4918,6 @@ function goBack(){
 
     }catch(error){}
 
-
-    /*
-       We deliberately do not call window.history.back()
-       automatically here because that can eject the user
-       from the OrangeBrowse application/page.
-    */
 
     showToast("No previous page");
 
@@ -3602,15 +4938,7 @@ function goForward(){
 
 
     if(
-        !Array.isArray(tab.history)
-    ){
-
-        tab.history=[];
-
-    }
-
-
-    if(
+        Array.isArray(tab.history) &&
         tab.historyIndex <
         tab.history.length-1
     ){
@@ -3672,11 +5000,6 @@ function reloadPage(){
         tab.url
     ){
 
-        /*
-           Re-open the current destination through
-           the same native navigation bridge.
-        */
-
         openNativeDestination(tab.url);
 
         showToast("Page reloaded");
@@ -3685,10 +5008,6 @@ function reloadPage(){
 
     }
 
-
-    /*
-       New-tab page only needs a local refresh.
-    */
 
     window.scrollTo({
         top:0,
@@ -3726,6 +5045,7 @@ function addHistory(title,url){
 
     historyItems=
         historyItems.slice(0,100);
+
 
     save(
         STORAGE.history,
@@ -3831,7 +5151,8 @@ function openHistoryItem(index){
     navigateTo(
         item.url,
         {
-            title:item.title
+            title:item.title,
+            fromHistoryURL:true
         }
     );
 
@@ -4024,7 +5345,8 @@ function openBookmark(index){
     navigateTo(
         item.url,
         {
-            title:item.title
+            title:item.title,
+            fromHistoryURL:true
         }
     );
 
@@ -4413,7 +5735,8 @@ function openOfflinePage(index){
     navigateTo(
         page.url,
         {
-            title:page.title
+            title:page.title,
+            fromHistoryURL:true
         }
     );
 
@@ -4790,10 +6113,6 @@ async function askAI(){
     input.value="";
 
 
-    /*
-       Native Android AI bridge.
-    */
-
     if(
         window.AndroidAI &&
         typeof window.AndroidAI.ask==="function"
@@ -4827,11 +6146,6 @@ async function askAI(){
 
     }
 
-
-    /*
-       Secure backend connection point.
-       Never put a private API key in this file.
-    */
 
     try{
 
@@ -4872,11 +6186,7 @@ async function askAI(){
 
         }
 
-    }catch(error){
-
-        /* Backend not installed. */
-
-    }
+    }catch(error){}
 
 
     addAIMessage(
@@ -4992,7 +6302,7 @@ function openSettings(){
                     </div>
 
                     <div class="setting-description">
-                        Choose your default search engine.
+                        OrangeBrowse Web Search
                     </div>
 
                 </div>
@@ -5001,16 +6311,8 @@ function openSettings(){
                     id="settingsEngine"
                     onchange="changeSearchEngine(this.value)">
 
-                    <option value="google">
-                        Google
-                    </option>
-
-                    <option value="bing">
-                        Bing
-                    </option>
-
-                    <option value="duckduckgo">
-                        DuckDuckGo
+                    <option value="searxng">
+                        OrangeBrowse Search
                     </option>
 
                 </select>
@@ -5112,22 +6414,26 @@ function openSettings(){
 
         <div class="setting">
 
-            <div class="setting-title">
-                Offline pages
+            <div class="setting">
+
+                <div class="setting-title">
+                    Offline pages
+                </div>
+
+                <div class="setting-description">
+                    Save the current page reference locally.
+                </div>
+
+                <button
+                    class="jama-button"
+                    style="margin-top:10px"
+                    onclick="saveCurrentOffline()">
+
+                    Save current page
+
+                </button>
+
             </div>
-
-            <div class="setting-description">
-                Save the current page reference locally.
-            </div>
-
-            <button
-                class="jama-button"
-                style="margin-top:10px"
-                onclick="saveCurrentOffline()">
-
-                Save current page
-
-            </button>
 
         </div>
 
@@ -5195,8 +6501,7 @@ function openSettings(){
 
     if(engine){
 
-        engine.value=
-            settings.engine || "google";
+        engine.value="searxng";
 
     }
 
@@ -5209,17 +6514,7 @@ function openSettings(){
 
 function changeSearchEngine(value){
 
-    if(
-        !["google","bing","duckduckgo"]
-        .includes(value)
-    ){
-
-        value="google";
-
-    }
-
-
-    settings.engine=value;
+    settings.engine="searxng";
 
     save(
         STORAGE.settings,
@@ -5231,12 +6526,12 @@ function changeSearchEngine(value){
         document.getElementById("searchEngine");
 
     if(engine){
-        engine.value=value;
+        engine.value="searxng";
     }
 
 
     showToast(
-        "Search engine updated"
+        "OrangeBrowse Search enabled"
     );
 
 }
@@ -5294,8 +6589,7 @@ function applySettings(){
 
     if(engine){
 
-        engine.value=
-            settings.engine || "google";
+        engine.value="searxng";
 
     }
 
@@ -5525,23 +6819,6 @@ function showToast(message){
 
 
 /* =====================================================
-   ESCAPE HELPERS
-===================================================== */
-
-function escapeHTML(value){
-
-    return String(value ?? "")
-
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-
-}
-
-
-/* =====================================================
    KEYBOARD SHORTCUTS
 ===================================================== */
 
@@ -5625,12 +6902,53 @@ document.addEventListener(
 
 
 /* =====================================================
-   MODAL OUTSIDE CLICK
+   DOM EVENTS
 ===================================================== */
 
-document
-    .getElementById("modal")
-    .addEventListener(
+document.addEventListener(
+    "click",
+    function(event){
+
+        /*
+           Support existing category buttons even
+           if they were already present in your HTML.
+        */
+
+        const categoryButton=
+            event.target.closest(
+                "[data-search-category]"
+            );
+
+
+        if(categoryButton){
+
+            const category=
+                categoryButton.dataset.searchCategory ||
+                "general";
+
+
+            if(currentSearch){
+
+                performOrangeSearch(
+                    currentSearch,
+                    category,
+                    1
+                );
+
+            }
+
+        }
+
+    }
+);
+
+
+const modalElement=
+    document.getElementById("modal");
+
+if(modalElement){
+
+    modalElement.addEventListener(
         "click",
         function(event){
 
@@ -5643,14 +6961,15 @@ document
         }
     );
 
+}
 
-/* =====================================================
-   SEARCH ENGINE SELECT
-===================================================== */
 
-document
-    .getElementById("searchEngine")
-    .addEventListener(
+const searchEngineElement=
+    document.getElementById("searchEngine");
+
+if(searchEngineElement){
+
+    searchEngineElement.addEventListener(
         "change",
         function(){
 
@@ -5660,6 +6979,8 @@ document
 
         }
     );
+
+}
 
 
 /* =====================================================
@@ -5699,6 +7020,365 @@ window.addEventListener(
 
     }
 );
+
+
+/* =====================================================
+   SEARCH UI CSS
+   Added automatically so you don't need to
+   immediately modify your existing CSS.
+===================================================== */
+
+(function injectSearchStyles(){
+
+    if(
+        document.getElementById(
+            "orangeBrowseSearchStyles"
+        )
+    ){
+
+        return;
+
+    }
+
+
+    const style=
+        document.createElement("style");
+
+
+    style.id=
+        "orangeBrowseSearchStyles";
+
+
+    style.textContent=`
+
+        #orangeSearchResults{
+            display:none;
+            width:100%;
+            margin:0 auto;
+            padding:0 14px 40px;
+            color:var(--text,#111);
+        }
+
+        #orangeSearchResults.visible{
+            display:block;
+        }
+
+        .orange-search-shell{
+            width:100%;
+            max-width:1100px;
+            margin:0 auto;
+        }
+
+        .orange-search-tabs{
+            display:flex;
+            gap:6px;
+            overflow-x:auto;
+            padding:12px 0;
+            border-bottom:1px solid
+                rgba(127,127,127,.18);
+            scrollbar-width:none;
+        }
+
+        .orange-search-tabs::-webkit-scrollbar{
+            display:none;
+        }
+
+        .orange-search-tab{
+            border:0;
+            background:transparent;
+            color:inherit;
+            padding:9px 14px;
+            border-radius:20px;
+            white-space:nowrap;
+            cursor:pointer;
+            font:inherit;
+        }
+
+        .orange-search-tab:hover{
+            background:rgba(255,106,0,.08);
+        }
+
+        .orange-search-tab.active{
+            color:#ff6a00;
+            background:#fff1e8;
+            font-weight:600;
+        }
+
+        body.dark .orange-search-tab.active{
+            background:rgba(255,106,0,.14);
+        }
+
+        .orange-search-content{
+            min-height:150px;
+            padding-top:12px;
+        }
+
+        .orange-search-info{
+            font-size:13px;
+            opacity:.65;
+            margin:8px 0 18px;
+        }
+
+        .orange-web-results{
+            display:flex;
+            flex-direction:column;
+            gap:2px;
+        }
+
+        .orange-web-result{
+            display:flex;
+            gap:14px;
+            padding:15px 4px;
+            border-bottom:1px solid
+                rgba(127,127,127,.13);
+        }
+
+        .orange-result-main{
+            min-width:0;
+            flex:1;
+        }
+
+        .orange-result-thumb{
+            width:90px;
+            height:70px;
+            object-fit:cover;
+            border-radius:9px;
+            flex:none;
+        }
+
+        .orange-result-url{
+            font-size:12px;
+            opacity:.62;
+            margin-bottom:4px;
+            overflow:hidden;
+            text-overflow:ellipsis;
+            white-space:nowrap;
+        }
+
+        .orange-result-title{
+            display:block;
+            color:#ff6a00;
+            font-size:18px;
+            line-height:1.3;
+            text-decoration:none;
+            font-weight:600;
+            margin-bottom:5px;
+        }
+
+        .orange-result-title:hover{
+            text-decoration:underline;
+        }
+
+        .orange-result-description{
+            font-size:14px;
+            line-height:1.55;
+            opacity:.78;
+            margin-bottom:5px;
+        }
+
+        .orange-result-link{
+            font-size:12px;
+            opacity:.55;
+            text-decoration:none;
+            word-break:break-all;
+        }
+
+        .orange-image-grid{
+            display:grid;
+            grid-template-columns:
+                repeat(auto-fill,minmax(150px,1fr));
+            gap:10px;
+        }
+
+        .orange-image-card{
+            display:block;
+            color:inherit;
+            text-decoration:none;
+            overflow:hidden;
+        }
+
+        .orange-image-wrapper{
+            width:100%;
+            aspect-ratio:1/1;
+            background:#eee;
+            border-radius:10px;
+            overflow:hidden;
+        }
+
+        body.dark .orange-image-wrapper{
+            background:#222;
+        }
+
+        .orange-image-wrapper img{
+            width:100%;
+            height:100%;
+            display:block;
+            object-fit:cover;
+            transition:transform .2s ease;
+        }
+
+        .orange-image-card:hover img{
+            transform:scale(1.04);
+        }
+
+        .orange-image-title{
+            padding:7px 2px;
+            font-size:12px;
+            line-height:1.35;
+            display:-webkit-box;
+            -webkit-line-clamp:2;
+            -webkit-box-orient:vertical;
+            overflow:hidden;
+        }
+
+        .orange-video-results{
+            display:flex;
+            flex-direction:column;
+            gap:12px;
+        }
+
+        .orange-video-card{
+            display:flex;
+            gap:12px;
+            padding:10px 0;
+            border-bottom:1px solid
+                rgba(127,127,127,.13);
+        }
+
+        .orange-video-thumb,
+        .orange-video-placeholder{
+            width:150px;
+            height:85px;
+            flex:none;
+            object-fit:cover;
+            border-radius:9px;
+            background:#222;
+        }
+
+        .orange-video-placeholder{
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            color:#fff;
+            text-decoration:none;
+        }
+
+        .orange-video-title{
+            color:#ff6a00;
+            text-decoration:none;
+            font-size:16px;
+            font-weight:600;
+        }
+
+        .orange-video-body p{
+            font-size:13px;
+            opacity:.7;
+            line-height:1.45;
+            margin-top:5px;
+        }
+
+        .orange-search-loading{
+            min-height:220px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            gap:12px;
+            opacity:.7;
+        }
+
+        .orange-search-spinner{
+            width:30px;
+            height:30px;
+            border:3px solid
+                rgba(255,106,0,.2);
+            border-top-color:#ff6a00;
+            border-radius:50%;
+            animation:
+                orangeSearchSpin .7s linear infinite;
+        }
+
+        @keyframes orangeSearchSpin{
+            to{
+                transform:rotate(360deg);
+            }
+        }
+
+        .orange-search-empty,
+        .orange-search-error{
+            text-align:center;
+            padding:55px 20px;
+            opacity:.75;
+        }
+
+        .orange-search-empty i,
+        .orange-search-error i{
+            font-size:34px;
+            color:#ff6a00;
+            margin-bottom:15px;
+        }
+
+        .orange-search-empty h3,
+        .orange-search-error h3{
+            margin-bottom:8px;
+        }
+
+        .orange-search-error button,
+        .orange-search-more button{
+            border:0;
+            background:#ff6a00;
+            color:#fff;
+            padding:11px 18px;
+            border-radius:8px;
+            cursor:pointer;
+            margin-top:15px;
+            font:inherit;
+        }
+
+        .orange-search-more{
+            text-align:center;
+            padding:20px 0;
+        }
+
+        @media(max-width:600px){
+
+            #orangeSearchResults{
+                padding-left:10px;
+                padding-right:10px;
+            }
+
+            .orange-result-title{
+                font-size:16px;
+            }
+
+            .orange-result-description{
+                font-size:13px;
+            }
+
+            .orange-result-thumb{
+                width:76px;
+                height:60px;
+            }
+
+            .orange-image-grid{
+                grid-template-columns:
+                    repeat(2,minmax(0,1fr));
+            }
+
+            .orange-video-thumb,
+            .orange-video-placeholder{
+                width:115px;
+                height:70px;
+            }
+
+        }
+
+    `;
+
+
+    document.head.appendChild(style);
+
+})();
 
 
 /* =====================================================
@@ -5785,11 +7465,6 @@ function initializeLoader(){
         }
     );
 
-
-    /*
-       Wait for the application to initialize,
-       then hide the loader.
-    */
 
     setTimeout(
         function(){
