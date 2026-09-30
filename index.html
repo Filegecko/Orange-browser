@@ -1047,6 +1047,35 @@ body.dark{
     color:var(--orange);
 }
 
+/* IN-APP WEB VIEW */
+.orange-web-view{
+    display:none;
+    width:100%;
+    min-height:calc(100vh - 150px);
+    background:var(--bg);
+    position:relative;
+}
+.orange-web-frame{
+    display:block;
+    width:100%;
+    height:calc(100vh - 150px);
+    min-height:500px;
+    border:0;
+    background:#fff;
+}
+body.orange-web-active #homeContent,
+body.orange-web-active #orangeSearchResults,
+body.orange-web-active #browserSearchView{
+    display:none!important;
+}
+body.orange-web-active .orange-web-view{
+    display:block;
+}
+@media(max-width:700px){
+    .orange-web-view{min-height:calc(100vh - 128px);}
+    .orange-web-frame{height:calc(100vh - 128px);min-height:420px;}
+}
+
 /* MOBILE NAV */
 
 .mobile-nav{
@@ -2407,14 +2436,9 @@ body.dark .danger-button{
 .connection-popup.offline .connection-popup-icon{color:var(--orange);}
 
 .mobile-nav .nav-back-icon,
-.mobile-nav .nav-forward-icon{
-    display:none;
-}
-
+.mobile-nav .nav-forward-icon{display:none;}
 .mobile-nav .nav-home-icon,
-.mobile-nav .nav-bookmark-icon{
-    display:block;
-}
+.mobile-nav .nav-bookmark-icon{display:block;}
 
 @media(max-width:700px){
     .search-loader-circle{top:54px;right:10px;width:34px;height:34px;}
@@ -2806,6 +2830,17 @@ title="Menu">
     </div>
 
 </section>
+<section class="orange-web-view" id="orangeWebView" aria-label="Web page">
+    <iframe
+        id="orangeWebFrame"
+        class="orange-web-frame"
+        title="OrangeBrowse web page"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allow="fullscreen; autoplay; encrypted-media; picture-in-picture"
+        sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts allow-top-navigation-by-user-activation"
+    ></iframe>
+</section>
+
 <div class="page home-content" id="homeContent">
 
 <section class="hero">
@@ -3808,98 +3843,49 @@ function captureOrangeHomeElements(){
 
 function isOrangeHomePage(){
     const tab = getActiveTab();
-
-    if(!tab){
-        return true;
-    }
-
-    return (
-        tab.isNewTab === true ||
-        (!tab.url && !tab.searchState)
-    );
+    if(!tab) return true;
+    return tab.isNewTab === true || (!tab.url && !tab.searchState);
 }
 
 function updateBottomNavigation(){
-
-    const first =
-        document.querySelector(
-            ".mobile-nav button:nth-child(1)"
-        );
-
-    const second =
-        document.querySelector(
-            ".mobile-nav button:nth-child(2)"
-        );
-
+    const first = document.querySelector(".mobile-nav button:nth-child(1)");
+    const second = document.querySelector(".mobile-nav button:nth-child(2)");
     if(!first || !second)return;
 
     const homePage = isOrangeHomePage();
-
-    const homeIcon =
-        first.querySelector(".nav-home-icon");
-
-    const backIcon =
-        first.querySelector(".nav-back-icon");
-
-    const bookmarkIcon =
-        second.querySelector(".nav-bookmark-icon");
-
-    const forwardIcon =
-        second.querySelector(".nav-forward-icon");
-
-    const homeLabel =
-        first.querySelector(".nav-home-label");
-
-    const bookmarkLabel =
-        second.querySelector(".nav-bookmark-label");
+    const homeIcon = first.querySelector(".nav-home-icon");
+    const backIcon = first.querySelector(".nav-back-icon");
+    const bookmarkIcon = second.querySelector(".nav-bookmark-icon");
+    const forwardIcon = second.querySelector(".nav-forward-icon");
+    const homeLabel = first.querySelector(".nav-home-label");
+    const bookmarkLabel = second.querySelector(".nav-bookmark-label");
 
     if(homePage){
-
-        first.onclick = function(){
-            showNewTab();
-        };
-
-        second.onclick = function(){
-            openBookmarks();
-        };
-
-        first.title = "Home";
-        second.title = "Bookmarks";
-
+        first.onclick=showNewTab;
+        second.onclick=openBookmarks;
+        first.title="Home";
+        second.title="Bookmarks";
         first.classList.add("active");
         second.classList.remove("active");
-
-        if(homeIcon) homeIcon.style.display = "block";
-        if(backIcon) backIcon.style.display = "none";
-        if(bookmarkIcon) bookmarkIcon.style.display = "block";
-        if(forwardIcon) forwardIcon.style.display = "none";
-
-        if(homeLabel) homeLabel.textContent = "Home";
-        if(bookmarkLabel) bookmarkLabel.textContent = "Bookmarks";
-
+        if(homeIcon)homeIcon.style.display="block";
+        if(backIcon)backIcon.style.display="none";
+        if(bookmarkIcon)bookmarkIcon.style.display="block";
+        if(forwardIcon)forwardIcon.style.display="none";
+        if(homeLabel)homeLabel.textContent="Home";
+        if(bookmarkLabel)bookmarkLabel.textContent="Bookmarks";
     }else{
-
-        first.onclick = function(){
-            goBack();
-        };
-
-        second.onclick = function(){
-            goForward();
-        };
-
-        first.title = "Back";
-        second.title = "Forward";
-
+        first.onclick=goBack;
+        second.onclick=goForward;
+        first.title="Back";
+        second.title="Forward";
         first.classList.remove("active");
         second.classList.remove("active");
-
-        if(homeIcon) homeIcon.style.display = "none";
-        if(backIcon) backIcon.style.display = "block";
-        if(bookmarkIcon) bookmarkIcon.style.display = "none";
-        if(forwardIcon) forwardIcon.style.display = "block";
-
-        if(homeLabel) homeLabel.textContent = "Back";
-        if(bookmarkLabel) bookmarkLabel.textContent = "Forward";
+        if(homeIcon)homeIcon.style.display="none";
+        if(backIcon)backIcon.style.display="block";
+        if(bookmarkIcon)bookmarkIcon.style.display="none";
+        if(forwardIcon)forwardIcon.style.display="block";
+        if(homeLabel)homeLabel.textContent="Back";
+        if(bookmarkLabel)bookmarkLabel.textContent="Forward";
     }
 }
 
@@ -4537,6 +4523,7 @@ function loadActiveTab(){
 ===================================================== */
 
 function showNewTab(saveTab=true){
+    closeOrangeWebView();
 
     restoreOrangeHomeView();
 
@@ -4779,52 +4766,43 @@ function getDisplayTitle(input,url){
 
 function openNativeDestination(url){
 
-    try{
+    const webView =
+        document.getElementById("orangeWebView");
 
-        if(
-            window.median &&
-            window.median.window &&
-            typeof window.median.window.open==="function"
-        ){
+    const frame =
+        document.getElementById("orangeWebFrame");
 
-            window.median.window.open(
-                url,
-                "internal"
-            );
-
-            return true;
-
-        }
-
-    }catch(error){
-
-        console.warn(
-            "Median navigation failed:",
-            error
-        );
-
+    if(!webView || !frame){
+        return false;
     }
 
+    /* Keep the destination inside the OrangeBrowse shell. */
+    document.body.classList.remove("orange-search-active");
+    document.body.classList.add("orange-web-active");
 
-    try{
-
-        window.open(
-            url,
-            "_blank"
-        );
-
-    }catch(error){
-
-        console.warn(
-            "Navigation fallback failed:",
-            error
-        );
-
+    if(frame.src !== url){
+        frame.src = url;
     }
 
+    updateBottomNavigation();
 
-    return false;
+    return true;
 
+}
+
+
+function closeOrangeWebView(){
+
+    const frame =
+        document.getElementById("orangeWebFrame");
+
+    document.body.classList.remove("orange-web-active");
+
+    if(frame){
+        frame.src = "about:blank";
+    }
+
+    updateBottomNavigation();
 }
 
 
@@ -6413,8 +6391,24 @@ function goBack(){
     }catch(error){}
 
 
-    /* No previous page: return to OrangeBrowse home */
-    showNewTab();
+    /* No previous page: return to OrangeBrowse home. */
+    tab.history = Array.isArray(tab.history) ? tab.history : [];
+    tab.historyIndex = -1;
+    tab.url = "";
+    tab.title = "New Tab";
+    tab.searchState = null;
+    tab.isNewTab = true;
+
+    currentSearchQuery = "";
+    currentSearchPage = 1;
+    currentSearchCategory = "general";
+
+    persistTabs();
+    updateRecentTabsPanel();
+    closeOrangeWebView();
+    hideSearchResults();
+    showNewTab(false);
+    setAddress("");
     updateBottomNavigation();
 
 }
