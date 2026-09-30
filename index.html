@@ -251,6 +251,24 @@ body.dark{
     display:none;
 }
 
+/* DESKTOP TAB STRIP - ALWAYS VISIBLE */
+@media(min-width:701px){
+    .tabbar{
+        display:block !important;
+        min-height:45px;
+    }
+    .tabs-container{
+        display:flex !important;
+        min-height:38px;
+    }
+}
+
+@media(max-width:700px){
+    .tabbar{
+        display:none;
+    }
+}
+
 .tab{
     flex:0 0 205px;
     max-width:240px;
@@ -1088,7 +1106,7 @@ body.dark .mobile-nav{
 
 .side-panel{
     position:absolute;
-    top:0;
+    top:58px;
     right:0;
     height:100%;
     width:min(410px,92%);
@@ -1116,8 +1134,11 @@ body.dark .mobile-nav{
 }
 
 .close-panel{
-    width:38px;
-    height:38px;
+    width:42px;
+    height:42px;
+    position:relative;
+    z-index:20;
+    flex:0 0 42px;
     border:0;
     border-radius:10px;
     background:var(--bg);
@@ -1420,14 +1441,13 @@ body.dark .danger-button{
     animation:loaderPulse 1.5s ease-in-out infinite;
 }
 
+.loader-logo img{
+    animation:loaderImageSpin 1.15s linear infinite;
+    transform-origin:center;
+}
+
 .loader-spinner{
-    position:absolute;
-    inset:-7px;
-    border:3px solid transparent;
-    border-top-color:var(--orange);
-    border-right-color:var(--orange);
-    border-radius:50%;
-    animation:loaderSpin .9s linear infinite;
+    display:none !important;
 }
 
 .loader-title{
@@ -1465,6 +1485,11 @@ body.dark .danger-button{
 .loader-dots span:nth-child(3){animation-delay:.3s}
 
 @keyframes loaderSpin{
+    to{transform:rotate(360deg)}
+}
+
+@keyframes loaderImageSpin{
+    from{transform:rotate(0deg)}
     to{transform:rotate(360deg)}
 }
 
@@ -1666,7 +1691,7 @@ body.dark .danger-button{
 ===================================================== */
 
 .browser-search-view{
-    display:none;
+    display:none !important;
     width:100%;
     min-height:calc(100vh - 150px);
     padding:0 15px 100px;
@@ -1738,6 +1763,24 @@ body.dark .danger-button{
 
 .search-loader-circle.active{
     display:flex;
+}
+
+/* Centered search loading indicator */
+.orange-search-loading{
+    min-height:45vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    gap:12px;
+}
+.orange-search-loading img{
+    width:58px;
+    height:58px;
+    object-fit:contain;
+    border-radius:50%;
+    animation:loaderImageSpin 1.15s linear infinite;
 }
 
 .search-loader-ring{
@@ -1830,8 +1873,13 @@ body.dark .danger-button{
     border:0;
     border-radius:50%;
     background:var(--orange);
-    color:#fff;
+    color:#111;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex:0 0 36px;
 }
+.results-search-form button i{color:#111 !important;}
 
 .search-category-row{
     display:flex;
@@ -2243,6 +2291,132 @@ body.dark .danger-button{
         height:65px;
     }
 }
+
+/* =====================================================
+   PERMANENT ORANGEBROWSE SHELL + CLEAN SEARCH LOADER
+===================================================== */
+.browser-header{
+    position:sticky;
+    top:0;
+    z-index:5000;
+}
+
+.tabbar{
+    position:sticky;
+    top:59px;
+    z-index:4900;
+}
+
+.search-loader-circle{
+    display:none !important;
+}
+
+.search-loader-ring{
+    display:none !important;
+}
+
+.orange-search-loading{
+    min-height:300px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    gap:12px;
+    text-align:center;
+}
+
+.orange-search-loading img{
+    width:58px;
+    height:58px;
+    object-fit:contain;
+    border-radius:50%;
+    animation:orangeSearchLogoSpin 1s linear infinite;
+}
+
+.orange-search-loading-text{
+    color:var(--muted);
+    font-size:11px;
+}
+
+.orange-search-error{
+    min-height:300px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    text-align:center;
+    padding:35px 15px;
+}
+
+.orange-search-error i{
+    font-size:28px;
+    color:var(--orange);
+    margin-bottom:12px;
+}
+
+.orange-search-error h3{
+    font-size:16px;
+    margin-bottom:6px;
+}
+
+.orange-search-error p{
+    color:var(--muted);
+    font-size:11px;
+    line-height:1.6;
+    max-width:520px;
+}
+
+@keyframes orangeSearchLogoSpin{
+    from{transform:rotate(0deg)}
+    to{transform:rotate(360deg)}
+}
+
+@media(max-width:700px){
+    .tabbar{top:53px;}
+}
+
+/* =====================================================
+   FINAL NAV / CONNECTION / LIGHT REFRESH OVERRIDES
+===================================================== */
+.search-loader-circle{
+    right:14px;
+    top:62px;
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    background:var(--card);
+    border:1px solid var(--border);
+    box-shadow:0 5px 20px rgba(0,0,0,.14);
+    z-index:99990;
+}
+.search-loader-circle .search-loader-ring{display:none!important;}
+.search-loader-circle img{
+    width:24px!important;
+    height:24px!important;
+    object-fit:contain;
+    border-radius:50%;
+    animation:orangeTinySpin .85s linear infinite;
+}
+.search-loader-count{display:none!important;}
+@keyframes orangeTinySpin{to{transform:rotate(360deg);}}
+
+/* Pull/refresh uses only the tiny loader, never the full-screen loader. */
+.orange-refreshing .search-loader-circle{display:flex!important;}
+
+.connection-popup.online .connection-popup-icon{color:var(--green);}
+.connection-popup.offline .connection-popup-icon{color:var(--orange);}
+
+.mobile-nav .nav-back-icon,
+.mobile-nav .nav-forward-icon{display:none;}
+body.orange-search-active .mobile-nav .nav-home-icon,
+body.orange-search-active .mobile-nav .nav-bookmark-icon{display:none;}
+body.orange-search-active .mobile-nav .nav-back-icon,
+body.orange-search-active .mobile-nav .nav-forward-icon{display:block;}
+
+@media(max-width:700px){
+    .search-loader-circle{top:54px;right:10px;width:34px;height:34px;}
+    .search-loader-circle img{width:22px!important;height:22px!important;}
+}
 </style>
 </head>
 
@@ -2275,6 +2449,63 @@ body.dark .danger-button{
 
 </div>
 
+<script>
+/* =====================================================
+   LOADER SAFETY WATCHDOG
+   This runs before the main application script so a JS error,
+   browser cache restore, or refresh can never trap the user behind
+   the full-screen loader.
+===================================================== */
+(function(){
+    const startedAt = Date.now();
+
+    function forceHideLoader(){
+        const loader = document.getElementById("appLoader");
+        if(!loader) return;
+        loader.classList.add("hide");
+        loader.style.opacity = "0";
+        loader.style.visibility = "hidden";
+        loader.style.pointerEvents = "none";
+    }
+
+    // Normal startup: give the browser a short moment to paint the loader.
+    setTimeout(forceHideLoader, 1400);
+
+    // If the document finishes loading sooner, remove it shortly after.
+    window.addEventListener("load", function(){
+        setTimeout(forceHideLoader, 250);
+    }, {once:true});
+
+    // Covers refresh/back-forward cache restores.
+    window.addEventListener("pageshow", function(){
+        setTimeout(forceHideLoader, 450);
+    });
+
+    // Final hard upper limit.
+    setTimeout(forceHideLoader, 2500);
+
+    // Runtime safety: if any later refresh/navigation code shows the
+    // full-page loader and then fails, do not leave the user trapped.
+    let visibleSince = 0;
+    setInterval(function(){
+        const loader = document.getElementById("appLoader");
+        if(!loader || document.readyState !== "complete") return;
+
+        const visible = !loader.classList.contains("hide") &&
+                        getComputedStyle(loader).visibility !== "hidden";
+
+        if(visible){
+            if(!visibleSince) visibleSince = Date.now();
+            if(Date.now() - visibleSince > 3000){
+                forceHideLoader();
+                visibleSince = 0;
+            }
+        }else{
+            visibleSince = 0;
+        }
+    }, 500);
+})();
+</script>
 
 <div class="app">
 
@@ -3109,8 +3340,6 @@ Off
 
 </section>
 
-</>
-
 </main>
 
 
@@ -3121,18 +3350,20 @@ Off
 <button class="active"
         onclick="showNewTab()">
 
-<i class="fa-solid fa-house"></i>
+<i class="fa-solid fa-house nav-home-icon"></i>
+<i class="fa-solid fa-chevron-left nav-back-icon"></i>
 
-<span>Home</span>
+<span class="nav-home-label">Home</span>
 
 </button>
 
 
 <button onclick="openBookmarks()">
 
-<i class="fa-regular fa-star"></i>
+<i class="fa-regular fa-star nav-bookmark-icon"></i>
+<i class="fa-solid fa-chevron-right nav-forward-icon"></i>
 
-<span>Bookmarks</span>
+<span class="nav-bookmark-label">Bookmarks</span>
 
 </button>
 
@@ -3542,27 +3773,28 @@ function captureOrangeHomeElements(){
 
     if(!main)return;
 
+    /*
+       IMPORTANT: the saved OrangeBrowse search behavior is an
+       in-app view, not a new/blank page. Only the HOME CONTENT
+       is hidden. The browser header, tab bar, search loader,
+       connection popup, results container and mobile navigation
+       must remain part of the same OrangeBrowse shell.
+    */
     orangeHomeElements =
         Array.from(main.children)
         .filter(element=>{
 
             if(!element)return false;
 
-            if(
-                element.id ===
-                "orangeSearchResults"
-            ){
-                return false;
-            }
+            if(element.id === "orangeSearchResults") return false;
+            if(element.id === "orangeRecentTabsPanel") return false;
+            if(element.id === "searchLoaderBar") return false;
+            if(element.id === "searchLoaderCircle") return false;
+            if(element.id === "connectionPopup") return false;
+            if(element.id === "browserSearchView") return false;
 
-            if(
-                element.id ===
-                "orangeRecentTabsPanel"
-            ){
-                return false;
-            }
-
-            return true;
+            /* The saved version has one home content wrapper. */
+            return element.id === "homeContent";
 
         });
 
@@ -3570,6 +3802,58 @@ function captureOrangeHomeElements(){
 
 }
 
+
+function updateBottomNavigation(){
+    const active = document.body.classList.contains("orange-search-active");
+    const first = document.querySelector(".mobile-nav button:nth-child(1)");
+    const second = document.querySelector(".mobile-nav button:nth-child(2)");
+    if(!first || !second)return;
+
+    if(active){
+        first.onclick=goBack;
+        second.onclick=goForward;
+        first.title="Back";
+        second.title="Forward";
+        first.classList.remove("active");
+        second.classList.remove("active");
+    }else{
+        first.onclick=showNewTab;
+        second.onclick=openBookmarks;
+        first.title="Home";
+        second.title="Bookmarks";
+        first.classList.add("active");
+        second.classList.remove("active");
+    }
+}
+
+function showConnectionPopup(online){
+    const popup=document.getElementById("connectionPopup");
+    const icon=document.getElementById("connectionIcon");
+    const title=document.getElementById("connectionTitle");
+    const message=document.getElementById("connectionMessage");
+    if(!popup)return;
+
+    popup.classList.toggle("online",online);
+    popup.classList.toggle("offline",!online);
+    if(icon)icon.className=online ? "fa-solid fa-wifi" : "fa-solid fa-wifi-slash";
+    if(title)title.textContent=online ? "You are online" : "You are offline";
+    if(message)message.textContent=online ? "Internet connection restored." : "No internet connection. Some pages may not load.";
+    popup.classList.add("show");
+    clearTimeout(window.orangeConnectionTimer);
+    window.orangeConnectionTimer=setTimeout(()=>popup.classList.remove("show"),2600);
+}
+
+function showTinyRefreshLoader(){
+    document.body.classList.add("orange-refreshing");
+    const circle=document.getElementById("searchLoaderCircle");
+    if(circle)circle.classList.add("active");
+}
+
+function hideTinyRefreshLoader(){
+    document.body.classList.remove("orange-refreshing");
+    const circle=document.getElementById("searchLoaderCircle");
+    if(circle)circle.classList.remove("active");
+}
 
 function showSearchView(){
 
@@ -3599,6 +3883,8 @@ function showSearchView(){
     document.body.classList.add(
         "orange-search-active"
     );
+
+    updateBottomNavigation();
 
 
     /*
@@ -3661,6 +3947,8 @@ function restoreOrangeHomeView(){
     document.body.classList.remove(
         "orange-search-active"
     );
+
+    updateBottomNavigation();
 
 }
 
@@ -3759,18 +4047,34 @@ function initialize(){
 ===================================================== */
 
 function disableTopTabs(){
+    renderTopTabs();
+}
 
-    const container =
-        document.getElementById(
-            "tabsContainer"
-        );
-
+function renderTopTabs(){
+    const container=document.getElementById("tabsContainer");
     if(!container)return;
 
-    container.innerHTML="";
+    container.innerHTML = tabs.map(tab=>{
+        const title = tab.title || "New Tab";
+        const icon = tab.searchState ? "fa-magnifying-glass" : (tab.url ? "fa-globe" : "fa-house");
+        return `
+            <div class="tab ${tab.id===activeTabId ? "active" : ""}" data-tab-id="${tab.id}" onclick="activateTab('${tab.id}')">
+                <div class="tab-favicon"><i class="fa-solid ${icon}"></i></div>
+                <div class="tab-title" title="${escapeHtml(title)}">${escapeHtml(title)}</div>
+                <button class="tab-close" onclick="event.stopPropagation();closeTab('${tab.id}')" aria-label="Close tab">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>`;
+    }).join("") + `
+        <button class="new-tab-button" onclick="createTab()" title="New tab" aria-label="New tab">
+            <i class="fa-solid fa-plus"></i>
+        </button>`;
 
-    container.style.display="none";
+    container.style.display="flex";
+}
 
+function escapeHtml(value){
+    return String(value ?? "").replace(/[&<>'"]/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","":"&quot;"}[ch]));
 }
 
 
@@ -4904,11 +5208,71 @@ function createSearchResultsContainer(){
 
 
 /* =====================================================
+   SEARCH RESULT PAGE SHELL
+   Keeps search inside the existing OrangeBrowse browser UI.
+===================================================== */
+
+function renderOrangeSearchShell(){
+
+    return `
+        <div class="results-search-box" style="
+            position:sticky;
+            top:0;
+            z-index:500;
+            background:var(--bg);
+            padding:14px 0 10px;
+        ">
+
+            <form class="results-search-form"
+                  onsubmit="event.preventDefault();performSearch(document.getElementById('orangeResultsSearchInput').value)">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                <input
+                    id="orangeResultsSearchInput"
+                    type="search"
+                    value="${escapeHTML(currentSearchQuery)}"
+                    placeholder="Search the web..."
+                    autocomplete="off"
+                >
+
+                <button type="submit" aria-label="Search">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+
+            </form>
+
+            <div class="search-category-row">
+                ${[
+                    ["general","All"],
+                    ["images","Images"],
+                    ["videos","Videos"],
+                    ["news","News"],
+                    ["map","Maps"],
+                    ["books","Books"],
+                    ["forums","Forums"]
+                ].map(([key,label])=>`
+                    <button
+                        class="search-category ${currentSearchCategory===key ? "active" : ""}"
+                        data-search-category="${key}"
+                        onclick="setSearchCategory('${key}');showSearchResults()">
+                        ${label}
+                    </button>
+                `).join("")}
+            </div>
+
+        </div>
+    `;
+}
+
+
+/* =====================================================
    SHOW SEARCH RESULTS
 ===================================================== */
 
 async function showSearchResults(){
 
+    showTinyRefreshLoader();
     createSearchResultsContainer();
 
 
@@ -4939,26 +5303,12 @@ async function showSearchResults(){
     saveCurrentSearchToTab();
 
 
-    container.innerHTML=`
+    container.innerHTML=
+        renderOrangeSearchShell() + `
 
-        <div style="
-            padding:35px 10px;
-            text-align:center;
-            color:var(--text,#555);
-        ">
-
-            <i
-                class="fa-solid fa-spinner fa-spin"
-                style="
-                    font-size:24px;
-                    margin-bottom:12px;
-                "
-            ></i>
-
-            <div>
-                Searching...
-            </div>
-
+        <div class="orange-search-loading">
+            <img src="logo.jpg" alt="OrangeBrowse">
+            <div class="orange-search-loading-text">Searching...</div>
         </div>
 
     `;
@@ -5060,65 +5410,13 @@ async function showSearchResults(){
         );
 
 
-        container.innerHTML=`
+        container.innerHTML=renderOrangeSearchShell() + `
 
-            <div style="
-                padding:35px 16px;
-                text-align:center;
-                color:var(--text,#555);
-            ">
-
-                <div style="
-                    font-size:42px;
-                    margin-bottom:12px;
-                ">
-
-                    <i
-                        class="
-                            fa-solid
-                            fa-triangle-exclamation
-                        "
-                    ></i>
-
-                </div>
-
-
-                <h3 style="
-                    margin-bottom:8px;
-                    color:var(--text,#111);
-                ">
-
-                    Search failed
-
-                </h3>
-
-
-                <p style="
-                    margin-bottom:16px;
-                ">
-
-                    ${escapeHTML(
-                        error.message ||
-                        "Could not load search results."
-                    )}
-
-                </p>
-
-
-                <button
-                    onclick="showSearchResults()"
-                    style="
-                        border:0;
-                        padding:10px 18px;
-                        border-radius:10px;
-                        cursor:pointer;
-                    "
-                >
-
-                    Try again
-
-                </button>
-
+            <div class="orange-search-error">
+                <i class="fa-solid fa-wifi"></i>
+                <h3>Search could not load</h3>
+                <p>${escapeHTML(error.message || "Could not load search results. Check your connection and try again.")}</p>
+                <button onclick="showSearchResults()" style="margin-top:14px;border:0;padding:10px 18px;border-radius:10px;background:var(--orange);color:#fff;font-weight:700;cursor:pointer;">Try again</button>
             </div>
 
         `;
@@ -5126,6 +5424,7 @@ async function showSearchResults(){
     }finally{
 
         searchLoading=false;
+        hideTinyRefreshLoader();
 
     }
 
@@ -5357,6 +5656,16 @@ function renderSearchResults(data){
 
     `;
 
+    html = renderOrangeSearchShell() + html;
+
+    html += `
+        <footer class="search-footer">
+            <div class="search-footer-location" id="orangeSearchFooterStatus">
+                <strong>OrangeBrowse</strong> &bull; ${navigator.onLine ? "Online" : "Offline mode"}
+                &bull; Search results are displayed inside OrangeBrowse.
+            </div>
+        </footer>
+    `;
 
     container.innerHTML=html;
 
@@ -6228,53 +6537,30 @@ function goForward(){
 ===================================================== */
 
 function reloadPage(){
+    showTinyRefreshLoader();
 
-    const tab =
-        getActiveTab();
+    const tab=getActiveTab();
 
-
-    if(tab && tab.url){
-
-        if(
-            tab.url.startsWith(
-                "orangebrowse-search://"
-            )
-        ){
-
-            showSearchResults();
-
-            return;
-
-        }
-
-
-        openNativeDestination(
-            tab.url
-        );
-
-        showToast(
-            "Page reloaded"
-        );
-
+    if(tab && tab.searchState && tab.searchState.query){
+        currentSearchQuery=tab.searchState.query;
+        currentSearchCategory=tab.searchState.category || "general";
+        currentSearchPage=Number(tab.searchState.page || 1);
+        showSearchResults();
         return;
-
     }
 
+    if(tab && tab.url && !tab.url.startsWith("orangebrowse-search://")){
+        setTimeout(()=>openNativeDestination(tab.url),120);
+        setTimeout(hideTinyRefreshLoader,900);
+        return;
+    }
 
-    window.scrollTo({
-
-        top:0,
-
-        behavior:"smooth"
-
-    });
-
-
-    showToast(
-        "New tab refreshed"
-    );
-
+    restoreOrangeHomeView();
+    window.scrollTo({top:0,behavior:"smooth"});
+    updateNetworkStatus();
+    setTimeout(hideTinyRefreshLoader,650);
 }
+
 
 
 /* =====================================================
@@ -7157,16 +7443,21 @@ function updateNetworkStatus(){
 }
 
 
-window.addEventListener(
-    "online",
-    updateNetworkStatus
-);
+function updateSearchFooterStatus(){
+    const footer = document.getElementById("orangeSearchFooterStatus");
+    if(!footer)return;
+    footer.innerHTML = `<strong>OrangeBrowse</strong> &bull; ${navigator.onLine ? "Online" : "Offline mode"} &bull; Search results are displayed inside OrangeBrowse.`;
+}
 
+window.addEventListener("online",()=>{
+    updateNetworkStatus();
+    showConnectionPopup(true);
+});
 
-window.addEventListener(
-    "offline",
-    updateNetworkStatus
-);
+window.addEventListener("offline",()=>{
+    updateNetworkStatus();
+    showConnectionPopup(false);
+});
 
 
 /* =====================================================
@@ -8258,6 +8549,57 @@ window.addEventListener(
 
 
 /* =====================================================
+   REFRESH / PULL-DOWN LOADER
+===================================================== */
+
+function showAppLoaderForRefresh(){
+    const loader=document.getElementById("appLoader");
+    if(!loader)return;
+    loader.classList.remove("hide");
+    loader.style.display="flex";
+    loader.style.opacity="1";
+    loader.style.visibility="visible";
+    loader.style.pointerEvents="auto";
+}
+
+function hideAppLoaderAfterRefresh(){
+    const loader=document.getElementById("appLoader");
+    if(!loader)return;
+    loader.classList.add("hide");
+}
+
+let orangePullStartY=0;
+let orangePullActive=false;
+
+window.addEventListener("pageshow",()=>{
+    const loader=document.getElementById("appLoader");
+    if(!loader)return;
+    setTimeout(()=>{
+        loader.classList.add("hide");
+        loader.style.pointerEvents="none";
+    },1100);
+});
+
+document.addEventListener("touchstart",event=>{
+    if(window.scrollY<=2 && event.touches && event.touches[0]){
+        orangePullStartY=event.touches[0].clientY;
+        orangePullActive=true;
+    }
+},{passive:true});
+
+document.addEventListener("touchend",event=>{
+    if(!orangePullActive)return;
+    const endY=event.changedTouches && event.changedTouches[0] ? event.changedTouches[0].clientY : orangePullStartY;
+    const distance=endY-orangePullStartY;
+    orangePullActive=false;
+    if(distance>90 && window.scrollY<=5){
+        showTinyRefreshLoader();
+        reloadPage();
+    }
+},{passive:true});
+
+
+/* =====================================================
    LOADER
 ===================================================== */
 
@@ -8357,11 +8699,7 @@ function initializeLoader(){
                     observer.disconnect();
 
 
-                    if(loader.parentNode){
-
-                        loader.remove();
-
-                    }
+                    /* Keep the loader in the DOM so refresh/pull-down can reuse it. */
 
                 },
                 500
@@ -8381,6 +8719,8 @@ function initializeLoader(){
 initialize();
 
 initializeLoader();
+updateBottomNavigation();
+updateNetworkStatus();
 
 
 /* =====================================================
@@ -8455,6 +8795,8 @@ orangeNavObserver.observe(
     }
 );
 
+
+  
 </script>
 
 </body>
