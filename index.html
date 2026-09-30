@@ -1745,7 +1745,7 @@ body.dark .danger-button{
 
 /* ROTATING LOGO SEARCH LOADER */
 
-.search-loader-circle{
+.search-loader-circle{display:none!important;
     position:fixed;
     right:14px;
     top:62px;
@@ -1881,6 +1881,57 @@ body.dark .danger-button{
 }
 .results-search-form button i{color:#111 !important;}
 
+/* SEARCH SUGGESTIONS */
+.ob-search-suggestions{
+    position:absolute;
+    left:0;
+    right:0;
+    top:calc(100% + 6px);
+    z-index:700;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    box-shadow:0 15px 40px rgba(0,0,0,.12);
+    overflow:hidden;
+    display:none;
+}
+.ob-search-suggestions.show{display:block;}
+.ob-suggestion-item{
+    width:100%;
+    border:0;
+    background:transparent;
+    color:var(--text);
+    padding:10px 12px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    text-align:left;
+    border-bottom:1px solid var(--border);
+}
+.ob-suggestion-item:last-child{border-bottom:0;}
+.ob-suggestion-item:hover{background:var(--bg);}
+.ob-suggestion-icon{
+    width:30px;height:30px;border-radius:9px;
+    background:var(--orange-light);color:var(--orange);
+    display:flex;align-items:center;justify-content:center;
+    flex:0 0 30px;font-size:11px;
+}
+.ob-suggestion-main{min-width:0;flex:1;}
+.ob-suggestion-title{
+    font-size:11px;font-weight:700;white-space:nowrap;
+    overflow:hidden;text-overflow:ellipsis;
+}
+.ob-suggestion-url{
+    margin-top:3px;color:var(--muted);font-size:9px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.ob-suggestion-arrow{color:var(--muted);font-size:9px;}
+.home-search-wrap,.results-search-wrap{position:relative;}
+.ob-suggestion-label{
+    padding:9px 12px 6px;color:var(--muted);font-size:9px;
+    font-weight:800;text-transform:uppercase;letter-spacing:.5px;
+}
+
 .search-category-row{
     display:flex;
     gap:4px;
@@ -1987,6 +2038,27 @@ body.dark .danger-button{
     font-size:9px;
     margin-top:8px;
 }
+
+/* PAGINATION */
+.ob-pagination{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    flex-wrap:wrap;margin-top:28px;
+}
+.ob-page-arrow,.ob-page-number{
+    min-width:38px;height:38px;padding:0 11px;border:1px solid var(--border);
+    border-radius:9px;background:var(--card);color:var(--text);font-size:11px;
+}
+.ob-page-arrow{display:inline-flex;align-items:center;gap:7px;}
+.ob-page-arrow:hover:not(:disabled),.ob-page-number:hover{border-color:var(--orange);}
+.ob-page-arrow:disabled{opacity:.4;cursor:not-allowed;}
+.ob-page-numbers{display:flex;align-items:center;gap:5px;}
+.ob-page-number.active{background:var(--orange);color:#fff;border-color:var(--orange);font-weight:800;}
+.ob-page-ellipsis{padding:0 4px;color:var(--muted);}
+.ob-no-more-results{
+    text-align:center;margin:14px 0 5px;padding:12px;
+    color:var(--muted);font-size:10px;
+}
+.ob-no-more-results i{color:var(--green);margin-right:5px;}
 
 /* IMAGE RESULTS */
 
@@ -2166,6 +2238,91 @@ body.dark .danger-button{
     cursor:not-allowed;
 }
 
+
+/* RECENT SEARCHES */
+.orange-recent-searches{
+    width:min(760px,100%);
+    margin:10px auto 12px;
+    display:none;
+    gap:7px;
+    flex-wrap:wrap;
+    align-items:center;
+}
+.orange-recent-searches.show{display:flex;}
+.orange-recent-search-title{width:100%;font-size:11px;font-weight:700;color:var(--muted);margin-bottom:1px;}
+.orange-recent-search-item{
+    display:flex;align-items:center;gap:7px;max-width:100%;
+    border:1px solid var(--border);background:var(--card);color:var(--text);
+    border-radius:18px;padding:7px 9px 7px 11px;font-size:12px;
+}
+.orange-recent-search-item button{border:0;background:transparent;color:var(--muted);cursor:pointer;padding:1px 3px;}
+.orange-recent-search-item .recent-search-open{cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px;}
+.orange-recent-search-head{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    gap:12px;
+    padding:4px 2px 2px;
+}
+.orange-clear-recent{
+    border:0;
+    background:transparent;
+    color:var(--orange);
+    font-size:10px;
+    font-weight:700;
+    cursor:pointer;
+    padding:6px 2px;
+}
+.orange-clear-recent:hover{text-decoration:underline;}
+.orange-recent-search-title{
+    width:auto;
+    font-size:11px;
+    font-weight:700;
+    color:var(--muted);
+    margin:0;
+}
+.orange-recent-search-title i{
+    color:var(--orange);
+    margin-right:4px;
+}
+.orange-recent-search-list{
+    width:100%;
+    display:flex;
+    gap:7px;
+    flex-wrap:wrap;
+}
+.recent-search-open{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    min-width:0;
+    border:0;
+    background:transparent;
+    color:inherit;
+}
+.recent-search-open span{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+
+/* RESULT MEDIA */
+.orange-result-media{margin-top:11px;width:100%;max-width:360px;border-radius:12px;overflow:hidden;background:rgba(127,127,127,.08);position:relative;}
+.orange-result-media img{width:100%;height:180px;object-fit:cover;display:block;}
+.orange-video-badge{position:absolute;left:10px;bottom:10px;background:rgba(0,0,0,.72);color:#fff;border-radius:999px;padding:6px 9px;font-size:11px;}
+.orange-video-badge i{margin-right:4px;}
+.orange-result-card{padding:17px 0;border-bottom:1px solid rgba(127,127,127,.18);}
+
+/* FOOTER LOCATION */
+.orange-location-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px;text-align:left;}
+.orange-location-item{padding:9px;border:1px solid var(--border);border-radius:10px;background:var(--card);}
+.orange-location-label{font-size:9px;opacity:.6;text-transform:uppercase;letter-spacing:.04em;}
+.orange-location-value{font-size:11px;margin-top:3px;word-break:break-word;}
+.orange-location-map{display:inline-flex;align-items:center;gap:5px;margin-top:8px;color:var(--orange);text-decoration:none;font-size:11px;}
+@media(max-width:520px){.orange-location-grid{grid-template-columns:1fr;}.orange-result-media{max-width:100%;}}
+
 /* SEARCH FOOTER */
 
 .search-footer{
@@ -2261,7 +2418,7 @@ body.dark .danger-button{
         padding:0 10px 90px;
     }
 
-    .search-loader-circle{
+    .search-loader-circle{display:none!important;
         top:54px;
         right:10px;
         width:34px;
@@ -2307,7 +2464,7 @@ body.dark .danger-button{
     z-index:4900;
 }
 
-.search-loader-circle{
+.search-loader-circle{display:none!important;
     display:none !important;
 }
 
@@ -2378,7 +2535,7 @@ body.dark .danger-button{
 /* =====================================================
    FINAL NAV / CONNECTION / LIGHT REFRESH OVERRIDES
 ===================================================== */
-.search-loader-circle{
+.search-loader-circle{display:none!important;
     right:14px;
     top:62px;
     width:36px;
@@ -2401,7 +2558,7 @@ body.dark .danger-button{
 @keyframes orangeTinySpin{to{transform:rotate(360deg);}}
 
 /* Pull/refresh uses only the tiny loader, never the full-screen loader. */
-.orange-refreshing .search-loader-circle{display:flex!important;}
+.orange-refreshing .search-loader-circle{display:none!important;display:flex!important;}
 
 .connection-popup.online .connection-popup-icon{color:var(--green);}
 .connection-popup.offline .connection-popup-icon{color:var(--orange);}
@@ -2417,9 +2574,154 @@ body.dark .danger-button{
 }
 
 @media(max-width:700px){
-    .search-loader-circle{top:54px;right:10px;width:34px;height:34px;}
+    .search-loader-circle{display:none!important;top:54px;right:10px;width:34px;height:34px;}
     .search-loader-circle img{width:22px!important;height:22px!important;}
 }
+
+/* =========================================================
+   ORANGEBROWSE SEARCH RESULT PRESENTATION
+========================================================= */
+.ob-result-tabs{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding:10px 0;
+    scrollbar-width:none;
+}
+.ob-result-tabs::-webkit-scrollbar{display:none}
+.ob-result-tab{
+    border:1px solid var(--border,#ddd);
+    background:var(--card,#fff);
+    color:var(--text,#222);
+    border-radius:18px;
+    padding:8px 14px;
+    font-size:13px;
+    white-space:nowrap;
+    cursor:pointer;
+}
+.ob-result-tab.active{
+    background:var(--orange,#ff6a00);
+    color:#fff;
+    border-color:var(--orange,#ff6a00);
+}
+.ob-search-result{
+    position:relative;
+    padding:15px 0;
+    border-bottom:1px solid var(--border,#e8e8e8);
+}
+.ob-search-result .ob-source{
+    font-size:12px;
+    color:#6b7280;
+    margin-bottom:5px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+.ob-search-result .ob-title{
+    font-size:18px;
+    line-height:1.3;
+    font-weight:650;
+    color:var(--orange,#ff6a00);
+    margin-bottom:6px;
+}
+.ob-search-result .ob-url{
+    font-size:12px;
+    color:#16803c;
+    margin-bottom:7px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+.ob-search-result .ob-snippet{
+    font-size:14px;
+    line-height:1.5;
+    color:var(--text,#333);
+}
+.ob-search-result .ob-thumb{
+    float:right;
+    width:112px;
+    height:76px;
+    object-fit:cover;
+    border-radius:9px;
+    margin:0 0 8px 12px;
+    background:#eee;
+}
+.ob-media-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+}
+.ob-media-card{
+    overflow:hidden;
+    border:1px solid var(--border,#e5e5e5);
+    border-radius:12px;
+    background:var(--card,#fff);
+    cursor:pointer;
+}
+.ob-media-card img{
+    width:100%;
+    aspect-ratio:16/10;
+    object-fit:cover;
+    display:block;
+    background:#eee;
+}
+.ob-media-card .ob-media-info{
+    padding:9px;
+}
+.ob-media-card .ob-media-title{
+    font-size:13px;
+    line-height:1.35;
+    font-weight:600;
+}
+.ob-media-card .ob-media-source{
+    margin-top:4px;
+    font-size:11px;
+    color:#777;
+}
+.ob-video-card{
+    display:flex;
+    gap:12px;
+    padding:12px 0;
+    border-bottom:1px solid var(--border,#e8e8e8);
+    cursor:pointer;
+}
+.ob-video-thumb{
+    width:150px;
+    height:88px;
+    flex:none;
+    border-radius:9px;
+    object-fit:cover;
+    background:#eee;
+}
+.ob-video-meta{
+    min-width:0;
+}
+.ob-video-title{
+    font-weight:650;
+    line-height:1.35;
+    margin-bottom:6px;
+}
+.ob-video-source{
+    font-size:12px;
+    color:#777;
+}
+.ob-video-play{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    background:rgba(0,0,0,.72);
+    color:#fff;
+    margin-top:7px;
+}
+@media(max-width:600px){
+    .ob-search-result .ob-thumb{width:92px;height:66px}
+    .ob-search-result .ob-title{font-size:16px}
+    .ob-video-thumb{width:125px;height:75px}
+}
+
 </style>
 </head>
 
@@ -2645,27 +2947,6 @@ title="Menu">
 
 <main class="main">
 <!-- =====================================================
-     SEARCH LOADER
-===================================================== -->
-
-<div class="search-loader-bar" id="searchLoaderBar">
-    <div class="search-loader-line"></div>
-</div>
-
-<div class="search-loader-circle" id="searchLoaderCircle">
-
-    <div class="search-loader-ring"></div>
-
-    <img src="logo.jpg" alt="">
-
-    <span class="search-loader-count" id="searchLoaderCount">
-        3
-    </span>
-
-</div>
-
-
-<!-- =====================================================
      CONNECTION POPUP
 ===================================================== -->
 
@@ -2841,6 +3122,8 @@ Search
 </button>
 
 </div>
+
+<div id="orangeRecentSearches" class="orange-recent-searches" aria-label="Recent searches"></div>
 
 <div class="engine-row">
 
@@ -3617,7 +3900,8 @@ const STORAGE = {
     history:"orangebrowse_history",
     closedTabs:"orangebrowse_closed_tabs",
     settings:"orangebrowse_settings",
-    offlinePages:"orangebrowse_offline_pages"
+    offlinePages:"orangebrowse_offline_pages",
+    downloads:"orangebrowse_downloads"
 };
 
 const DEFAULT_SETTINGS = {
@@ -3628,16 +3912,7 @@ const DEFAULT_SETTINGS = {
     dataSaver:false
 };
 
-/*
-   RENDER SEARCH API
-
-   Replace the placeholder below with the URL Render gives
-   your OrangeBrowse Search API, for example:
-
-   https://orangebrowse-search-api.onrender.com/search
-*/
-const RENDER_SEARCH_ENDPOINT =
-    "https://search-api-kdnj.onrender.com/search";
+const RENDER_SEARCH_ENDPOINT = "https://search-api-kdnj.onrender.com/search";
 
 
 /* =====================================================
@@ -3652,11 +3927,15 @@ let bookmarks = load(STORAGE.bookmarks,[]);
 let historyItems = load(STORAGE.history,[]);
 let closedTabs = load(STORAGE.closedTabs,[]);
 let offlinePages = load(STORAGE.offlinePages,[]);
+let downloads = load(STORAGE.downloads,[]);
 
 let settings = {
     ...DEFAULT_SETTINGS,
     ...load(STORAGE.settings,{})
 };
+
+/* Incognito is a session mode; it never survives an app restart. */
+settings.incognito = false;
 
 let toastTimer = null;
 
@@ -3669,6 +3948,10 @@ let currentSearchQuery = "";
 let currentSearchCategory = "general";
 let currentSearchPage = 1;
 let searchLoading = false;
+let searchPageHasMore = false;
+let searchLastPage = null;
+let searchSuggestionTimer = null;
+let suggestionRequestId = 0;
 
 
 /* =====================================================
@@ -3928,17 +4211,8 @@ function showConnectionPopup(online){
     window.orangeConnectionTimer=setTimeout(()=>popup.classList.remove("show"),2600);
 }
 
-function showTinyRefreshLoader(){
-    document.body.classList.add("orange-refreshing");
-    const circle=document.getElementById("searchLoaderCircle");
-    if(circle)circle.classList.add("active");
-}
-
-function hideTinyRefreshLoader(){
-    document.body.classList.remove("orange-refreshing");
-    const circle=document.getElementById("searchLoaderCircle");
-    if(circle)circle.classList.remove("active");
-}
+function showTinyRefreshLoader(){}
+function hideTinyRefreshLoader(){}
 
 function showSearchView(){
 
@@ -4115,6 +4389,7 @@ function initialize(){
     updateAllFeatureUI();
 
     updatePrivacyUI();
+    renderRecentSearches();
 
     updateNetworkStatus();
 
@@ -4167,7 +4442,7 @@ function escapeHtml(value){
    TAB FUNCTIONS
 ===================================================== */
 
-function createTab(saveData=true){
+function createTab(saveData=true,isPrivate=settings.incognito){
 
     const id =
         generateTabId();
@@ -4188,7 +4463,9 @@ function createTab(saveData=true){
 
         historyIndex:-1,
 
-        searchState:null
+        searchState:null,
+
+        private:!!isPrivate
 
     };
 
@@ -4225,14 +4502,18 @@ function createTab(saveData=true){
 
 function persistTabs(){
 
-    save(
-        STORAGE.tabs,
-        tabs
-    );
+    /* Private/incognito tabs exist only in memory and are never restored. */
+    const persistentTabs = tabs.filter(tab => !tab.private);
+    save(STORAGE.tabs,persistentTabs);
+
+    const active = getActiveTab();
+    const persistentActiveId = active && !active.private
+        ? activeTabId
+        : (persistentTabs[0] ? persistentTabs[0].id : "");
 
     localStorage.setItem(
         STORAGE.activeTab,
-        activeTabId || ""
+        persistentActiveId || ""
     );
 
 }
@@ -4840,6 +5121,138 @@ function openNativeDestination(url){
    SEARCH INPUT
 ===================================================== */
 
+
+/* =====================================================
+   RECENT SEARCHES — LAST 5
+===================================================== */
+function getRecentSearches(){
+    try{
+        const raw=JSON.parse(localStorage.getItem("orangebrowse_recent_searches") || "[]");
+        return Array.isArray(raw) ? raw.map(item=>{
+            if(typeof item==="string"){
+                return {
+                    query:item,
+                    url:"orangebrowse-search://"+encodeURIComponent(item),
+                    time:null
+                };
+            }
+            return {
+                query:String(item?.query || "").trim(),
+                url:String(item?.url || (item?.query ? "orangebrowse-search://"+encodeURIComponent(item.query) : "")),
+                time:item?.time || null
+            };
+        }).filter(item=>item.query) : [];
+    }catch(e){
+        return [];
+    }
+}
+
+function saveRecentSearch(query){
+    query=String(query||"").trim();
+    if(!query || settings.incognito)return;
+
+    let list=getRecentSearches().filter(
+        x=>x.query.toLowerCase()!==query.toLowerCase()
+    );
+
+    list.unshift({
+        query:query,
+        url:"orangebrowse-search://"+encodeURIComponent(query),
+        time:new Date().toISOString()
+    });
+
+    localStorage.setItem(
+        "orangebrowse_recent_searches",
+        JSON.stringify(list.slice(0,5))
+    );
+
+    renderRecentSearches();
+}
+
+function removeRecentSearch(index){
+    const list=getRecentSearches();
+    list.splice(index,1);
+    localStorage.setItem(
+        "orangebrowse_recent_searches",
+        JSON.stringify(list)
+    );
+    renderRecentSearches();
+}
+
+function clearRecentSearches(){
+    localStorage.removeItem("orangebrowse_recent_searches");
+    renderRecentSearches();
+    showToast("Recent searches cleared");
+}
+
+function openRecentSearch(index){
+    const item=getRecentSearches()[index];
+    if(!item)return;
+
+    const query=item.query;
+    const input=document.getElementById("mainSearch");
+    if(input)input.value=query;
+
+    /* Re-open the saved OrangeBrowse search inside the current tab. */
+    performSearch(query);
+}
+
+function renderRecentSearches(){
+    const box=document.getElementById("orangeRecentSearches");
+    if(!box)return;
+
+    const list=settings.incognito ? [] : getRecentSearches();
+
+    if(!list.length){
+        box.classList.remove("show");
+        box.innerHTML="";
+        return;
+    }
+
+    box.classList.add("show");
+    box.innerHTML=`
+        <div class="orange-recent-search-head">
+            <button class="orange-clear-recent" type="button"
+                    onclick="clearRecentSearches()">
+                <i class="fa-solid fa-trash-can"></i> Clear all
+            </button>
+
+            <span class="orange-recent-search-title">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+                Recent searches
+            </span>
+        </div>
+
+        <div class="orange-recent-search-list">
+            ${list.map((item,i)=>`
+                <div class="orange-recent-search-item"
+                     data-recent-index="${i}">
+
+                    <button class="recent-search-open"
+                            type="button"
+                            onclick="openRecentSearch(${i})"
+                            title="Open this search">
+
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                        <span>${escapeHTML(item.query)}</span>
+
+                    </button>
+
+                    <button type="button"
+                            onclick="event.stopPropagation();removeRecentSearch(${i})"
+                            aria-label="Remove search"
+                            title="Remove">
+
+                        <i class="fa-solid fa-xmark"></i>
+
+                    </button>
+
+                </div>
+            `).join("")}
+        </div>
+    `;
+}
+
 function performSearch(value=null){
 
     const input =
@@ -4869,6 +5282,8 @@ function performSearch(value=null){
 
     currentSearchQuery=query;
 
+    saveRecentSearch(query);
+
     currentSearchPage=1;
 
     currentSearchCategory =
@@ -4891,10 +5306,12 @@ function performSearch(value=null){
     }
 
 
-    addHistory(
-        query,
-        "#search:" + query
-    );
+    if(!settings.incognito){
+        addHistory(
+            query,
+            "#search:" + query
+        );
+    }
 
 
     saveCurrentSearchToTab();
@@ -4956,6 +5373,133 @@ function saveCurrentSearchToTab(){
 
 }
 
+
+/* =====================================================
+   SEARCH SUGGESTIONS / AUTOCOMPLETE
+===================================================== */
+const POPULAR_SITES = [
+    ["Google","https://www.google.com","Search"],
+    ["YouTube","https://www.youtube.com","Videos"],
+    ["Wikipedia","https://www.wikipedia.org","Knowledge"],
+    ["Facebook","https://www.facebook.com","Social"],
+    ["Instagram","https://www.instagram.com","Social"],
+    ["Reddit","https://www.reddit.com","Community"],
+    ["X","https://x.com","Social"],
+    ["Amazon","https://www.amazon.com","Shopping"],
+    ["GitHub","https://github.com","Developer"],
+    ["LinkedIn","https://www.linkedin.com","Professional"],
+    ["TikTok","https://www.tiktok.com","Videos"],
+    ["Netflix","https://www.netflix.com","Entertainment"],
+    ["Gmail","https://mail.google.com","Email"],
+    ["Google Maps","https://maps.google.com","Maps"],
+    ["Yahoo","https://www.yahoo.com","Web"],
+    ["Bing","https://www.bing.com","Search"]
+];
+
+function hideSearchSuggestions(id){
+    const box=document.getElementById(id);
+    if(box) box.classList.remove("show");
+}
+
+function suggestionSiteFromResult(result){
+    const title=result.title || result.name || "Website";
+    const url=result.url || result.link || "";
+    if(!url || !/^https?:\/\//i.test(url)) return null;
+    return {title,url,meta:getDomain(url)};
+}
+
+function renderSuggestionBox(id,items,label){
+    const box=document.getElementById(id);
+    if(!box)return;
+    if(!items.length){ box.classList.remove("show"); box.innerHTML=""; return; }
+    box.innerHTML=`<div class="ob-suggestion-label">${escapeHTML(label || "Suggestions")}</div>`+
+        items.map(item=>`\
+            <button type="button" class="ob-suggestion-item" onclick="handleSearchSuggestion(${JSON.stringify(item.url||"")},${JSON.stringify(item.title||"")})">\
+                <span class="ob-suggestion-icon"><i class="fa-solid ${item.isSearch?"fa-magnifying-glass":"fa-globe"}"></i></span>\
+                <span class="ob-suggestion-main">\
+                    <span class="ob-suggestion-title">${escapeHTML(item.title)}</span>\
+                    <span class="ob-suggestion-url">${escapeHTML(item.meta || item.url || "")}</span>\
+                </span>\
+                <span class="ob-suggestion-arrow"><i class="fa-solid fa-arrow-up-right-from-square"></i></span>\
+            </button>`).join("");
+    box.classList.add("show");
+}
+
+function handleSearchSuggestion(url,title){
+    hideSearchSuggestions("orangeResultsSuggestions");
+    hideSearchSuggestions("orangeHomeSuggestions");
+    if(url && /^https?:\/\//i.test(url)){
+        navigateTo(url,{title:title || url});
+    }else if(title){
+        performSearch(title);
+    }
+}
+
+async function updateSearchSuggestions(input,isResults){
+    const query=String(input?.value||"").trim();
+    const id=isResults ? "orangeResultsSuggestions" : "orangeHomeSuggestions";
+    if(!query){ hideSearchSuggestions(id); return; }
+    clearTimeout(searchSuggestionTimer);
+    const request=++suggestionRequestId;
+    searchSuggestionTimer=setTimeout(async()=>{
+        let items=[];
+        try{
+            const params=new URLSearchParams({q:query,category:"general",page:"1"});
+            const response=await fetch(RENDER_SEARCH_ENDPOINT+"?"+params.toString(),{headers:{Accept:"application/json"},cache:"no-store"});
+            if(response.ok){
+                const data=await response.json();
+                items=(Array.isArray(data.results)?data.results:[]).map(suggestionSiteFromResult).filter(Boolean);
+            }
+        }catch(e){}
+        if(request!==suggestionRequestId)return;
+
+        const lower=query.toLowerCase();
+        const local=POPULAR_SITES.filter(x=>(x[0]+" "+x[1]+" "+x[2]).toLowerCase().includes(lower))
+            .map(x=>({title:x[0],url:x[1],meta:x[1].replace(/^https?:\/\//i,"").replace(/\/$/,"")}));
+        const merged=[]; const seen=new Set();
+        [...items,...local].forEach(item=>{ const key=item.url.toLowerCase(); if(!seen.has(key)){seen.add(key);merged.push(item);} });
+        if(isResults){
+            renderSuggestionBox(id,merged.slice(0,5),"Top matches");
+        }else{
+            renderSuggestionBox(id,merged.slice(0,12),"Popular matches");
+        }
+    },280);
+}
+
+function attachSearchSuggestionListeners(){
+    const home=document.getElementById("mainSearch");
+    const result=document.getElementById("orangeResultsSearchInput");
+    if(home && home.dataset.suggestionsBound!=="1"){
+        home.dataset.suggestionsBound="1";
+        home.addEventListener("input",()=>updateSearchSuggestions(home,false));
+        home.addEventListener("focus",()=>{if(home.value.trim())updateSearchSuggestions(home,false);});
+    }
+    if(result && result.dataset.suggestionsBound!=="1"){
+        result.dataset.suggestionsBound="1";
+        result.addEventListener("input",()=>updateSearchSuggestions(result,true));
+        result.addEventListener("focus",()=>{if(result.value.trim())updateSearchSuggestions(result,true);});
+    }
+}
+
+function createHomeSearchSuggestions(){
+    const input=document.getElementById("mainSearch");
+    if(!input || document.getElementById("orangeHomeSuggestions"))return;
+    const parent=input.closest("form,.search-box,.search-container,.hero-search") || input.parentElement;
+    if(!parent)return;
+    if(!parent.classList.contains("home-search-wrap")) parent.classList.add("home-search-wrap");
+    const box=document.createElement("div");
+    box.id="orangeHomeSuggestions";
+    box.className="ob-search-suggestions";
+    parent.appendChild(box);
+    attachSearchSuggestionListeners();
+}
+
+document.addEventListener("DOMContentLoaded",createHomeSearchSuggestions);
+
+document.addEventListener("click",event=>{
+    if(!event.target.closest(".home-search-wrap")) hideSearchSuggestions("orangeHomeSuggestions");
+    if(!event.target.closest(".results-search-wrap")) hideSearchSuggestions("orangeResultsSuggestions");
+});
 
 /* =====================================================
    SEARCH KEY
@@ -5309,8 +5853,9 @@ function renderOrangeSearchShell(){
             padding:14px 0 10px;
         ">
 
+            <div class="results-search-wrap">
             <form class="results-search-form"
-                  onsubmit="event.preventDefault();performSearch(document.getElementById('orangeResultsSearchInput').value)">
+                  onsubmit="event.preventDefault();performSearch(document.getElementById('orangeResultsSearchInput').value);hideSearchSuggestions('orangeResultsSuggestions')">
 
                 <i class="fa-solid fa-magnifying-glass"></i>
 
@@ -5327,6 +5872,8 @@ function renderOrangeSearchShell(){
                 </button>
 
             </form>
+            <div id="orangeResultsSuggestions" class="ob-search-suggestions" aria-label="Search suggestions"></div>
+            </div>
 
             <div class="search-category-row">
                 ${[
@@ -5358,8 +5905,7 @@ function renderOrangeSearchShell(){
 
 async function showSearchResults(){
 
-    showTinyRefreshLoader();
-    createSearchResultsContainer();
+        createSearchResultsContainer();
 
 
     /*
@@ -5510,8 +6056,7 @@ async function showSearchResults(){
     }finally{
 
         searchLoading=false;
-        hideTinyRefreshLoader();
-
+        
     }
 
 }
@@ -5520,6 +6065,43 @@ async function showSearchResults(){
 /* =====================================================
    RENDER SEARCH RESULTS
 ===================================================== */
+
+function filterAdResults(results){
+    if(!Array.isArray(results))return [];
+
+    const blockedTerms=[
+        "doubleclick.net",
+        "googlesyndication.com",
+        "googleadservices.com",
+        "adservice.google.com",
+        "adsystem.com",
+        "advertising.com",
+        "taboola.com",
+        "outbrain.com",
+        "adnxs.com",
+        "scorecardresearch.com",
+        "zedo.com",
+        "propellerads.com",
+        "popads.net",
+        "clickadu.com",
+        "exoclick.com"
+    ];
+
+    return results.filter(result=>{
+        const haystack=[
+            result?.url,
+            result?.link,
+            result?.title,
+            result?.content,
+            result?.description,
+            result?.snippet
+        ].filter(Boolean).join(" ").toLowerCase();
+
+        return !blockedTerms.some(
+            term=>haystack.includes(term)
+        );
+    });
+}
 
 function renderSearchResults(data){
 
@@ -5532,55 +6114,51 @@ function renderSearchResults(data){
     if(!container)return;
 
 
-    const results =
+    const rawResults =
         Array.isArray(data.results)
         ? data.results
         : [];
 
+    /* SearXNG normally returns a fixed page of results. Use the
+       returned page length to detect whether another page exists. */
+    searchPageHasMore = rawResults.length >= 10;
+    if(data && typeof data.has_more === "boolean") searchPageHasMore = data.has_more;
+    if(data && typeof data.total === "number"){
+        const pageSize = Math.max(rawResults.length,10);
+        searchLastPage = Math.max(1,Math.ceil(data.total/pageSize));
+        searchPageHasMore = currentSearchPage < searchLastPage;
+    } else {
+        searchLastPage = searchPageHasMore ? null : currentSearchPage;
+    }
+
+    let results = rawResults;
+
+    if(settings.adBlock){
+        results=filterAdResults(results);
+    }
+
 
     if(results.length===0){
-
-        container.innerHTML=`
-
-            <div style="
-                padding:40px 15px;
-                text-align:center;
-            ">
-
-                <i
-                    class="
-                        fa-solid
-                        fa-magnifying-glass
-                    "
-                    style="
-                        font-size:35px;
-                    "
-                ></i>
-
-
-                <h3>
-                    No results found
-                </h3>
-
-
-                <p>
-
-                    No results were returned for
-
-                    <strong>
-                        "${escapeHTML(
-                            currentSearchQuery
-                        )}"
-                    </strong>.
-
-                </p>
-
-            </div>
-
-        `;
-
+        searchPageHasMore=false;
+        searchLastPage=currentSearchPage;
+        const pages=buildPageNumbers(currentSearchPage,searchLastPage,false);
+        container.innerHTML=renderOrangeSearchShell()+`
+            <div style="padding:40px 15px 10px;text-align:center;">
+                <i class="fa-solid fa-magnifying-glass" style="font-size:35px;color:var(--orange);"></i>
+                <h3 style="margin-top:12px;">No results found</h3>
+                <p style="margin-top:8px;color:var(--muted);">No results were returned for <strong>"${escapeHTML(currentSearchQuery)}"</strong>.</p>
+                <div class="ob-no-more-results">
+                    <i class="fa-solid fa-circle-check"></i>
+                    No more results for input <strong>"${escapeHTML(currentSearchQuery)}"</strong>
+                </div>
+                <div class="ob-pagination">
+                    <button class="ob-page-arrow" onclick="previousSearchPage()" ${currentSearchPage<=1?"disabled":""}><i class="fa-solid fa-arrow-left"></i> Previous</button>
+                    <div class="ob-page-numbers">${pages.map(page=>`<button class="ob-page-number ${page===currentSearchPage?"active":""}" onclick="goToSearchPage(${page})">${page}</button>`).join("")}</div>
+                    <button class="ob-page-arrow" disabled>Next <i class="fa-solid fa-arrow-right"></i></button>
+                </div>
+            </div>`;
+        attachSearchSuggestionListeners();
         return;
-
     }
 
 
@@ -5677,69 +6255,30 @@ function renderSearchResults(data){
     }
 
 
+    const pageNumbers = buildPageNumbers(currentSearchPage, searchLastPage, searchPageHasMore);
+    const noMore = !searchPageHasMore;
+
     html += `
-
-        <div style="
-            display:flex;
-            justify-content:center;
-            gap:10px;
-            margin-top:25px;
-        ">
-
-
-            <button
-                onclick="previousSearchPage()"
-
-                ${
-                    currentSearchPage<=1
-                    ? "disabled"
-                    : ""
-                }
-
-                style="
-                    padding:10px 16px;
-                    border:0;
-                    border-radius:9px;
-                    cursor:pointer;
-                "
-            >
-
-                <i
-                    class="
-                        fa-solid
-                        fa-arrow-left
-                    "
-                ></i>
-
-                Previous
-
+        <div class="ob-pagination" aria-label="Search pagination">
+            <button class="ob-page-arrow" onclick="previousSearchPage()" ${currentSearchPage<=1 ? "disabled" : ""}>
+                <i class="fa-solid fa-arrow-left"></i> Previous
             </button>
-
-
-            <button
-                onclick="nextSearchPage()"
-
-                style="
-                    padding:10px 16px;
-                    border:0;
-                    border-radius:9px;
-                    cursor:pointer;
-                "
-            >
-
-                Next
-
-                <i
-                    class="
-                        fa-solid
-                        fa-arrow-right
-                    "
-                ></i>
-
+            <div class="ob-page-numbers">
+                ${pageNumbers.map(page=>page === "…"
+                    ? `<span class="ob-page-ellipsis">…</span>`
+                    : `<button class="ob-page-number ${page===currentSearchPage?"active":""}" onclick="goToSearchPage(${page})">${page}</button>`
+                ).join("")}
+            </div>
+            <button class="ob-page-arrow" onclick="nextSearchPage()" ${noMore ? "disabled" : ""}>
+                Next <i class="fa-solid fa-arrow-right"></i>
             </button>
-
         </div>
-
+        ${noMore ? `
+            <div class="ob-no-more-results">
+                <i class="fa-solid fa-circle-check"></i>
+                No more results for input <strong>"${escapeHTML(currentSearchQuery)}"</strong>
+            </div>
+        ` : ""}
     `;
 
     html = renderOrangeSearchShell() + html;
@@ -5748,12 +6287,20 @@ function renderSearchResults(data){
         <footer class="search-footer">
             <div class="search-footer-location" id="orangeSearchFooterStatus">
                 <strong>OrangeBrowse</strong> &bull; ${navigator.onLine ? "Online" : "Offline mode"}
-                &bull; Search results are displayed inside OrangeBrowse.
+                <div class="orange-location-grid">
+                    <div class="orange-location-item"><div class="orange-location-label">📍 Browse location</div><div class="orange-location-value" id="orangeFooterLocationValue">Requesting location permission...</div></div>
+                    <div class="orange-location-item"><div class="orange-location-label">📮 Postal code</div><div class="orange-location-value" id="orangeFooterPostalValue">—</div></div>
+                    <div class="orange-location-item"><div class="orange-location-label">🕒 Date & time</div><div class="orange-location-value" id="orangeFooterDateValue">—</div></div>
+                    <div class="orange-location-item"><div class="orange-location-label">🌐 Time zone</div><div class="orange-location-value" id="orangeFooterTimezoneValue">—</div></div>
+                </div>
+                <a class="orange-location-map" id="orangeFooterMap" href="#" target="_blank" rel="noopener" style="display:none;"><i class="fa-solid fa-map-location-dot"></i> Open exact location in Maps</a>
             </div>
         </footer>
     `;
 
     container.innerHTML=html;
+    attachSearchSuggestionListeners();
+    requestOrangeFooterLocation();
 
 }
 
@@ -5764,141 +6311,58 @@ function renderSearchResults(data){
 
 function renderNormalResults(results){
 
-    return results.map(
-        (result,index)=>{
+    return results.map((result,index)=>{
 
-            const title =
-                result.title ||
-                result.name ||
-                "Untitled result";
+        const title = result.title || result.name || "Untitled result";
+        const url = result.url || result.link || "#";
+        const content = result.content || result.description || result.snippet || "";
+        const engine = result.engine || "";
+        const media = result.thumbnail || result.thumbnail_src || result.img_src || result.image || result.image_url || result.media_url || "";
+        const isVideo = currentSearchCategory === "videos" || !!result.iframe_src || !!result.video_src || !!result.video_url;
+        const videoUrl = result.video_url || result.video_src || result.iframe_src || "";
 
+        const mediaHtml = media ? `
+            <a class="orange-result-media" href="${escapeHTML(url)}" onclick="openSearchResult(event,this.href)" aria-label="Open result">
+                <img src="${escapeHTML(media)}" alt="${escapeHTML(title)}" loading="lazy" referrerpolicy="no-referrer"
+                     onerror="this.parentElement.style.display='none';">
+                ${isVideo ? `<span class="orange-video-badge"><i class="fa-solid fa-play"></i> Video</span>` : ""}
+            </a>
+        ` : "";
 
-            const url =
-                result.url ||
-                result.link ||
-                "#";
-
-
-            const content =
-                result.content ||
-                result.description ||
-                result.snippet ||
-                "";
-
-
-            const engine =
-                result.engine ||
-                "";
-
-
-            return `
-
-                <article
-                    class="orange-search-result"
-                    style="
-                        padding:17px 0;
-                        border-bottom:1px solid
-                        rgba(127,127,127,.18);
-                    "
-                >
-
-                    <div style="
-                        font-size:12px;
-                        opacity:.65;
-                        margin-bottom:5px;
-                        word-break:break-all;
-                    ">
-
-                        ${escapeHTML(
-                            getDomain(url)
-                        )}
-
-                    </div>
-
-
-                    <a
-                        href="${escapeHTML(url)}"
-
-                        onclick="
-                            openSearchResult(
-                                event,
-                                this.href
-                            )
-                        "
-
-                        style="
-                            font-size:19px;
-                            font-weight:700;
-                            text-decoration:none;
-                            color:
-                                var(
-                                    --orange,
-                                    #ff6a00
-                                );
-                        "
-                    >
-
-                        ${escapeHTML(title)}
-
-                    </a>
-
-
-                    ${
-                        content
-                        ?
-                        `
-
-                        <div style="
-                            margin-top:7px;
-                            line-height:1.55;
-                            opacity:.82;
-                        ">
-
-                            ${escapeHTML(
-                                stripHTML(
-                                    content
-                                )
-                            )}
-
-                        </div>
-
-                        `
-                        :
-                        ""
-                    }
-
-
-                    ${
-                        engine
-                        ?
-                        `
-
-                        <div style="
-                            margin-top:7px;
-                            font-size:11px;
-                            opacity:.55;
-                        ">
-
-                            ${escapeHTML(
-                                engine
-                            )}
-
-                        </div>
-
-                        `
-                        :
-                        ""
-                    }
-
-                </article>
-
-            `;
-
-        }
-    ).join("");
-
+        return `
+            <article class="orange-search-result orange-result-card">
+                <div style="font-size:12px;opacity:.65;margin-bottom:5px;word-break:break-all;">
+                    ${escapeHTML(getDomain(url))}
+                </div>
+                <a href="${escapeHTML(url)}" onclick="openSearchResult(event,this.href)"
+                   style="font-size:19px;font-weight:700;text-decoration:none;color:var(--orange,#ff6a00);">
+                    ${escapeHTML(title)}
+                </a>
+                ${mediaHtml}
+                ${content ? `<div style="margin-top:7px;line-height:1.55;opacity:.82;">${escapeHTML(stripHTML(content))}</div>` : ""}
+                ${engine ? `<div style="margin-top:7px;font-size:11px;opacity:.55;">${escapeHTML(engine)}</div>` : ""}
+            </article>
+        `;
+    }).join("");
 }
 
+
+/* =====================================================
+   VIDEO RESULTS
+===================================================== */
+function renderVideoResults(results){
+    return results.map(result=>{
+        const title=result.title || result.name || "Video result";
+        const url=result.url || result.link || "#";
+        const thumb=result.thumbnail || result.thumbnail_src || result.img_src || result.image || result.image_url || "";
+        return `
+            <article class="orange-result-card">
+                ${thumb ? `<a class="orange-result-media" href="${escapeHTML(url)}" onclick="openSearchResult(event,this.href)"><img src="${escapeHTML(thumb)}" alt="${escapeHTML(title)}" loading="lazy" referrerpolicy="no-referrer"><span class="orange-video-badge"><i class="fa-solid fa-play"></i> Video</span></a>` : ""}
+                <a href="${escapeHTML(url)}" onclick="openSearchResult(event,this.href)" style="font-size:18px;font-weight:700;text-decoration:none;color:var(--orange);display:block;margin-top:9px;">${escapeHTML(title)}</a>
+                ${result.content ? `<div style="margin-top:7px;line-height:1.5;opacity:.82;">${escapeHTML(stripHTML(result.content))}</div>` : ""}
+            </article>`;
+    }).join("");
+}
 
 /* =====================================================
    IMAGE RESULTS
@@ -6144,36 +6608,48 @@ function openSearchResult(event,url){
    SEARCH PAGINATION
 ===================================================== */
 
-function nextSearchPage(){
-
-    if(searchLoading)return;
-
-
-    currentSearchPage++;
-
-
-    saveCurrentSearchToTab();
-
-    showSearchResults();
-
+function buildPageNumbers(current,last,hasMore){
+    current=Number(current)||1;
+    const pages=[];
+    if(last){
+        const from=Math.max(1,current-2);
+        const to=Math.min(last,current+2);
+        if(from>1) pages.push(1);
+        if(from>2) pages.push("…");
+        for(let p=from;p<=to;p++) pages.push(p);
+        if(to<last-1) pages.push("…");
+        if(to<last) pages.push(last);
+    }else{
+        const from=Math.max(1,current-2);
+        const to=current+2;
+        if(from>1) pages.push(1);
+        if(from>2) pages.push("…");
+        for(let p=from;p<=to;p++) pages.push(p);
+        if(hasMore) pages.push("…");
+    }
+    return [...new Set(pages)];
 }
 
+function goToSearchPage(page){
+    if(searchLoading || page<1 || page===currentSearchPage)return;
+    if(searchLastPage && page>searchLastPage)return;
+    currentSearchPage=Number(page);
+    saveCurrentSearchToTab();
+    showSearchResults();
+}
+
+function nextSearchPage(){
+    if(searchLoading || !searchPageHasMore)return;
+    currentSearchPage++;
+    saveCurrentSearchToTab();
+    showSearchResults();
+}
 
 function previousSearchPage(){
-
-    if(searchLoading)return;
-
-
-    if(currentSearchPage<=1)return;
-
-
+    if(searchLoading || currentSearchPage<=1)return;
     currentSearchPage--;
-
-
     saveCurrentSearchToTab();
-
     showSearchResults();
-
 }
 
 
@@ -6623,8 +7099,7 @@ function goForward(){
 ===================================================== */
 
 function reloadPage(){
-    showTinyRefreshLoader();
-
+    
     const tab=getActiveTab();
 
     if(tab && tab.searchState && tab.searchState.query){
@@ -6799,33 +7274,61 @@ function bookmarkCurrent(){
 
 function toggleIncognito(){
 
-    settings.incognito =
-        !settings.incognito;
+    if(!settings.incognito){
 
+        /* Start a fresh private tab. Existing normal tabs stay available. */
+        settings.incognito=true;
 
-    save(
-        STORAGE.settings,
-        settings
+        createTab(false,true);
+
+        closeMenu();
+        renderRecentSearches();
+        updatePrivacyUI();
+        updateAllFeatureUI();
+
+        showToast(
+            "Incognito mode enabled — activity will not be saved"
+        );
+
+        return;
+    }
+
+    /* Leave incognito: discard every private tab. */
+    settings.incognito=false;
+
+    tabs=tabs.filter(
+        tab=>!tab.private
     );
 
+    if(!tabs.length){
 
+        activeTabId=null;
+
+        createTab(
+            false,
+            false
+        );
+
+    }else{
+
+        activeTabId=tabs[0].id;
+
+        persistTabs();
+        loadActiveTab();
+        updateRecentTabsPanel();
+
+    }
+
+    renderRecentSearches();
     updatePrivacyUI();
-
-    updateFeatureUI(
-        "incognito"
-    );
-
+    updateAllFeatureUI();
+    closeMenu();
 
     showToast(
-
-        settings.incognito
-        ? "Incognito mode enabled"
-        : "Incognito mode disabled"
-
+        "Incognito mode disabled"
     );
 
 }
-
 
 function updatePrivacyUI(){
 
@@ -6926,35 +7429,34 @@ function toggleFeature(event,type){
         event.stopPropagation();
     }
 
-
-    if(
-        !Object.prototype.hasOwnProperty.call(
-            settings,
-            type
-        )
-    ){
-
-        settings[type]=false;
-
+    if(type==="incognito"){
+        toggleIncognito();
+        return;
     }
 
+    if(!Object.prototype.hasOwnProperty.call(settings,type)){
+        settings[type]=false;
+    }
 
-    settings[type] =
-        !settings[type];
-
+    settings[type]=!settings[type];
 
     save(
         STORAGE.settings,
         settings
     );
 
-
     updateFeatureUI(type);
-
     updatePrivacyUI();
 
-}
+    if(type==="adBlock"){
+        showToast(
+            settings.adBlock
+            ? "Ad blocker enabled"
+            : "Ad blocker disabled"
+        );
+    }
 
+}
 
 function updateFeatureUI(type){
 
@@ -7443,6 +7945,705 @@ function closeModal(){
 
 
 /* =====================================================
+   BROWSER MENU PAGES
+===================================================== */
+
+function formatBrowserTime(value){
+    if(!value)return "";
+    try{
+        return new Intl.DateTimeFormat(undefined,{
+            dateStyle:"medium",
+            timeStyle:"short"
+        }).format(new Date(value));
+    }catch(e){
+        return "";
+    }
+}
+
+function safeOpenUrl(url,title){
+    if(!url)return;
+
+    if(String(url).startsWith("#search:")){
+        performSearch(String(url).slice(8));
+        return;
+    }
+
+    if(String(url).startsWith("orangebrowse-search://")){
+        const q=decodeURIComponent(
+            String(url).replace("orangebrowse-search://","")
+        );
+        performSearch(q);
+        return;
+    }
+
+    navigateTo(
+        url,
+        {
+            title:title || url,
+            fromHistory:true
+        }
+    );
+}
+
+function renderBrowserDataList(items,options={}){
+    const emptyIcon=options.emptyIcon || "fa-folder-open";
+    const emptyText=options.emptyText || "Nothing here yet.";
+
+    if(!items.length){
+        return `
+            <div class="empty">
+                <i class="fa-solid ${emptyIcon}"></i>
+                <p>${escapeHTML(emptyText)}</p>
+            </div>
+        `;
+    }
+
+    return `
+        <div class="data-list">
+            ${items.map((item,index)=>{
+                const title=item.title || item.query || item.url || "Untitled";
+                const url=item.url || "";
+                const time=formatBrowserTime(
+                    item.time || item.createdAt || item.closedAt
+                );
+
+                const action=url
+                    ? `onclick="safeOpenUrl(decodeURIComponent('${encodeURIComponent(url)}'),decodeURIComponent('${encodeURIComponent(title)}'))"`
+                    : "";
+
+                return `
+                    <div class="data-item"
+                         ${action}
+                         style="${url ? "cursor:pointer;" : ""}">
+
+                        <div class="data-icon">
+                            <i class="fa-solid ${options.icon || "fa-globe"}"></i>
+                        </div>
+
+                        <div class="data-content">
+                            <div class="data-title">
+                                ${escapeHTML(title)}
+                            </div>
+
+                            <div class="data-url">
+                                ${escapeHTML(
+                                    url || time || "Local OrangeBrowse item"
+                                )}
+                            </div>
+
+                            ${
+                                time
+                                ? `
+                                    <div style="
+                                        font-size:8px;
+                                        color:var(--muted);
+                                        margin-top:3px;
+                                    ">
+                                        ${escapeHTML(time)}
+                                    </div>
+                                  `
+                                : ""
+                            }
+                        </div>
+
+                        ${
+                            options.deleteFn
+                            ? `
+                                <button
+                                    class="data-delete"
+                                    onclick="event.stopPropagation();${options.deleteFn}(${index})"
+                                    title="Remove">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </button>
+                              `
+                            : ""
+                        }
+
+                    </div>
+                `;
+            }).join("")}
+        </div>
+    `;
+}
+
+function openBookmarks(){
+    closeMenu();
+
+    openModal(
+        "Bookmarks",
+        `
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                gap:10px;
+                margin-bottom:12px;
+            ">
+                <p style="color:var(--muted);font-size:10px;">
+                    ${bookmarks.length}
+                    saved bookmark${bookmarks.length===1?"":"s"}
+                </p>
+
+                ${
+                    bookmarks.length
+                    ? `
+                        <button
+                            class="danger-button"
+                            style="width:auto;padding:0 12px;margin:0;"
+                            onclick="clearBookmarks()">
+                            Clear all
+                        </button>
+                      `
+                    : ""
+                }
+            </div>
+
+            ${renderBrowserDataList(
+                bookmarks,
+                {
+                    icon:"fa-bookmark",
+                    deleteFn:"deleteBookmark",
+                    emptyIcon:"fa-star",
+                    emptyText:"No bookmarks saved yet. Open a page and bookmark it."
+                }
+            )}
+        `
+    );
+}
+
+function deleteBookmark(index){
+    if(index<0 || index>=bookmarks.length)return;
+
+    bookmarks.splice(index,1);
+    save(STORAGE.bookmarks,bookmarks);
+
+    openBookmarks();
+    showToast("Bookmark removed");
+}
+
+function clearBookmarks(){
+    if(!bookmarks.length)return;
+
+    if(!confirm("Clear all bookmarks?"))return;
+
+    bookmarks=[];
+    save(STORAGE.bookmarks,bookmarks);
+
+    openBookmarks();
+    showToast("Bookmarks cleared");
+}
+
+function openHistory(){
+    closeMenu();
+
+    const items=historyItems.slice(0,100);
+
+    openModal(
+        "History",
+        `
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                gap:10px;
+                margin-bottom:12px;
+            ">
+                <p style="color:var(--muted);font-size:10px;">
+                    ${items.length}
+                    history item${items.length===1?"":"s"}
+                </p>
+
+                ${
+                    items.length
+                    ? `
+                        <button
+                            class="danger-button"
+                            style="width:auto;padding:0 12px;margin:0;"
+                            onclick="clearHistory()">
+                            Clear all
+                        </button>
+                      `
+                    : ""
+                }
+            </div>
+
+            ${renderBrowserDataList(
+                items,
+                {
+                    icon:"fa-clock-rotate-left",
+                    deleteFn:"deleteHistory",
+                    emptyIcon:"fa-clock-rotate-left",
+                    emptyText:"No browsing history yet."
+                }
+            )}
+        `
+    );
+}
+
+function deleteHistory(index){
+    if(index<0 || index>=historyItems.length)return;
+
+    historyItems.splice(index,1);
+    save(STORAGE.history,historyItems);
+
+    openHistory();
+    showToast("History item removed");
+}
+
+function clearHistory(){
+    if(!historyItems.length)return;
+
+    if(!confirm("Clear all browsing history?"))return;
+
+    historyItems=[];
+    save(STORAGE.history,historyItems);
+
+    openHistory();
+    showToast("Browsing history cleared");
+}
+
+function openRecentlyClosed(){
+    closeMenu();
+
+    openModal(
+        "Recently closed tabs",
+        `
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                gap:10px;
+                margin-bottom:12px;
+            ">
+                <p style="color:var(--muted);font-size:10px;">
+                    ${closedTabs.length}
+                    recently closed tab${closedTabs.length===1?"":"s"}
+                </p>
+
+                ${
+                    closedTabs.length
+                    ? `
+                        <button
+                            class="danger-button"
+                            style="width:auto;padding:0 12px;margin:0;"
+                            onclick="clearClosedTabs()">
+                            Clear all
+                        </button>
+                      `
+                    : ""
+                }
+            </div>
+
+            ${
+                closedTabs.length
+                ? `
+                    <div class="data-list">
+                        ${
+                            closedTabs.map((tab,index)=>`
+                                <div
+                                    class="data-item"
+                                    style="cursor:pointer;"
+                                    onclick="reopenClosedTab(${index})">
+
+                                    <div class="data-icon">
+                                        <i class="fa-solid fa-window-restore"></i>
+                                    </div>
+
+                                    <div class="data-content">
+                                        <div class="data-title">
+                                            ${escapeHTML(tab.title || "New Tab")}
+                                        </div>
+
+                                        <div class="data-url">
+                                            ${escapeHTML(
+                                                tab.url ||
+                                                (tab.searchState
+                                                    ? "OrangeBrowse search"
+                                                    : "New tab")
+                                            )}
+                                        </div>
+
+                                        <div style="
+                                            font-size:8px;
+                                            color:var(--muted);
+                                            margin-top:3px;
+                                        ">
+                                            ${escapeHTML(
+                                                formatBrowserTime(tab.closedAt)
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        class="data-delete"
+                                        onclick="event.stopPropagation();deleteClosedTab(${index})"
+                                        title="Remove">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+
+                                </div>
+                            `).join("")
+                        }
+                    </div>
+                  `
+                : `
+                    <div class="empty">
+                        <i class="fa-solid fa-window-restore"></i>
+                        <p>No recently closed tabs.</p>
+                    </div>
+                  `
+            }
+        `
+    );
+}
+
+function reopenClosedTab(index){
+    const tab=closedTabs[index];
+    if(!tab)return;
+
+    const restored={
+        ...tab,
+        id:generateTabId(),
+        private:false
+    };
+
+    delete restored.closedAt;
+
+    tabs.push(restored);
+    activeTabId=restored.id;
+
+    closedTabs.splice(index,1);
+    save(STORAGE.closedTabs,closedTabs);
+
+    persistTabs();
+    loadActiveTab();
+    updateRecentTabsPanel();
+
+    closeModal();
+    showToast("Tab reopened");
+}
+
+function deleteClosedTab(index){
+    if(index<0 || index>=closedTabs.length)return;
+
+    closedTabs.splice(index,1);
+    save(STORAGE.closedTabs,closedTabs);
+
+    openRecentlyClosed();
+}
+
+function clearClosedTabs(){
+    if(!closedTabs.length)return;
+
+    if(!confirm("Clear recently closed tabs?"))return;
+
+    closedTabs=[];
+    save(STORAGE.closedTabs,closedTabs);
+
+    openRecentlyClosed();
+    showToast("Recently closed tabs cleared");
+}
+
+function openDownloads(){
+    closeMenu();
+
+    openModal(
+        "Downloads",
+        `
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                gap:10px;
+                margin-bottom:12px;
+            ">
+                <p style="color:var(--muted);font-size:10px;">
+                    ${downloads.length}
+                    recorded download${downloads.length===1?"":"s"}
+                </p>
+
+                ${
+                    downloads.length
+                    ? `
+                        <button
+                            class="danger-button"
+                            style="width:auto;padding:0 12px;margin:0;"
+                            onclick="clearDownloads()">
+                            Clear all
+                        </button>
+                      `
+                    : ""
+                }
+            </div>
+
+            ${
+                downloads.length
+                ? renderBrowserDataList(
+                    downloads,
+                    {
+                        icon:"fa-download",
+                        deleteFn:"deleteDownload"
+                    }
+                  )
+                : `
+                    <div class="empty">
+                        <i class="fa-solid fa-download"></i>
+                        <p>No downloads recorded yet.</p>
+                        <small style="
+                            display:block;
+                            margin-top:7px;
+                        ">
+                            Downloads started with a
+                            <code>download</code> link from this page
+                            will appear here.
+                        </small>
+                    </div>
+                  `
+            }
+        `
+    );
+}
+
+function deleteDownload(index){
+    if(index<0 || index>=downloads.length)return;
+
+    downloads.splice(index,1);
+    save(STORAGE.downloads,downloads);
+
+    openDownloads();
+}
+
+function clearDownloads(){
+    if(!downloads.length)return;
+
+    if(!confirm("Clear download history?"))return;
+
+    downloads=[];
+    save(STORAGE.downloads,downloads);
+
+    openDownloads();
+    showToast("Download list cleared");
+}
+
+function saveCurrentOfflinePage(){
+    const tab=getActiveTab();
+
+    if(
+        !tab ||
+        !tab.url ||
+        tab.url.startsWith("orangebrowse-search://")
+    ){
+        showToast("Only a normal web page can be saved here");
+        return;
+    }
+
+    if(offlinePages.some(item=>item.url===tab.url)){
+        showToast("Page is already saved");
+        return;
+    }
+
+    offlinePages.unshift({
+        id:Date.now(),
+        title:tab.title || tab.url,
+        url:tab.url,
+        time:new Date().toISOString()
+    });
+
+    offlinePages=offlinePages.slice(0,50);
+    save(STORAGE.offlinePages,offlinePages);
+
+    showToast("Page saved to Offline pages");
+}
+
+function openOfflinePages(){
+    closeMenu();
+
+    openModal(
+        "Offline pages",
+        `
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                gap:10px;
+                margin-bottom:12px;
+            ">
+                <p style="color:var(--muted);font-size:10px;">
+                    ${offlinePages.length}
+                    saved page${offlinePages.length===1?"":"s"}
+                </p>
+
+                <button
+                    class="jama-button"
+                    style="padding:9px 12px;"
+                    onclick="saveCurrentOfflinePage();openOfflinePages();">
+                    Save current page
+                </button>
+            </div>
+
+            ${renderBrowserDataList(
+                offlinePages,
+                {
+                    icon:"fa-cloud-arrow-down",
+                    deleteFn:"deleteOfflinePage",
+                    emptyIcon:"fa-cloud-arrow-down",
+                    emptyText:"No offline pages saved yet."
+                }
+            )}
+
+            <p style="
+                color:var(--muted);
+                font-size:9px;
+                line-height:1.5;
+                margin-top:12px;
+            ">
+                OrangeBrowse remembers saved page URLs locally.
+                Full offline website caching depends on the native
+                app/webview and the page's cache permissions.
+            </p>
+        `
+    );
+}
+
+function deleteOfflinePage(index){
+    if(index<0 || index>=offlinePages.length)return;
+
+    offlinePages.splice(index,1);
+    save(STORAGE.offlinePages,offlinePages);
+
+    openOfflinePages();
+}
+
+function openSettings(){
+    closeMenu();
+
+    openModal(
+        "Settings",
+        `
+            <div class="setting">
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-title">Search engine</div>
+                        <div class="setting-description">
+                            Choose the default engine used for browser searches.
+                        </div>
+                    </div>
+
+                    <select onchange="changeSearchEngine(this.value)">
+                        <option value="google" ${settings.engine==="google"?"selected":""}>Google</option>
+                        <option value="bing" ${settings.engine==="bing"?"selected":""}>Bing</option>
+                        <option value="duckduckgo" ${settings.engine==="duckduckgo"?"selected":""}>DuckDuckGo</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="setting">
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-title">Dark mode</div>
+                        <div class="setting-description">
+                            Change the OrangeBrowse interface theme.
+                        </div>
+                    </div>
+
+                    <button
+                        class="toggle ${settings.dark?"active":""}"
+                        onclick="toggleDarkMode();openSettings();">
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="setting">
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-title">Ad blocker</div>
+                        <div class="setting-description">
+                            Filter known advertising/tracking results and
+                            optional OrangeBrowse elements. Website-wide
+                            blocking needs the native app layer.
+                        </div>
+                    </div>
+
+                    <button
+                        class="toggle ${settings.adBlock?"active":""}"
+                        onclick="toggleAdBlock();openSettings();">
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="setting">
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-title">Data Saver</div>
+                        <div class="setting-description">
+                            Reduce optional media/resource work in OrangeBrowse.
+                        </div>
+                    </div>
+
+                    <button
+                        class="toggle ${settings.dataSaver?"active":""}"
+                        onclick="toggleFeature(event,'dataSaver');openSettings();">
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="setting">
+                <div class="setting-row">
+                    <div>
+                        <div class="setting-title">Incognito</div>
+                        <div class="setting-description">
+                            Private tabs do not write searches, history or
+                            closed-tab records to local storage.
+                        </div>
+                    </div>
+
+                    <button
+                        class="toggle ${settings.incognito?"active":""}"
+                        onclick="toggleIncognito();openSettings();">
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+
+            <button
+                class="danger-button"
+                onclick="clearAllBrowserData()">
+                Clear OrangeBrowse data
+            </button>
+        `
+    );
+}
+
+function clearAllBrowserData(){
+    if(!confirm(
+        "Clear bookmarks, history, recent searches, closed tabs and saved offline pages?"
+    ))return;
+
+    bookmarks=[];
+    historyItems=[];
+    closedTabs=[];
+    offlinePages=[];
+    downloads=[];
+
+    localStorage.removeItem(
+        "orangebrowse_recent_searches"
+    );
+
+    save(STORAGE.bookmarks,bookmarks);
+    save(STORAGE.history,historyItems);
+    save(STORAGE.closedTabs,closedTabs);
+    save(STORAGE.offlinePages,offlinePages);
+    save(STORAGE.downloads,downloads);
+
+    renderRecentSearches();
+    showToast("Browser data cleared");
+    closeModal();
+}
+
+/* =====================================================
    MENU
 ===================================================== */
 
@@ -7529,11 +8730,47 @@ function updateNetworkStatus(){
 }
 
 
-function updateSearchFooterStatus(){
-    const footer = document.getElementById("orangeSearchFooterStatus");
-    if(!footer)return;
-    footer.innerHTML = `<strong>OrangeBrowse</strong> &bull; ${navigator.onLine ? "Online" : "Offline mode"} &bull; Search results are displayed inside OrangeBrowse.`;
+/* =====================================================
+   FOOTER LOCATION / DATE / TIMEZONE
+===================================================== */
+function updateOrangeFooterClock(){
+    const date=document.getElementById("orangeFooterDateValue");
+    const zone=document.getElementById("orangeFooterTimezoneValue");
+    if(date) date.textContent=new Intl.DateTimeFormat(undefined,{dateStyle:"medium",timeStyle:"medium"}).format(new Date());
+    if(zone) zone.textContent=Intl.DateTimeFormat().resolvedOptions().timeZone || "Local time";
 }
+
+function requestOrangeFooterLocation(){
+    updateOrangeFooterClock();
+    clearInterval(window.orangeFooterClockTimer);
+    window.orangeFooterClockTimer=setInterval(updateOrangeFooterClock,1000);
+    const loc=document.getElementById("orangeFooterLocationValue");
+    const postal=document.getElementById("orangeFooterPostalValue");
+    const map=document.getElementById("orangeFooterMap");
+    if(!loc)return;
+    if(!navigator.geolocation){ loc.textContent="Location unavailable"; return; }
+    navigator.geolocation.getCurrentPosition(async position=>{
+        const lat=position.coords.latitude;
+        const lon=position.coords.longitude;
+        loc.textContent=`${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+        if(map){ map.href=`https://www.google.com/maps?q=${lat},${lon}`; map.style.display="inline-flex"; }
+        try{
+            const response=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lon)}`,{headers:{"Accept":"application/json"}});
+            if(response.ok){
+                const data=await response.json();
+                const a=data.address||{};
+                const place=a.city||a.town||a.village||a.municipality||a.county||data.display_name;
+                if(place)loc.textContent=place;
+                if(postal)postal.textContent=a.postcode || "Not available";
+            }
+        }catch(e){ if(postal)postal.textContent="Not available"; }
+    },()=>{
+        loc.textContent="Location permission not granted";
+        if(postal)postal.textContent="—";
+    },{enableHighAccuracy:true,timeout:10000,maximumAge:60000});
+}
+
+function updateSearchFooterStatus(){ updateOrangeFooterClock(); requestOrangeFooterLocation(); }
 
 window.addEventListener("online",()=>{
     updateNetworkStatus();
@@ -8679,8 +9916,7 @@ document.addEventListener("touchend",event=>{
     const distance=endY-orangePullStartY;
     orangePullActive=false;
     if(distance>90 && window.scrollY<=5){
-        showTinyRefreshLoader();
-        reloadPage();
+                reloadPage();
     }
 },{passive:true});
 
@@ -8802,6 +10038,39 @@ function initializeLoader(){
    START
 ===================================================== */
 
+/* Track downloads initiated by links owned by this page. */
+document.addEventListener("click",function(event){
+
+    const link=event.target.closest("a[download]");
+
+    if(!link || settings.incognito)return;
+
+    const url=
+        link.href ||
+        link.getAttribute("href") ||
+        "";
+
+    const name=
+        link.getAttribute("download") ||
+        url.split("/").pop() ||
+        "download";
+
+    downloads.unshift({
+        id:Date.now(),
+        title:name,
+        url:url,
+        time:new Date().toISOString()
+    });
+
+    downloads=downloads.slice(0,50);
+
+    save(
+        STORAGE.downloads,
+        downloads
+    );
+
+});
+
 initialize();
 
 initializeLoader();
@@ -8883,6 +10152,196 @@ orangeNavObserver.observe(
 
 
   
+</script>
+
+
+<script>
+/* =========================================================
+   ORANGEBROWSE OPERA-STYLE RESULT RENDERER
+   Uses actual SearXNG category data. It does not invent
+   media when a result does not provide it.
+========================================================= */
+(function(){
+    const endpoint = "https://search-api-kdnj.onrender.com/search";
+
+    function esc(v){
+        return String(v ?? "").replace(/[&<>"']/g, s => ({
+            "&":"&amp;","<":"&lt;",">":"&gt;",
+            '"':"&quot;","'":"&#039;"
+        }[s]));
+    }
+
+    function firstMedia(r){
+        return r.thumbnail || r.img_src || r.image || r.thumbnail_src || "";
+    }
+
+    function sourceName(r){
+        return r.source || r.engine || "";
+    }
+
+    function resultUrl(r){
+        return r.url || r.link || "#";
+    }
+
+    function mediaItems(data){
+        return Array.isArray(data.results) ? data.results : [];
+    }
+
+    function createTabs(container, query, active){
+        container.innerHTML = `
+          <div class="ob-result-tabs">
+            ${["general","images","videos","news","map"].map(c => `
+              <button class="ob-result-tab ${active===c?"active":""}"
+                data-ob-category="${c}">
+                ${c==="general"?"All":c[0].toUpperCase()+c.slice(1)}
+              </button>
+            `).join("")}
+          </div>`;
+        container.querySelectorAll("[data-ob-category]").forEach(btn=>{
+            btn.addEventListener("click",()=>run(query,btn.dataset.obCategory));
+        });
+    }
+
+    function renderAll(data, target){
+        const results = mediaItems(data);
+        if(!results.length){
+            target.insertAdjacentHTML("beforeend",
+                `<div class="no-results">No results were returned.</div>`);
+            return;
+        }
+
+        target.insertAdjacentHTML("beforeend",
+            results.map(r=>{
+                const image = firstMedia(r);
+                const thumb = image
+                    ? `<img class="ob-thumb" src="${esc(image)}" loading="lazy" alt="">`
+                    : "";
+                return `
+                <article class="ob-search-result"
+                    data-ob-open="${esc(resultUrl(r))}">
+                    ${thumb}
+                    <div class="ob-source">${esc(sourceName(r) || new URL(resultUrl(r),location.href).hostname)}</div>
+                    <div class="ob-title">${esc(r.title || "Untitled result")}</div>
+                    <div class="ob-url">${esc(resultUrl(r))}</div>
+                    <div class="ob-snippet">${esc(r.content || r.description || "")}</div>
+                </article>`;
+            }).join("")
+        );
+
+        target.querySelectorAll("[data-ob-open]").forEach(el=>{
+            el.addEventListener("click",()=>{
+                const u=el.dataset.obOpen;
+                if(u && u!=="#"){
+                    window.location.href=u;
+                }
+            });
+        });
+    }
+
+    function renderImages(data,target){
+        const results=mediaItems(data).filter(r=>firstMedia(r));
+        if(!results.length){
+            target.insertAdjacentHTML("beforeend",
+                `<div class="no-results">No image results were returned.</div>`);
+            return;
+        }
+
+        target.insertAdjacentHTML("beforeend",`
+          <div class="ob-media-grid">
+            ${results.map(r=>`
+              <article class="ob-media-card" data-ob-open="${esc(resultUrl(r))}">
+                <img src="${esc(firstMedia(r))}" loading="lazy" alt="${esc(r.title||"")}">
+                <div class="ob-media-info">
+                  <div class="ob-media-title">${esc(r.title||"Image result")}</div>
+                  <div class="ob-media-source">${esc(sourceName(r))}</div>
+                </div>
+              </article>
+            `).join("")}
+          </div>`);
+
+        target.querySelectorAll("[data-ob-open]").forEach(el=>{
+            el.addEventListener("click",()=>{
+                const u=el.dataset.obOpen;
+                if(u && u!=="#") window.location.href=u;
+            });
+        });
+    }
+
+    function renderVideos(data,target){
+        const results=mediaItems(data);
+        if(!results.length){
+            target.insertAdjacentHTML("beforeend",
+                `<div class="no-results">No video results were returned.</div>`);
+            return;
+        }
+
+        target.insertAdjacentHTML("beforeend",
+          results.map(r=>{
+            const image=firstMedia(r);
+            return `
+              <article class="ob-video-card" data-ob-open="${esc(resultUrl(r))}">
+                ${image
+                  ? `<img class="ob-video-thumb" src="${esc(image)}" loading="lazy" alt="">`
+                  : `<div class="ob-video-thumb"></div>`}
+                <div class="ob-video-meta">
+                  <div class="ob-video-title">${esc(r.title||"Video result")}</div>
+                  <div class="ob-video-source">${esc(sourceName(r))}</div>
+                  <span class="ob-video-play">▶</span>
+                </div>
+              </article>`;
+          }).join("")
+        );
+
+        target.querySelectorAll("[data-ob-open]").forEach(el=>{
+            el.addEventListener("click",()=>{
+                const u=el.dataset.obOpen;
+                if(u && u!=="#") window.location.href=u;
+            });
+        });
+    }
+
+    async function run(query,category="general"){
+        const root =
+            document.querySelector("#searchResults") ||
+            document.querySelector(".search-results") ||
+            document.querySelector("[data-search-results]");
+
+        if(!root) return;
+
+        root.innerHTML = `<div class="search-loading">Searching...</div>`;
+
+        try{
+            const url=new URL(endpoint);
+            url.searchParams.set("q",query);
+            url.searchParams.set("category",category);
+            url.searchParams.set("page","1");
+
+            const response=await fetch(url);
+            const data=await response.json();
+
+            root.innerHTML="";
+            const tabs=document.createElement("div");
+            root.appendChild(tabs);
+            createTabs(tabs,query,category);
+
+            const body=document.createElement("div");
+            root.appendChild(body);
+
+            if(category==="images") renderImages(data,body);
+            else if(category==="videos") renderVideos(data,body);
+            else renderAll(data,body);
+
+        }catch(error){
+            root.innerHTML=`
+              <div class="no-results">
+                Search could not load<br>
+                <small>${esc(error.message)}</small>
+              </div>`;
+        }
+    }
+
+    window.orangeBrowseOperaSearch = run;
+})();
 </script>
 
 </body>
