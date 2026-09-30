@@ -2417,6 +2417,11 @@ body.orange-search-active .mobile-nav .nav-forward-icon{display:block;}
     .search-loader-circle{top:54px;right:10px;width:34px;height:34px;}
     .search-loader-circle img{width:22px!important;height:22px!important;}
 }
+
+/* OrangeBrowse in-app web viewer */
+.orange-web-active #orangeWebViewer{display:block!important;}
+#orangeWebViewer{box-sizing:border-box;}
+
 </style>
 </head>
 
@@ -4677,7 +4682,7 @@ function navigateTo(value,options={}){
 
     updateRecentTabsPanel();
 
-    openInOrangeContent(destination);
+    openNativeDestination(destination);
 
 }
 
@@ -4700,30 +4705,214 @@ function getDisplayTitle(input,url){
 ===================================================== */
 
 function openNativeDestination(url){
-    openInOrangeContent(url);
-}
 
-function openInOrangeContent(url){
-    if(!url) return;
+    if(!url) return false;
 
-    let frame = document.getElementById("orangeWebContentFrame");
-    if(!frame){
-        frame = document.createElement("iframe");
-        frame.id = "orangeWebContentFrame";
-        frame.style.cssText = "width:100%;height:calc(100vh - 120px);border:0;display:block;background:#fff;";
+    /*
+       ORANGEBROWSE SMART SITE HANDLER
+
+       - First try the URL in the OrangeBrowse frame.
+       - If the site permits framing, keep the OrangeBrowse
+         header/navigation visible.
+       - If the site refuses framing, remove the frame completely
+         and use the app's normal internal webview.
+       - Never use window.open("_blank") for normal browsing.
+    */
+
+    let frameWrap =
+        document.getElementById("orangeInternalWebView");
+
+    if(!frameWrap){
+
+        frameWrap = document.createElement("div");
+        frameWrap.id = "orangeInternalWebView";
+
+        frameWrap.style.cssText = `
+            position:relative;
+            width:100%;
+            min-height:calc(100vh - 130px);
+            background:var(--bg,#f5f5f5);
+            display:none;
+            overflow:hidden;
+        `;
+
+        frameWrap.innerHTML = `
+            <div id="orangeFrameProgress"
+                 style="
+                    position:absolute;
+                    left:0;
+                    top:0;
+                    height:3px;
+                    width:100%;
+                    transform:scaleX(0);
+                    transform-origin:left;
+                    background:var(--orange,#ff6a00);
+                    transition:transform .2s;
+                    z-index:20;
+                 ">
+            </div>
+
+            <iframe
+                id="orangeInternalFrame"
+                title="OrangeBrowse internal page"
+                referrerpolicy="strict-origin-when-cross-origin"
+                allow="fullscreen; autoplay; clipboard-read; clipboard-write"
+                style="
+                    width:100%;
+                    height:calc(100vh - 130px);
+                    min-height:500px;
+                    border:0;
+                    display:block;
+                    background:#fff;
+                 ">
+            </iframe>
+        `;
+
         const main = document.querySelector("main");
-        if(main) main.appendChild(frame);
-        else document.body.appendChild(frame);
+
+        if(main){
+            main.appendChild(frameWrap);
+        }else{
+            document.body.appendChild(frameWrap);
+        }
     }
 
-    const results = document.getElementById("orangeSearchResults");
-    if(results) results.style.display = "none";
+    const frame =
+        document.getElementById("orangeInternalFrame");
 
-    frame.style.display = "block";
-    frame.src = url;
-    document.body.classList.add("orange-web-active");
-    updateBottomNavigation();
+    const progress =
+        document.getElementById("orangeFrameProgress");
+
+    const results =
+        document.getElementById("orangeSearchResults");
+
+    if(!frame) return false;
+
+    /*
+       Hide search-result content but DO NOT hide the
+       OrangeBrowse header/navigation.
+    */
+    if(results){
+        results.style.display="none";
+    }
+
+    frameWrap.style.display="block";
+    frame.style.display="block";
+
+    if(progress){
+        progress.style.transform="scaleX(.2)";
+    }
+
+    let frameLoaded=false;
+    let fallbackStarted=false;
+
+    function openNormalInternalPage(){
+
+        if(fallbackStarted) return;
+        fallbackStarted=true;
+
+        /*
+           Remove the frame completely before opening the normal
+           internal page. This is the important difference from
+           the previous version: Google and other X-Frame-Options
+           sites are no longer left trapped behind an iframe.
+        */
+        frame.src="about:blank";
+        frame.style.display="none";
+
+        if(progress){
+            progress.style.transform="scaleX(1)";
+        }
+
+        /*
+           Median's internal target is used WITHOUT "_blank".
+           This keeps the destination in the app's browser layer
+           rather than intentionally launching a normal external
+           browser tab.
+        */
+        if(
+            window.median &&
+            window.median.window &&
+            typeof window.median.window.open==="function"
+        ){
+
+            try{
+                window.median.window.open(
+                    url,
+                    "internal"
+                );
+                return;
+            }catch(error){
+                console.warn(
+                    "OrangeBrowse internal navigation failed:",
+                    error
+                );
+            }
+        }
+
+        /*
+           If there is no native internal webview available,
+           restore the OrangeBrowse content area instead of
+           redirecting the whole document.
+        */
+        frameWrap.style.display="none";
+
+        if(typeof showNewTab==="function"){
+            try{
+                showNewTab(false);
+            }catch(error){}
+        }
+    }
+
+    /*
+       Successful frame load:
+       keep the OrangeBrowse shell and frame.
+    */
+    frame.onload=function(){
+
+        frameLoaded=true;
+
+        if(progress){
+            progress.style.transform="scaleX(1)";
+        }
+    };
+
+    /*
+       An iframe error is a strong signal that the destination
+       cannot be embedded. Switch to normal internal browsing.
+    */
+    frame.onerror=function(){
+
+        if(frameLoaded) return;
+
+        openNormalInternalPage();
+    };
+
+    /*
+       Many X-Frame-Options/CSP blocks do not fire iframe.onerror.
+       Therefore use a short detection window. If the frame has
+       not loaded, switch to the normal internal webview.
+    */
+    setTimeout(function(){
+
+        if(frameLoaded || fallbackStarted) return;
+
+        openNormalInternalPage();
+
+    },3500);
+
+    try{
+        frame.src=url;
+    }catch(error){
+        openNormalInternalPage();
+    }
+
+    return true;
 }
+
+/* =====================================================
+   SEARCH INPUT
+===================================================== */
 
 function performSearch(value=null){
 
